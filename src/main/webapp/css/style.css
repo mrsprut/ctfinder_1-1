@@ -55,3 +55,9 @@ p {
 footer.page-footer {
   margin: 0;
 }
+
+
+/* Custom code */
+
+/* section visibility */
+/*body > section.sect:not(.active) { display:none; }*/

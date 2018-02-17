@@ -109,6 +109,10 @@
 
 		return function(params) {
 
+			$('.parallax').parallax();
+			window.scrollTo(0,1);
+			window.scrollTo(1,0);
+			console.log('hi!');
 			/*$.ajax({
 				type: 'POST',
 				url: '/prostogae?action=get-data-by-section&section=home',

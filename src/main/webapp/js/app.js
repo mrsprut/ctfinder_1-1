@@ -11,22 +11,24 @@
     //console.log($(".loader"));
     // invoke page handler
     var ph = pageHandlers[pageName]; 
-    if( ph ) { 
-      var $page = $(".sect#" + pageName);
-      ph.call( $page.length ? $page[0] : null,param ); // call "page" handler
-    }
+    
     // activate the page  
     $("nav a.active").removeClass("active");
     $("nav a[href='#"+pageName+"']").addClass("active");
     //TODO hide only old section
     $(document.body).attr("page",pageName)
-                    .find(".sect").fadeOut(1000).removeClass("active")
-                    .filter(".sect#" + pageName).addClass("active").fadeIn(600);
+                    .find("section.sect.active").fadeOut(1000).removeClass("active")
+                    .filter("section.sect#" + pageName).fadeIn(1000).addClass("active");
+    
+    if( ph ) { 
+        var $page = $("section#" + pageName);
+        ph.call( $page.length ? $page[0] : null,param ); // call "page" handler
+      }
   }  
 
   function app(pageName,param) {
   
-    var $page = $(document.body).find(".sect#" + pageName);  
+    var $page = $(document.body).find("section#" + pageName);  
     
     var src = $page.attr("src");
     if( src && $page.find(">:first-child").length == 0) { 
@@ -39,7 +41,7 @@
 
   // register page handler  
   app.handler = function(handler) {
-    var $page = $(document.body).find(".sect#" + currentPage);  
+    var $page = $(document.body).find("section#" + currentPage);  
     pageHandlers[currentPage] = handler.call($page[0]);
   }
   
