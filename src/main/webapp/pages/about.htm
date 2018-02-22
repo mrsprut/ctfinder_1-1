@@ -1,0 +1,85 @@
+<div class="container">
+	<div class="row center">
+		<div class="col s12">
+			<div id="storyCarousel1" class="carousel carousel-slider center"
+				data-indicators="true">
+				<div class="carousel-fixed-item center middle-indicator">
+					<div class="left">
+						<a href="Previo"
+							class="movePrevCarousel middle-indicator-text waves-effect waves-light content-indicator"><i
+							class="material-icons left  middle-indicator-text">chevron_left</i></a>
+					</div>
+					<div class="right">
+						<a href="Siguiente"
+							class=" moveNextCarousel middle-indicator-text waves-effect waves-light content-indicator"><i
+							class="material-icons right middle-indicator-text">chevron_right</i></a>
+					</div>
+				</div>
+				<a class="carousel-item" href="#"><img
+					src="../img/story_1_1.png"></a> <a class="carousel-item" href="#"><img
+					src="../img/story_1_2.png"></a> <a class="carousel-item" href="#"><img
+					src="../img/story_1_3.png"></a>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	app.handler(function() {
+
+		//console.log('this ' + $(this));
+		//var $container = $(this).find("#page-container");
+		//console.log('container ' + $container);
+
+		return function(params) {
+
+			$('#storyCarousel1').carousel({
+				fullWidth : true,
+		      	indicators: false
+			});
+			// move next carousel
+		   $('.moveNextCarousel').click(function(e){
+		      e.preventDefault();
+		      e.stopPropagation();
+		      $('.carousel').carousel('next');
+		   });
+
+		   // move prev carousel
+		   $('.movePrevCarousel').click(function(e){
+		      e.preventDefault();
+		      e.stopPropagation();
+		      $('.carousel').carousel('prev');
+		   });
+			window.scrollTo(0, 1);
+			window.scrollTo(1, 0);
+			/*$.ajax({
+				type: 'POST',
+				url: '/prostogae?action=get-data-by-section&section=home',
+				//contentType: 'text/plain',
+				cache: false
+			}).done(function(responseText, textStatus, jqXHR) {
+				  //if got code 200
+				  if(responseText !== '' && responseText !== 'error'){
+					  
+						//
+						console.log(responseText.content);
+						//$('section#copyright p#p-content').text(responseText.content);
+
+					  	var template = Hogan.compile("<p>{{content}}</p>");
+						//var output = template.render(responseText);
+						//var $container = $(this).find("section#copyright #page-container");
+					  	$container.html(template.render(responseText));
+				  } else {
+					  
+				  //
+				  }
+				  //stopLoadingAnimation();
+				  $(".loader").css("display", "none");
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				  
+				//if got code 404 or 500, etc.
+				//stopLoadingAnimation();
+				$(".loader").css("display", "none");
+			});*/
+		};
+	});
+</script>
