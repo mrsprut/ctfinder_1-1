@@ -17,9 +17,9 @@
     $("nav a[href='#"+pageName+"']").addClass("active");
     //TODO hide only old section
     $(document.body).attr("page",pageName)
-                    .find("section.active").fadeOut(1000).removeClass("active");
-                    //.filter("section#" + pageName).fadeIn(1000).addClass("active");
-    $(document.body).find("section#" + pageName).fadeIn(1000).addClass("active");
+                    .find("section").fadeOut(1000).removeClass("active")
+                    .filter("section#" + pageName).fadeIn(1000).addClass("active");
+    //$(document.body).find("section#" + pageName).fadeIn(1000).addClass("active");
     //console.log($(document.body).find("section#" + pageName));
     
     if( ph ) { 

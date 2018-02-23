@@ -1,8 +1,7 @@
 <div class="container">
 	<div class="row center">
 		<div class="col s12">
-			<div id="storyCarousel1" class="carousel carousel-slider center"
-				data-indicators="true">
+			<div id="storyCarousel1" class="carousel carousel-slider center" data-indicators="true">
 				<div class="carousel-fixed-item center middle-indicator">
 					<div class="left">
 						<a href="Previo"
@@ -11,14 +10,17 @@
 					</div>
 					<div class="right">
 						<a href="Siguiente"
-							class=" moveNextCarousel middle-indicator-text waves-effect waves-light content-indicator"><i
+							class="moveNextCarousel middle-indicator-text waves-effect waves-light content-indicator"><i
 							class="material-icons right middle-indicator-text">chevron_right</i></a>
 					</div>
 				</div>
-				<a class="carousel-item" href="#"><img
-					src="../img/story_1_1.png"></a> <a class="carousel-item" href="#"><img
-					src="../img/story_1_2.png"></a> <a class="carousel-item" href="#"><img
-					src="../img/story_1_3.png"></a>
+				<a class="carousel-item" href="#"> <img
+					src="../img/story_1_1.png">
+				</a> <a class="carousel-item" href="#"> <img
+					src="../img/story_1_2.png">
+				</a> <a class="carousel-item" href="#"> <img
+					src="../img/story_1_3.png">
+				</a>
 			</div>
 		</div>
 	</div>
@@ -29,28 +31,47 @@
 		//console.log('this ' + $(this));
 		//var $container = $(this).find("#page-container");
 		//console.log('container ' + $container);
+		
+		$(document).ready(function(){
+	      
+			(function(){
+				  var styles = document.createElement('link');
+				  styles.rel = 'stylesheet';
+				  styles.type = 'text/css';
+				  styles.media = 'screen';
+				  styles.href = 'css/carousel.css';
+				  document.getElementsByTagName('head')[0].appendChild(styles);
+				  
+				  $('#storyCarousel1').carousel({
+						fullWidth : true,
+						indicators : false
+					});
+					// move next carousel
+					$('.moveNextCarousel').click(function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						$('.carousel').carousel('next');
+					});
+
+					// move prev carousel
+					$('.movePrevCarousel').click(function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						$('.carousel').carousel('prev');
+					});
+					
+					window.scrollTo(0, 1);
+					window.scrollTo(1, 0);
+			})();
+	    });
 
 		return function(params) {
 
-			$('#storyCarousel1').carousel({
-				fullWidth : true,
-		      	indicators: false
-			});
-			// move next carousel
-		   $('.moveNextCarousel').click(function(e){
-		      e.preventDefault();
-		      e.stopPropagation();
-		      $('.carousel').carousel('next');
-		   });
+			console.log($('#storyCarousel1'));
+			console.log($('.moveNextCarousel'));
 
-		   // move prev carousel
-		   $('.movePrevCarousel').click(function(e){
-		      e.preventDefault();
-		      e.stopPropagation();
-		      $('.carousel').carousel('prev');
-		   });
-			window.scrollTo(0, 1);
-			window.scrollTo(1, 0);
+			//window.scrollTo(0, 1);
+			//window.scrollTo(1, 0);
 			/*$.ajax({
 				type: 'POST',
 				url: '/prostogae?action=get-data-by-section&section=home',
