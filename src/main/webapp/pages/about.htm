@@ -1,7 +1,8 @@
 <div class="container">
 	<div class="row center">
 		<div class="col s12">
-			<div id="storyCarousel1" class="carousel carousel-slider center" data-indicators="true">
+			<div id="storyCarousel1" class="carousel carousel-slider center"
+				data-indicators="true">
 				<div class="carousel-fixed-item center middle-indicator">
 					<div class="left">
 						<a href="Previo"
@@ -26,49 +27,56 @@
 	</div>
 </div>
 <script type="text/javascript">
+
+	setTimeout(() => {
+		var styles = document.createElement('link');
+		styles.rel = 'stylesheet';
+		styles.type = 'text/css';
+		styles.media = 'screen';
+		styles.href = 'css/carousel.css';
+		document.getElementsByTagName('head')[0].appendChild(styles);
+		
+		//console.log($('#storyCarousel1'));
+		//window.scrollTo(0,1);
+		//window.scrollTo(1,0);
+		$('#storyCarousel1').carousel({
+			fullWidth : true,
+			indicators : false
+		});
+		
+		// move next carousel
+		$('.moveNextCarousel').click(function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$('.carousel').carousel('next');
+		});
+
+		// move prev carousel
+		$('.movePrevCarousel').click(function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$('.carousel').carousel('prev');
+		});
+		
+	}, 500);
+	
 	app.handler(function() {
 
 		//console.log('this ' + $(this));
 		//var $container = $(this).find("#page-container");
 		//console.log('container ' + $container);
 		
-		$(document).ready(function(){
+		/*$(document).ready(function(){
 	      
 			(function(){
-				  var styles = document.createElement('link');
-				  styles.rel = 'stylesheet';
-				  styles.type = 'text/css';
-				  styles.media = 'screen';
-				  styles.href = 'css/carousel.css';
-				  document.getElementsByTagName('head')[0].appendChild(styles);
 				  
-				  $('#storyCarousel1').carousel({
-						fullWidth : true,
-						indicators : false
-					});
-					// move next carousel
-					$('.moveNextCarousel').click(function(e) {
-						e.preventDefault();
-						e.stopPropagation();
-						$('.carousel').carousel('next');
-					});
-
-					// move prev carousel
-					$('.movePrevCarousel').click(function(e) {
-						e.preventDefault();
-						e.stopPropagation();
-						$('.carousel').carousel('prev');
-					});
 					
-					window.scrollTo(0, 1);
-					window.scrollTo(1, 0);
+					//window.scrollTo(0, 1);
+					//window.scrollTo(1, 0);
 			})();
-	    });
+	    });*/
 
 		return function(params) {
-
-			console.log($('#storyCarousel1'));
-			console.log($('.moveNextCarousel'));
 
 			//window.scrollTo(0, 1);
 			//window.scrollTo(1, 0);
@@ -101,6 +109,9 @@
 				//stopLoadingAnimation();
 				$(".loader").css("display", "none");
 			});*/
+			setTimeout(() => {
+		  		$(".preloader-wrapper").css("display", "none");
+			}, 500);
 		};
 	});
 </script>

@@ -63,3 +63,5 @@ footer.page-footer {
 /*body > section.sect:not(.active) { display:none; }*/
 
 section { display:none; }
+
+.preloader-wrapper { display:none;position:absolute;left:50%;top:50%}

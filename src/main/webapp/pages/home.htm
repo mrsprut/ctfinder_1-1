@@ -101,6 +101,10 @@
 	<div class="parallax"><img src="../img/background3.png" alt="Unsplashed background img 3"></div>
 </div>
 <script type="text/javascript">
+
+	$('.parallax').parallax();
+	
+	
 	app.handler(function() {
 
 		//console.log('this ' + $(this));
@@ -109,7 +113,6 @@
 
 		return function(params) {
 
-			$('.parallax').parallax();
 			window.scrollTo(0,1);
 			window.scrollTo(1,0);
 			//console.log('hi!');
@@ -142,6 +145,10 @@
 				//stopLoadingAnimation();
 				$(".loader").css("display", "none");
 		  	});*/
+			
+		  	setTimeout(() => {
+		  		$(".preloader-wrapper").css("display", "none");
+			}, 500);
 	  	};
   	});
 </script>

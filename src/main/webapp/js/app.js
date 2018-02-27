@@ -7,7 +7,7 @@
   // show the "page" with optional parameter
   function show(pageName,param) {
 
-    //$(".loader").css("display", "block");
+    $(".preloader-wrapper").css("display", "block");
     //console.log($(".loader"));
     // invoke page handler
     var ph = pageHandlers[pageName]; 
