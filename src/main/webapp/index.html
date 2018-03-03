@@ -4,7 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <!--Let browser know website is optimized for mobile-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<!--Set up google-signin-->
+<meta name="google-signin-client_id" content="662695077745-6ucmgmh2qtf9ltav8thhnot7i671ktgs.apps.googleusercontent.com">
 <title>CTFinder</title>
 
 <!--Import Google Icon Font-->
@@ -40,6 +41,7 @@
 				<li><a href="#">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
 				<li><a href="#auth">Вход</a></li>
+				<li id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
 			</ul>
 
 			<ul id="nav-mobile" class="side-nav">
@@ -48,6 +50,7 @@
 				<li><a href="#">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
 				<li><a href="#auth">Вход</a></li>
+				<li id="g-signin2-mobile"><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
 			</ul>
 			<a href="#" data-activates="nav-mobile" class="button-collapse"><i
 				class="material-icons">menu</i></a>
@@ -98,6 +101,7 @@
 		</div>
 	</footer>
 
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
 	<!--Import jQuery before materialize.js-->
 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery-hashchange.js"></script>
