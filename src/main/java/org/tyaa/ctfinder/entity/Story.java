@@ -4,16 +4,16 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 @Entity
-public class State {
+public class Story {
 @Id
 private int id;
 private String title_key;
-private int offer_type_id;
-public State(int id, String title_key, int offer_type_id) {
+private String image_key;
+public Story(int id, String title_key, String image_key) {
 	super();
 	this.id = id;
 	this.title_key = title_key;
-	this.offer_type_id = offer_type_id;
+	this.image_key = image_key;
 }
 public int getId() {
 	return id;
@@ -27,11 +27,11 @@ public String getTitle_key() {
 public void setTitle_key(String title_key) {
 	this.title_key = title_key;
 }
-public int getOffer_type_id() {
-	return offer_type_id;
+public String getImage_key() {
+	return image_key;
 }
-public void setOffer_type_id(int offer_type_id) {
-	this.offer_type_id = offer_type_id;
+public void setImage_key(String image_key) {
+	this.image_key = image_key;
 }
 
 }

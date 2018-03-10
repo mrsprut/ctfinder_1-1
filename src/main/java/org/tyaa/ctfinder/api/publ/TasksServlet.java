@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.tyaa.ctfinder.entity.State;
-import org.tyaa.ctfinder.entity.Task;
+import org.tyaa.ctfinder.entity.User;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,8 +24,8 @@ public class TasksServlet extends HttpServlet {
 	
 	static {
 		
-		ObjectifyService.register(State.class);
-		ObjectifyService.register(Task.class);
+		//ObjectifyService.register(State.class);
+		ObjectifyService.register(User.class);
 	}	
        
     /**
