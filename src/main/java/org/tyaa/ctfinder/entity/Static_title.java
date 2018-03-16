@@ -5,41 +5,46 @@ import com.googlecode.objectify.annotation.Id;
 
 @Entity
 public class Static_title {
-@Id
-private int id;
-private String key;
-private int lang_id;
-private String content;
-public Static_title(int id, String key, int lang_id, String content) {
-	super();
-	this.id = id;
-	this.key = key;
-	this.lang_id = lang_id;
-	this.content = content;
-}
-public int getId() {
-	return id;
-}
-public void setId(int id) {
-	this.id = id;
-}
-public String getKey() {
-	return key;
-}
-public void setKey(String key) {
-	this.key = key;
-}
-public int getLang_id() {
-	return lang_id;
-}
-public void setLang_id(int lang_id) {
-	this.lang_id = lang_id;
-}
-public String getContent() {
-	return content;
-}
-public void setContent(String content) {
-	this.content = content;
-}
+	
+	@Id
+	private Long id;
+	private String key;
+	private Long lang_id;
+	private String content;
+
+	public Static_title() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public Long getLang_id() {
+		return lang_id;
+	}
+
+	public void setLang_id(Long lang_id) {
+		this.lang_id = lang_id;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
 
 }

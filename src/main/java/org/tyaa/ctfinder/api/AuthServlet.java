@@ -3,6 +3,7 @@ package org.tyaa.ctfinder.api;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.servlet.ServletConfig;
@@ -11,9 +12,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.tyaa.ctfinder.controller.UserDAO;
+import org.tyaa.ctfinder.controller.User_typeDAO;
+import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User;
+import org.tyaa.ctfinder.entity.User_type;
+import org.tyaa.ctfinder.model.RespData;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -37,6 +43,13 @@ public class AuthServlet extends HttpServlet {
 	private static final JacksonFactory jacksonFactory = new JacksonFactory();
 
 	private GoogleIdTokenVerifier verifier;
+	
+	static {
+		
+		//Entities registration
+		ObjectifyService.register(User.class);
+		ObjectifyService.register(Static_title.class);
+	}
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -60,21 +73,23 @@ public class AuthServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		response.setContentType("plain/text");
-		response.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json");
+		resp.setCharacterEncoding("UTF-8");
+		
+		HttpSession session = req.getSession(true);
 		
 		Gson gson = new Gson();
 	    		//new GsonBuilder()
 	            //.setDateFormat("yyyy-MM-dd").create();
 
-		try (PrintWriter out = response.getWriter()) {
+		try (PrintWriter out = resp.getWriter()) {
 
-			if (request.getParameterMap().keySet().contains("idtoken")) {
+			if (req.getParameterMap().keySet().contains("idtoken")) {
 
-				String idTokenString = request.getParameter("idtoken");
+				String idTokenString = req.getParameter("idtoken");
 				GoogleIdToken idToken = verifier.verify(idTokenString);
 				if (idToken != null) {
 
@@ -84,46 +99,86 @@ public class AuthServlet extends HttpServlet {
 					String userId = payload.getSubject();
 					// System.out.println("User ID: " + userId);
 
-					// Get profile information from payload
-					String email = payload.getEmail();
-					boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-					String name = (String) payload.get("name");
-					String pictureUrl = (String) payload.get("picture");
-					String locale = (String) payload.get("locale");
-					String familyName = (String) payload.get("family_name");
-					String givenName = (String) payload.get("given_name");
-
 					// Use or store profile information
 
-					String idString = request.getParameter("id");
+					//String idString = request.getParameter("id");
 					User user = new User();
+					
 					ObjectifyService.run(new VoidWork() {
 						public void vrun() {
 							try {
-								UserDAO.getUser(idString, user);
+								UserDAO.findUserByGoogleId(userId, user);
 							} catch (Exception ex) {
 
-								String orderJson = gson.toJson(ex.getMessage());
-								out.print(orderJson);
+								//RespData rd = new RespData(ex.getMessage());
+								RespData rd = new RespData("findUserByGoogleId");
+								String errorJson = gson.toJson(rd);
+								out.print(errorJson);
 							}
 						}
 					});
 					
-					if(user.getGoogle_id().equals("")) {
+					if(user.getGoogle_id() == null || user.getGoogle_id().equals("")) {
 						
-						//TODO
-						//UserDAO.createUser(_user);
+						// Get profile information from payload
+						String email = payload.getEmail();
+						boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+						String name = (String) payload.get("name");
+						String pictureUrl = (String) payload.get("picture");
+						String locale = (String) payload.get("locale");
+						String familyName = (String) payload.get("family_name");
+						String givenName = (String) payload.get("given_name");
+						
+						//TODO use locale
+						
+						user.setGoogle_id(userId);
+						user.setName(name);
+						user.setEmail(email);
+						user.setPicture(pictureUrl);
+												
+						ObjectifyService.run(new VoidWork() {
+							public void vrun() {
+								try {
+									UserDAO.createUser(user);
+								} catch (Exception ex) {
+
+									//RespData rd = new RespData(ex.getMessage());
+									RespData rd = new RespData("createUser");
+									/*String errorTrace = "";
+									for(StackTraceElement el: ex.getStackTrace()) {
+										errorTrace += el.toString();
+									}
+									RespData rd = new RespData(errorTrace);*/
+									String errorJson = gson.toJson(rd);
+									out.print(errorJson);
+								}
+							}
+						});
 					}
 
-					out.print(name);
+					session.setAttribute("user_id", user.getId());
+					String successString = user.getName() + " - " + user.getPicture() + " - ok";
+					ArrayList al = new ArrayList();
+					al.add(successString);
+					RespData rd = new RespData(al);
+					//String successJson = gson.toJson(rd);
+					String successJson = gson.toJson(successString);
+					out.print(successJson);
 
 				} else {
-					System.out.println("Invalid ID token.");
-					out.print("Invalid ID token.");
+					//System.out.println("Invalid ID token.");
+					RespData rd = new RespData("Invalid ID token.");
+					String errorJson = gson.toJson(rd);
+					out.print(errorJson);
 				}
 			}
 		} catch (GeneralSecurityException e) {
 			// TODO Auto-generated catch block
+			try (PrintWriter out = resp.getWriter()) {
+				RespData rd = new RespData("GeneralSecurityException");
+				String errorJson = gson.toJson(rd);
+				out.print(errorJson);
+			}
 			e.printStackTrace();
 		}
 	}

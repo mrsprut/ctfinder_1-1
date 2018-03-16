@@ -7,20 +7,16 @@ import com.googlecode.objectify.annotation.Id;
 public class User_type {
 	
 	@Id
-	private int id;
+	private Long id;
 	private String title_key;
 
-	public User_type(int id, String title_key) {
-		super();
-		this.id = id;
-		this.title_key = title_key;
-	}
+	public User_type() {}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

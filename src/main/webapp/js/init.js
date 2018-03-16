@@ -16,8 +16,9 @@ function onSignIn(googleUser) {
 	xhr.open('POST', 'https://creativetfinder.appspot.com/auth');
 	//xhr.open('POST', 'http://localhost:8080/auth');
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhr.responseType = 'json';
 	xhr.onload = function() {
-	  console.log('Signed in as: ' + xhr.responseText);
+	  console.log('Signed in as: ' + xhr.response);
 	  //$('g-signin2, g-signin2-mobile').html('Exit(' + xhr.responseText + ')');
 	};
 	xhr.send('idtoken=' + id_token);
