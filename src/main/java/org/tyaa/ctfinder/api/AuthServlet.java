@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.controller.User_typeDAO;
+import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.entity.User_type;
@@ -49,6 +50,8 @@ public class AuthServlet extends HttpServlet {
 		//Entities registration
 		ObjectifyService.register(User.class);
 		ObjectifyService.register(Static_title.class);
+		ObjectifyService.register(User_type.class);
+		ObjectifyService.register(Language.class);
 	}
 
 	/**
@@ -102,7 +105,7 @@ public class AuthServlet extends HttpServlet {
 					// Use or store profile information
 
 					//String idString = request.getParameter("id");
-					/*User user = new User();
+					User user = new User();
 					
 					ObjectifyService.run(new VoidWork() {
 						public void vrun() {
@@ -142,13 +145,13 @@ public class AuthServlet extends HttpServlet {
 									UserDAO.createUser(user);
 								} catch (Exception ex) {
 
-									//RespData rd = new RespData(ex.getMessage());
-									RespData rd = new RespData("createUser");
+									RespData rd = new RespData(ex.getMessage());
+									//RespData rd = new RespData("createUser");
 									//String errorTrace = "";
 									//for(StackTraceElement el: ex.getStackTrace()) {
 									//	errorTrace += el.toString();
 									//}
-									RespData rd = new RespData(errorTrace);
+									//RespData rd = new RespData(errorTrace);
 									String errorJson = gson.toJson(rd);
 									out.print(errorJson);
 								}
@@ -156,14 +159,24 @@ public class AuthServlet extends HttpServlet {
 						});
 					}
 
-					session.setAttribute("user_id", user.getId());
-					String successString = user.getName() + " - " + user.getPicture() + " - ok";
-					ArrayList al = new ArrayList();
-					al.add(successString);
-					RespData rd = new RespData(al);
-					//String successJson = gson.toJson(rd);
-					String successJson = gson.toJson(successString);
-					out.print(successJson);*/
+					try {
+						session.setAttribute("user_id", user.getId());
+						//String successString = user.getName() + " - " + user.getPicture() + " - ok";
+						ArrayList al = new ArrayList();
+						//al.add(successString);
+						al.add(user.getName());
+						al.add(user.getPicture());
+						RespData rd = new RespData(al);
+						String successJson = gson.toJson(rd);
+						//String successJson = gson.toJson(successString);
+						out.print(successJson);
+					}  catch (Exception ex) {
+
+						RespData rd = new RespData(ex.getMessage());
+						//RespData rd = new RespData("findUserByGoogleId");
+						String errorJson = gson.toJson(rd);
+						out.print(errorJson);
+					}
 
 				} else {
 					//System.out.println("Invalid ID token.");
@@ -172,7 +185,7 @@ public class AuthServlet extends HttpServlet {
 					out.print(errorJson);
 				}
 			}
-		} catch (GeneralSecurityException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			try (PrintWriter out = resp.getWriter()) {
 				RespData rd = new RespData("GeneralSecurityException");

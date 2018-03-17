@@ -31,6 +31,7 @@ public class UserDAO {
 	
 	public static void findUserByGoogleId(String _id, User _user) {
 			
+		ofy().clear();
 		//Пытаемся получить из БД объект Пользователь
 		//по его ИД
 		User user =
@@ -56,6 +57,7 @@ public class UserDAO {
 
 	public static void createUser(User _user) {
 		
+		ofy().clear();
 		//Находим в БД локализованный заголовок user
 		Static_title staticTitle =
 				ofy().load()
@@ -78,8 +80,6 @@ public class UserDAO {
 			//Устанавливаем тип пользователя user
 			_user.setUser_type_id(user_type.getId());
 		}
-		
-		
 	
         ofy().save().entity(_user).now();
 	}

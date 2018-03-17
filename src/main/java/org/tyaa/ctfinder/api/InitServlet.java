@@ -73,7 +73,7 @@ public class InitServlet extends HttpServlet {
 			
 			//Создаем в БД запись для английского языка
 			
-			Language englishLanguage = new Language();
+			/*Language englishLanguage = new Language();
 			englishLanguage.setCode("en");
 			
 			ObjectifyService.run(new VoidWork() {
@@ -158,29 +158,8 @@ public class InitServlet extends HttpServlet {
 							}
 						}
 					});
-					
-					/*//Создаем в БД запись для заголовка для английского языка
-					
-					Static_title englishTitle = new Static_title();
-					englishTitle.setLang_id(englishLanguage.getId());
-					englishTitle.setKey("english");
-					englishTitle.setContent("english");
-					
-					ObjectifyService.run(new VoidWork() {
-						public void vrun() {
-							try {
-								Static_titleDAO.createStatic_title(englishTitle);
-							} catch (Exception ex) {
-
-								String errorJson = gson.toJson(ex.getMessage());
-								out.print(errorJson);
-							}
-						}
-					});*/
-					
-					
 				}
-			}
+			}*/
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();
