@@ -102,7 +102,7 @@ public class AuthServlet extends HttpServlet {
 					// Use or store profile information
 
 					//String idString = request.getParameter("id");
-					User user = new User();
+					/*User user = new User();
 					
 					ObjectifyService.run(new VoidWork() {
 						public void vrun() {
@@ -144,11 +144,11 @@ public class AuthServlet extends HttpServlet {
 
 									//RespData rd = new RespData(ex.getMessage());
 									RespData rd = new RespData("createUser");
-									/*String errorTrace = "";
-									for(StackTraceElement el: ex.getStackTrace()) {
-										errorTrace += el.toString();
-									}
-									RespData rd = new RespData(errorTrace);*/
+									//String errorTrace = "";
+									//for(StackTraceElement el: ex.getStackTrace()) {
+									//	errorTrace += el.toString();
+									//}
+									RespData rd = new RespData(errorTrace);
 									String errorJson = gson.toJson(rd);
 									out.print(errorJson);
 								}
@@ -163,7 +163,7 @@ public class AuthServlet extends HttpServlet {
 					RespData rd = new RespData(al);
 					//String successJson = gson.toJson(rd);
 					String successJson = gson.toJson(successString);
-					out.print(successJson);
+					out.print(successJson);*/
 
 				} else {
 					//System.out.println("Invalid ID token.");

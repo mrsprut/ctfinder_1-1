@@ -75,6 +75,8 @@ public class DebugServlet extends HttpServlet {
 	    //Открываем выходной поток - с сервера к клиенту
 		try (PrintWriter out = resp.getWriter()) {
 			
+			ofy().clear();
+			
 			/*RespData rd = new RespData("test");
 			String errorJson = gson.toJson(rd);
 			out.print(errorJson);*/
@@ -114,7 +116,7 @@ public class DebugServlet extends HttpServlet {
 			Static_title staticTitle =
 					ofy().load()
 					.type(Static_title.class)
-					.filter("content =", "user")
+					.filter("content", "user")
 					.first()
 					.now();
 			

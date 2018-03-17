@@ -2,13 +2,16 @@ package org.tyaa.ctfinder.entity;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 @Entity
 public class Language {
 	
 	@Id
 	private Long id;
+	@Index
 	private String title_key;
+	@Index
 	private String code;
 
 	public Language() {
