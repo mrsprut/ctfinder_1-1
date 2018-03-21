@@ -28,6 +28,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.appengine.repackaged.com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.VoidWork;
 import com.google.api.client.http.HttpTransport;
@@ -84,9 +85,10 @@ public class AuthServlet extends HttpServlet {
 		
 		HttpSession session = req.getSession(true);
 		
-		Gson gson = new Gson();
-	    		//new GsonBuilder()
-	            //.setDateFormat("yyyy-MM-dd").create();
+		Gson gson = //new Gson();
+	    		new GsonBuilder()
+	    		.excludeFieldsWithoutExposeAnnotation()
+	            .setDateFormat("yyyy-MM-dd").create();
 
 		try (PrintWriter out = resp.getWriter()) {
 
@@ -164,8 +166,9 @@ public class AuthServlet extends HttpServlet {
 						//String successString = user.getName() + " - " + user.getPicture() + " - ok";
 						ArrayList al = new ArrayList();
 						//al.add(successString);
-						al.add(user.getName());
-						al.add(user.getPicture());
+						//al.add(user.getName());
+						//al.add(user.getPicture());
+						al.add(user);
 						RespData rd = new RespData(al);
 						String successJson = gson.toJson(rd);
 						//String successJson = gson.toJson(successString);

@@ -3,9 +3,13 @@ package org.tyaa.ctfinder.model;
 import java.util.ArrayList;
 //import java.util.List;
 
+import com.google.gson.annotations.Expose;
+
 public class RespData {
 
+	@Expose
 	public ArrayList result = new ArrayList();
+	@Expose
 	public String error = "";
 	
 	public RespData() {}
