@@ -32,6 +32,13 @@
 			</div>
 		</div>
 	</div>
+	<!-- Dropdown Structure -->
+	<!-- <ul id="signout-dropdown" class="dropdown-content">
+		<li id="username-li"></li>
+		<li id="useremail-li"></li>
+		<li class="divider"></li>
+		<li><a href="#!" onclick="signOut();">Выход</a></li>
+	</ul> -->
 	<nav class="white" role="navigation">
 		<div class="nav-wrapper container">
 			<a id="logo-container" href="#" class="brand-logo">CTFinder</a>
@@ -40,16 +47,31 @@
 				<li><a href="#">Искать</a></li>
 				<li><a href="#create">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
-				<li><a href="#auth">Вход</a></li>
+				<li id="signout-li"><a href="#home">Выход</a></li>
+				<!-- Dropdown Trigger -->
+      			<!-- <li id="signout-li">
+      				<a class="dropdown-trigger" href="#!" data-target="signout-dropdown">
+      					<img id="userimage-img" src="">
+						logout
+      					<i class="material-icons right">arrow_drop_down</i>
+    				</a>
+   				</li> -->
 				<li id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
 			</ul>
-
 			<ul id="nav-mobile" class="side-nav">
 				<li><a href="#home">Главная</a></li>
 				<li><a href="#">Искать</a></li>
 				<li><a href="#create">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
-				<li><a href="#auth">Вход</a></li>
+				<li id="signout-li-mobile"><a href="#home">Выход</a></li>
+				<!-- Dropdown Trigger -->
+      			<!-- <li id="signout-li-mobile">
+      				<a class="dropdown-trigger" href="#!" data-target="signout-dropdown">
+      					<img id="userimage-img-mobile" src="">
+      					logout
+      					<i class="material-icons right">arrow_drop_down</i>
+    				</a>
+   				</li> -->
 				<li id="g-signin2-mobile"><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
 			</ul>
 			<a href="#" data-activates="nav-mobile" class="button-collapse"><i

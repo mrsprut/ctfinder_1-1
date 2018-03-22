@@ -42,18 +42,26 @@ function onSignIn(googleUser) {
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xhr.responseType = 'json';
 	xhr.onload = function() {
-	  console.log('Signed in as: ' + xhr.response);
-	  //$('g-signin2, g-signin2-mobile').html('Exit(' + xhr.responseText + ')');
-	  //console.log($('li#g-signin2, li#g-signin2-mobile'));
-	  //$('li#g-signin2, li#g-signin2-mobile').hide();
+	  console.log('Signed in as: ' + xhr.response.result[0].name);
+	  console.log('Signed in as: ' + xhr.response.result[0].email);
+	  console.log('Signed in as: ' + xhr.response.result[0].pictureUrl);
+	  //
+	  //$("#username-li").text(xhr.response.result[0].name);
+	  //$("#useremail-li").text(xhr.response.result[0].email);
+	  //$("#userimage-img").attr("src", xhr.response.result[0].pictureUrl);
+	  //$("#userimage-img-mobile").attr("src", xhr.response.result[0].pictureUrl);
 	};
 	xhr.send('idtoken=' + id_token);
 }
 
+$('li#signout-li, li#signout-li-mobile').click(signOut);
+
 function signOut() {
+	
     var auth2 = gapi.auth2.getAuthInstance();
+    
     auth2.signOut().then(function () {
-      console.log('User signed out.');
-      //$('li#g-signin2, li#g-signin2-mobile').show();
+    	
+      
     });
   }

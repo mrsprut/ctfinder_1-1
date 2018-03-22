@@ -162,16 +162,12 @@ public class AuthServlet extends HttpServlet {
 					}
 
 					try {
+						
 						session.setAttribute("user_id", user.getId());
-						//String successString = user.getName() + " - " + user.getPicture() + " - ok";
 						ArrayList al = new ArrayList();
-						//al.add(successString);
-						//al.add(user.getName());
-						//al.add(user.getPicture());
 						al.add(user);
 						RespData rd = new RespData(al);
 						String successJson = gson.toJson(rd);
-						//String successJson = gson.toJson(successString);
 						out.print(successJson);
 					}  catch (Exception ex) {
 
@@ -187,6 +183,14 @@ public class AuthServlet extends HttpServlet {
 					String errorJson = gson.toJson(rd);
 					out.print(errorJson);
 				}
+			} else {
+				
+				session.removeAttribute("user_id");
+				ArrayList al = new ArrayList();
+				al.add("logout");
+				RespData rd = new RespData(al);
+				String successJson = gson.toJson(rd);
+				out.print(successJson);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
