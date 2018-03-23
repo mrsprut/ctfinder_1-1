@@ -39,9 +39,13 @@
 				//stopLoadingAnimation();
 				$(".loader").css("display", "none");
 		  	});*/
-			setTimeout(() => {
-		  		$(".preloader-wrapper").css("display", "none");
-			}, 500);
+			
+			var preloaderHide = function(){
+				   
+				$(".preloader-wrapper").css("display", "none");
+			}
+			
+			setTimeout(preloaderHide, 500);
 	  	};
   	});
 </script>

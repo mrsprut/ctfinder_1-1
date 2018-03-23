@@ -47,7 +47,7 @@
 				<li><a href="#">Искать</a></li>
 				<li><a href="#create">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
-				<li id="signout-li"><a href="#home">Выход</a></li>
+				<!-- <li id="signout-li"><a href="#home">Выход</a></li> -->
 				<!-- Dropdown Trigger -->
       			<!-- <li id="signout-li">
       				<a class="dropdown-trigger" href="#!" data-target="signout-dropdown">
@@ -56,14 +56,14 @@
       					<i class="material-icons right">arrow_drop_down</i>
     				</a>
    				</li> -->
-				<li id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
+				<!-- <li id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></li> -->
 			</ul>
 			<ul id="nav-mobile" class="side-nav">
 				<li><a href="#home">Главная</a></li>
 				<li><a href="#">Искать</a></li>
 				<li><a href="#create">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
-				<li id="signout-li-mobile"><a href="#home">Выход</a></li>
+				<!-- <li id="signout-li-mobile"><a href="#home">Выход</a></li> -->
 				<!-- Dropdown Trigger -->
       			<!-- <li id="signout-li-mobile">
       				<a class="dropdown-trigger" href="#!" data-target="signout-dropdown">
@@ -72,12 +72,25 @@
       					<i class="material-icons right">arrow_drop_down</i>
     				</a>
    				</li> -->
-				<li id="g-signin2-mobile"><div class="g-signin2" data-onsuccess="onSignIn"></div></li>
+				<!-- <li id="g-signin2-mobile"><div class="g-signin2" data-onsuccess="onSignIn"></div></li> -->
 			</ul>
 			<a href="#" data-activates="nav-mobile" class="button-collapse"><i
 				class="material-icons">menu</i></a>
 		</div>
 	</nav>
+
+	<div id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></div>
+
+	<div id="signout" class="dropdown-tyaa" style="float: right;">
+		<img id="userpicture" src="" alt="Authentication..." width="100" height="50">
+		<div class="dropdown-content-tyaa">
+			<div id="username"></div>
+			<div id="useremail"></div>
+			<div>
+				<a href="#home" onclick="signOut();">Выход</a>
+			</div>
+		</div>
+	</div>
 
 	<section id="home" src="pages/home.htm"></section>
 	<section id="create" src="pages/create.htm"></section>

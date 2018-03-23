@@ -3,6 +3,11 @@
 
     $('.button-collapse').sideNav();
     //$('.parallax').parallax();
+    
+    $('.dropdown-tyaa').click(function(){
+    	
+        $(this).find('.dropdown-content-tyaa').stop().slideToggle(400);
+    });
   }); // end of document ready
 })(jQuery); // end of jQuery name space
 
@@ -46,15 +51,14 @@ function onSignIn(googleUser) {
 	  console.log('Signed in as: ' + xhr.response.result[0].email);
 	  console.log('Signed in as: ' + xhr.response.result[0].pictureUrl);
 	  //
-	  //$("#username-li").text(xhr.response.result[0].name);
-	  //$("#useremail-li").text(xhr.response.result[0].email);
-	  //$("#userimage-img").attr("src", xhr.response.result[0].pictureUrl);
-	  //$("#userimage-img-mobile").attr("src", xhr.response.result[0].pictureUrl);
+	  $("#username").text(xhr.response.result[0].name);
+	  $("#useremail").text(xhr.response.result[0].email);
+	  $("#userpicture").attr("src", xhr.response.result[0].pictureUrl);
 	};
 	xhr.send('idtoken=' + id_token);
 }
 
-$('li#signout-li, li#signout-li-mobile').click(signOut);
+$('#signout-li').click(signOut);
 
 function signOut() {
 	

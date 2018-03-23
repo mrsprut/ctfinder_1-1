@@ -56,7 +56,8 @@
 </div>
 <script type="text/javascript">
 
-	setTimeout(() => {
+	var carouselsStart = function(){
+		
 		var styles = document.createElement('link');
 		styles.rel = 'stylesheet';
 		styles.type = 'text/css';
@@ -99,8 +100,9 @@
 			e.stopPropagation();
 			$('#storyCarousel2').carousel('prev');
 		});
-		
-	}, 500);
+	}
+
+	setTimeout(carouselsStart, 500);
 	
 	app.handler(function() {
 
@@ -151,9 +153,13 @@
 				//stopLoadingAnimation();
 				$(".loader").css("display", "none");
 			});*/
-			setTimeout(() => {
-		  		$(".preloader-wrapper").css("display", "none");
-			}, 500);
+			
+			var preloaderHide = function(){
+			   
+				$(".preloader-wrapper").css("display", "none");
+			}
+			
+			setTimeout(preloaderHide, 500);
 		};
 	});
 </script>
