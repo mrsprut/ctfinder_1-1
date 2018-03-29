@@ -40,8 +40,11 @@
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
       <version>1.9.60</version>
-      <scope>provided</scope>
+      
     </dependency>
+    
+    <!-- <scope>provided</scope> -->
+    
     <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
 	<dependency>
 	    <groupId>com.google.api-client</groupId>

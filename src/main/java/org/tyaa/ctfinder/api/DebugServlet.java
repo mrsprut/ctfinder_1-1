@@ -14,9 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.tyaa.ctfinder.controller.LanguageDAO;
-import org.tyaa.ctfinder.controller.Static_titleDAO;
-import org.tyaa.ctfinder.controller.User_typeDAO;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User_type;
@@ -25,7 +22,6 @@ import org.tyaa.ctfinder.model.RespData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.VoidWork;
 
 /**
  * Servlet implementation class InitServlet
