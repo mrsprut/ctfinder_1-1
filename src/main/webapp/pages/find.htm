@@ -1,0 +1,185 @@
+<div class="container">
+	<div class="row flex">
+		<div class="col s1 valign-wrapper">
+			<ul id="slide-out" class="sidenav">
+				<li>
+					<ul class="collapsible">
+						<li>
+							<div class="collapsible-header">
+								<i class="material-icons">list</i>Категории
+							</div>
+							<div class="collapsible-body">
+								<form action="#">
+									<p>
+										<label for="category-1"> <input id="category-1"
+											type="checkbox" /><span>волонтерская помощь</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>дизайн</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>естественные
+												науки</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>помощь
+												животным</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>природа</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>проектирование
+												техники</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>промышленность</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>разработка
+												приложений</span>
+										</label>
+									</p>
+									<p>
+										<label> <input type="checkbox" /> <span>общественные
+												науки</span>
+										</label>
+									</p>
+								</form>
+							</div>
+						</li>
+						<li>
+							<div class="collapsible-header">
+								<i class="material-icons">filter_list</i>Фильтр
+							</div>
+							<div class="collapsible-body">
+								<div class="row">
+									<div class="input-field col s12">
+										<input type="text" id="country-input" class="autocomplete">
+										<label for="country-input">Страна</label>
+									</div>
+								</div>
+								<div class="row">
+									<div class="input-field col s12">
+										<input type="text" id="city-input" class="autocomplete">
+										<label for="city-input">Город</label>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="collapsible-header">
+								<i class="material-icons">sort</i>Сортировка
+							</div>
+							<div class="collapsible-body">
+								<form action="#">
+									<p>
+										<label> <input name="sort-group" type="radio" checked />
+											<span>новизна</span>
+										</label>
+									</p>
+									<p>
+										<label> <input name="sort-group" type="radio" /> <span>от
+												простых к сложным</span>
+										</label>
+									</p>
+									<p>
+										<label> <input name="sort-group" type="radio" /> <span>от
+												сложных к простым</span>
+										</label>
+									</p>
+								</form>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<a href="#" data-target="slide-out" class="sidenav-trigger"><i
+				class="material-icons" style="pointer-events: none">settings</i></a>
+		</div>
+		<div class="col s11">
+			<form>
+				<div class="input-field">
+					<input id="search" type="search" required> <label
+						class="label-icon" for="search"><i class="material-icons">search</i></label>
+					<i class="material-icons">close</i>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	$('.sidenav').sidenav();
+	$('.collapsible').collapsible();
+	
+	$('input#country-input').autocomplete({
+      data: {
+        "USA": null,
+        "Россия": null,
+        "Украина": null
+      },
+    });
+
+    $('input#city-input').autocomplete({
+      data: {
+        "Киев": null,
+        "Львов": null,
+        "Мариуполь": null
+      },
+    });
+	
+	app.handler(function() {
+
+		//console.log('this ' + $(this));
+		//var $container = $(this).find("#page-container");
+		//console.log('container ' + $container);
+
+		return function(params) {
+
+			/*$.ajax({
+				type: 'POST',
+				url: '/prostogae?action=get-data-by-section&section=home',
+				//contentType: 'text/plain',
+				cache: false
+			}).done(function(responseText, textStatus, jqXHR) {
+				  //if got code 200
+				  if(responseText !== '' && responseText !== 'error'){
+					  
+						//
+						console.log(responseText.content);
+						//$('section#copyright p#p-content').text(responseText.content);
+
+					  	var template = Hogan.compile("<p>{{content}}</p>");
+						//var output = template.render(responseText);
+						//var $container = $(this).find("section#copyright #page-container");
+					  	$container.html(template.render(responseText));
+				  } else {
+					  
+				  //
+				  }
+				  //stopLoadingAnimation();
+				  $(".loader").css("display", "none");
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				  
+				//if got code 404 or 500, etc.
+				//stopLoadingAnimation();
+				$(".loader").css("display", "none");
+			});*/
+
+			var preloaderHide = function() {
+
+				$(".preloader-wrapper").css("display", "none");
+			}
+
+			setTimeout(preloaderHide, 500);
+		};
+	});
+</script>

@@ -28,6 +28,11 @@ p {
   .parallax-container .section {
     width: 100%;
   }
+  
+  .parallax img {
+  
+  	opacity: 0.5 !important;
+  }
 
 @media only screen and (max-width : 992px) {
   .parallax-container .section {
@@ -58,6 +63,19 @@ footer.page-footer {
 
 
 /* Custom code */
+
+/* Text shadow */
+
+.glow {
+  text-shadow: 
+    1px 0px 1px #ccc, 0px 1px 1px #eee, 
+    2px 1px 1px #ccc, 1px 2px 1px #eee,
+    3px 2px 1px #ccc, 2px 3px 1px #eee,
+    4px 3px 1px #ccc, 3px 4px 1px #eee,
+    5px 4px 1px #ccc, 4px 5px 1px #eee,
+    6px 5px 1px #ccc, 5px 6px 1px #eee,
+    7px 6px 1px #ccc;
+}
 
 /* section visibility */
 /*body > section.sect:not(.active) { display:none; }*/
@@ -139,3 +157,9 @@ div#g-signin2 {
 /*.dropdown-tyaa:focus .dropdown-content-tyaa {
     display: block;
 }*/
+
+/*Flex columns height*/
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}

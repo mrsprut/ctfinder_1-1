@@ -14,11 +14,13 @@
 <!--Import materialize.css-->
 <link type="text/css" rel="stylesheet" href="css/materialize.min.css"
 	media="screen,projection" />
+<!--Custom styles-->
 <link href="css/style.css" type="text/css" rel="stylesheet"
 	media="screen,projection" />
 </head>
 
 <body>
+	<!--Common preloader-->
 	<div class="preloader-wrapper big active">
 		<div class="spinner-layer spinner-green-only">
 			<div class="circle-clipper left">
@@ -32,57 +34,31 @@
 			</div>
 		</div>
 	</div>
-	<!-- Dropdown Structure -->
-	<!-- <ul id="signout-dropdown" class="dropdown-content">
-		<li id="username-li"></li>
-		<li id="useremail-li"></li>
-		<li class="divider"></li>
-		<li><a href="#!" onclick="signOut();">Выход</a></li>
-	</ul> -->
-	<nav class="white" role="navigation">
+	<!--Main menu-->
+	<nav class="white">
 		<div class="nav-wrapper container">
 			<a id="logo-container" href="#" class="brand-logo">CTFinder</a>
+			<a href="#" data-target="nav-mobile" class="sidenav-trigger button-collapse"><i class="material-icons">menu</i></a>
 			<ul class="right hide-on-med-and-down">
-				<li><a href="#home">Главная</a></li>
-				<li><a href="#">Искать</a></li>
-				<li><a href="#create">Предложить</a></li>
+				<li><a href="#home" class="">Главная</a></li>
+				<li><a href="#find">Искать</a></li>
+				<li><a href="#create" class="active">Предложить</a></li>
 				<li><a href="#about">О сервисе</a></li>
-				<!-- <li id="signout-li"><a href="#home">Выход</a></li> -->
-				<!-- Dropdown Trigger -->
-      			<!-- <li id="signout-li">
-      				<a class="dropdown-trigger" href="#!" data-target="signout-dropdown">
-      					<img id="userimage-img" src="">
-						logout
-      					<i class="material-icons right">arrow_drop_down</i>
-    				</a>
-   				</li> -->
-				<!-- <li id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></li> -->
 			</ul>
-			<ul id="nav-mobile" class="side-nav">
-				<li><a href="#home">Главная</a></li>
-				<li><a href="#">Искать</a></li>
-				<li><a href="#create">Предложить</a></li>
-				<li><a href="#about">О сервисе</a></li>
-				<!-- <li id="signout-li-mobile"><a href="#home">Выход</a></li> -->
-				<!-- Dropdown Trigger -->
-      			<!-- <li id="signout-li-mobile">
-      				<a class="dropdown-trigger" href="#!" data-target="signout-dropdown">
-      					<img id="userimage-img-mobile" src="">
-      					logout
-      					<i class="material-icons right">arrow_drop_down</i>
-    				</a>
-   				</li> -->
-				<!-- <li id="g-signin2-mobile"><div class="g-signin2" data-onsuccess="onSignIn"></div></li> -->
-			</ul>
-			<a href="#" data-activates="nav-mobile" class="button-collapse"><i
-				class="material-icons">menu</i></a>
 		</div>
 	</nav>
-
+	<!--Main menu mobile-->
+	<ul id="nav-mobile" class="sidenav">
+		<li><a href="#home" class="">Главная</a></li>
+		<li><a href="#find">Искать</a></li>
+		<li><a href="#create" class="active">Предложить</a></li>
+		<li><a href="#about">О сервисе</a></li>
+	</ul>
+	<!--Google sign-in button-->
 	<div id="g-signin2"><div class="g-signin2" data-onsuccess="onSignIn"></div></div>
-
+	<!--Google sign-out dropdown-->
 	<div id="signout" class="dropdown-tyaa" style="float: right;">
-		<img id="userpicture" src="" alt="Authentication..." width="100" height="50">
+		<img id="userpicture" src="img/hourglass.jpeg" alt="Authentication..." width="100" height="50">
 		<div class="dropdown-content-tyaa">
 			<div id="username"></div>
 			<div id="useremail"></div>
@@ -91,11 +67,12 @@
 			</div>
 		</div>
 	</div>
-
+	<!--Sections for pages-->
 	<section id="home" src="pages/home.htm"></section>
+	<section id="find" src="pages/find.htm"></section>
 	<section id="create" src="pages/create.htm"></section>
 	<section id="about" src="pages/about.htm"></section>
-
+	<!--Footer-->
 	<footer class="page-footer teal">
 		<div class="container">
 			<div class="row">
@@ -105,8 +82,6 @@
 						students working on this project like it's our full time job. Any
 						amount would help support and continue development on this project
 						and is greatly appreciated.</p>
-
-
 				</div>
 				<div class="col l3 s12">
 					<h5 class="white-text">Settings</h5>
@@ -135,7 +110,7 @@
 			</div>
 		</div>
 	</footer>
-
+	<!--Common javascript-->
 	<script src="js/pre-init.js"></script>
 	<!--Import jQuery before materialize.js-->
 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>

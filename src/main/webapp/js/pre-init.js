@@ -40,7 +40,7 @@ function checkSigninStatus(isSignedIn) {
 
 			$("#username").text("");
 			$("#useremail").text("");
-			$("#userpicture").attr("src", "");
+			$("#userpicture").attr("src", "img/hourglass.jpeg");
 			
 			//GoogleAuth.disconnect();
 		};

@@ -1,7 +1,7 @@
 (function($){
   $(function(){
 
-    $('.button-collapse').sideNav();
+    //$('.button-collapse').sideNav();
     //$('.parallax').parallax();
     
     $('.dropdown-tyaa').click(function(){

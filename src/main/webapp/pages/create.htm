@@ -1,5 +1,49 @@
-<div>
-	Create new task
+<div class="container">
+	<div class="row">
+		<div class="col s12 m3 l3 xl3">
+			<h5>Создать</h5>
+			<div class="card">
+				<div class="card-content">Form</div>
+			</div>
+		</div>
+
+		<div class="col s12 m9 l9 xl9">
+			<h5>Расписание</h5>
+			<div class="row">
+				<div class="col s6">
+					<form>
+						<label for="calendar"> Выберите дату: </label> <input
+							id="calendar" name="calendar" type="date"> </input>
+					</form>
+				</div>
+			</div>
+
+			<!-- Сюда при помощи jquery помещается шаблон таблицы, заполненный данными о заказах -->
+			<div class="row">
+				<div class="col s12 m12 l12 xl12">
+					<div id="table-container"></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12 m12 l12 xl12">
+					<div class="card horizontal">
+						<div class="card-stacked">
+							<div class="card-content">
+								<form>
+									<button id="doneOrder" class="waves-effect waves-light btn"
+										type="button">Выполнен</button>
+									<button id="cancelOrder" class="waves-effect waves-light btn"
+										type="button">Отмена</button>
+									<button id="deleteOrder" class="waves-effect waves-light btn"
+										type="button">Удаление</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 	app.handler(function() {
@@ -15,7 +59,7 @@
 				url: '/prostogae?action=get-data-by-section&section=home',
 				//contentType: 'text/plain',
 				cache: false
-		  	}).done(function(responseText, textStatus, jqXHR) {
+			}).done(function(responseText, textStatus, jqXHR) {
 				  //if got code 200
 				  if(responseText !== '' && responseText !== 'error'){
 					  
@@ -33,19 +77,19 @@
 				  }
 				  //stopLoadingAnimation();
 				  $(".loader").css("display", "none");
-		  	}).fail(function(jqXHR, textStatus, errorThrown) {
+			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
 				//if got code 404 or 500, etc.
 				//stopLoadingAnimation();
 				$(".loader").css("display", "none");
-		  	});*/
-			
-			var preloaderHide = function(){
-				   
+			});*/
+
+			var preloaderHide = function() {
+
 				$(".preloader-wrapper").css("display", "none");
 			}
-			
+
 			setTimeout(preloaderHide, 500);
-	  	};
-  	});
+		};
+	});
 </script>
