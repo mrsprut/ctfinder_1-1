@@ -1,0 +1,95 @@
+<div class="container">
+	<div class="section">
+		<div class="row">
+			<div class="col s12 center">
+				<h3><i class="material-icons medium">settings</i></h3>
+				<h3><i class="mdi-content-send brown-text"></i></h3>
+				<h5>Добро пожаловать в панель управления системой CTFinder!</h5>
+				<p class="left-align light flow-text">Это панель для администраторов.</p>
+				<p class="left-align light flow-text">С ее помощью можно настраивать внешний вид и структуры данных пользовательского веб-интерфейса.</p>
+				<p class="left-align light flow-text">Если Вы зашли на эту страницу, значит Вам предоставлен также доступ к админ-пенели облачного хостинга для участия в разработке системы.</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+        <div class="row">
+            <h5>Настройки системы</h5>
+        </div>
+        <div class="row">
+	    	<div class="col s12 m6 l4 xl3">
+			    <div class="card">
+			        <div class="card-content">
+			        	<span class="card-title">Типы заданий</span>
+			          	<p>Список типов заданий, которые можно создавать или искать</p>
+			        </div>
+			        <div class="card-action">
+			          	<a href="#offertypes">Настроить</a>
+			        </div>
+			      </div>
+			</div>
+			<div class="col s12 m6 l4 xl3">
+			    <div class="card">
+			        <div class="card-content">
+			        	<span class="card-title">Иллюстрации</span>
+			          	<p>Статические изображения для отображения на страницах сайта</p>
+			        </div>
+			        <div class="card-action">
+			          	<a href="#pictures">Настроить</a>
+			        </div>
+			      </div>
+			</div>
+		</div>
+</div>
+<script type="text/javascript">
+
+	app.handler(function() {
+
+		//console.log('this ' + $(this));
+		//var $container = $(this).find("#page-container");
+		//console.log('container ' + $container);
+
+		return function(params) {
+
+			//window.scrollTo(0,1);
+			//window.scrollTo(1,0);
+			//console.log('hi!');
+			/*$.ajax({
+				type: 'POST',
+				url: '/prostogae?action=get-data-by-section&section=home',
+				//contentType: 'text/plain',
+				cache: false
+		  	}).done(function(responseText, textStatus, jqXHR) {
+				  //if got code 200
+				  if(responseText !== '' && responseText !== 'error'){
+					  
+						//
+						console.log(responseText.content);
+						//$('section#copyright p#p-content').text(responseText.content);
+
+					  	var template = Hogan.compile("<p>{{content}}</p>");
+						//var output = template.render(responseText);
+						//var $container = $(this).find("section#copyright #page-container");
+					  	$container.html(template.render(responseText));
+				  } else {
+					  
+				  //
+				  }
+				  //stopLoadingAnimation();
+				  $(".loader").css("display", "none");
+		  	}).fail(function(jqXHR, textStatus, errorThrown) {
+				  
+				//if got code 404 or 500, etc.
+				//stopLoadingAnimation();
+				$(".loader").css("display", "none");
+		  	});*/
+			
+			var preloaderHide = function(){
+				   
+				$(".preloader-wrapper").css("display", "none");
+			}
+			
+			setTimeout(preloaderHide, 500);
+	  	};
+  	});
+</script>
