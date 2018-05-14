@@ -18,6 +18,23 @@ public class LanguageDAO {
 			_language.setTitle_key(language.getTitle_key());
 		}
 	}
+	
+	public static void getLangByCode(String _code, Language _language) {
+		
+		Language language =
+				ofy().load()
+				.type(Language.class)
+				.filter("code", _code)
+				.first()
+				.now();
+		
+		if(language != null) {
+			
+			_language.setId(language.getId());
+			_language.setCode(language.getCode());
+			_language.setTitle_key(language.getTitle_key());
+		}
+	}
 
 	public static void createLang(Language _language) {
 

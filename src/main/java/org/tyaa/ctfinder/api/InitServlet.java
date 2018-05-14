@@ -11,13 +11,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.entity.Language;
+import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User_type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.VoidWork;
 
 /**
  * Servlet implementation class InitServlet
@@ -66,6 +69,8 @@ public class InitServlet extends HttpServlet {
 	    
 	    //Открываем выходной поток - с сервера к клиенту
 		try (PrintWriter out = resp.getWriter()) {
+			
+			/* Migration 1 */
 			
 			//Создаем в БД запись для английского языка
 			
@@ -156,11 +161,45 @@ public class InitServlet extends HttpServlet {
 					});
 				}
 			}*/
+			
+			/* Migration 2 */
+			
+			//Создаем в БД записи для описаний типов предложений
+			
+			//Получаем из БД объект английского языка
+			Language englishLanguage = new Language();
+			ObjectifyService.run(new VoidWork() {
+				public void vrun() {
+					try {
+						LanguageDAO.getLangByCode("en", englishLanguage);
+					} catch (Exception ex) {
+
+						String errorJson = gson.toJson(ex.getMessage());
+						out.print(errorJson);
+					}
+				}
+			});
+			
+			Static_description volunteerAssistanceEnSd = new Static_description();
+			//TODO key generator
+			volunteerAssistanceEnSd.setKey("volunteer_assistance_offer_type");
+			volunteerAssistanceEnSd.setLang_id(englishLanguage.getId());
+			volunteerAssistanceEnSd.setContent("volunteer assistance");
+			
+			ObjectifyService.run(new VoidWork() {
+				public void vrun() {
+					try {
+						Static_titleDAO.createStatic_title(englishTitle);
+					} catch (Exception ex) {
+
+						String errorJson = gson.toJson(ex.getMessage());
+						out.print(errorJson);
+					}
+				}
+			});
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();
 		}
 	}
-
-	
 }
