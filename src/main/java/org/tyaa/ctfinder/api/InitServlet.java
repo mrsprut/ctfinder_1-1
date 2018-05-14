@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.tyaa.ctfinder.controller.LanguageDAO;
+import org.tyaa.ctfinder.controller.Offer_typeDAO;
+import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.entity.Language;
+import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User_type;
@@ -36,6 +39,8 @@ public class InitServlet extends HttpServlet {
 		ObjectifyService.register(Language.class);
 		ObjectifyService.register(Static_title.class);
 		ObjectifyService.register(User_type.class);
+		ObjectifyService.register(Static_description.class);
+		ObjectifyService.register(Offer_type.class);
 		//ObjectifyService.register(User.class);
 	}
 	
@@ -167,7 +172,7 @@ public class InitServlet extends HttpServlet {
 			//Создаем в БД записи для описаний типов предложений
 			
 			//Получаем из БД объект английского языка
-			Language englishLanguage = new Language();
+			/*Language englishLanguage = new Language();
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
@@ -189,7 +194,7 @@ public class InitServlet extends HttpServlet {
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
-						Static_titleDAO.createStatic_title(englishTitle);
+						Static_descriprionDAO.createStatic_descriprion(volunteerAssistanceEnSd);
 					} catch (Exception ex) {
 
 						String errorJson = gson.toJson(ex.getMessage());
@@ -197,6 +202,21 @@ public class InitServlet extends HttpServlet {
 					}
 				}
 			});
+			
+			Offer_type volunteerAssistanceOt = new Offer_type();
+			volunteerAssistanceOt.setDescription_key(volunteerAssistanceEnSd.getKey());
+			
+			ObjectifyService.run(new VoidWork() {
+				public void vrun() {
+					try {
+						Offer_typeDAO.createOffer_type(volunteerAssistanceOt);
+					} catch (Exception ex) {
+
+						String errorJson = gson.toJson(ex.getMessage());
+						out.print(errorJson);
+					}
+				}
+			});*/
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();
