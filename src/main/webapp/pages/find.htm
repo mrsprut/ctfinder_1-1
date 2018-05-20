@@ -9,7 +9,7 @@
 								<i class="material-icons">list</i>Категории
 							</div>
 							<div class="collapsible-body">
-								<form action="#">
+								<form id="categories" action="#">
 									<p>
 										<label for="category-1"> <input id="category-1"
 											type="checkbox" /><span>волонтерская помощь</span>
@@ -152,11 +152,21 @@
 			}).done(function(responseText, textStatus, jqXHR) {
 				  
 				console.log(responseText);
+				//Готовим шаблон списка при помощи библиотеки Hogan
+	            var template = Hogan.compile(
+	                '{{#result}}'
+	                +'<p>'
+						+'<label for="category-{{id}}"> <input id="category-{{id}}"'
+							+'type="checkbox" /><span>{{description}}</span>'
+						+'</label>'
+					+'</p>'
+					+'{{/result}}'
+	            );
+	            //Заполняем шаблон данными и помещаем на веб-страницу
+				$('#categories').html(template.render(responseText));
+				
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
-				//if got code 404 or 500, etc.
-				//stopLoadingAnimation();
-				//$(".loader").css("display", "none");
 				console.log(textStatus);
 			});
 

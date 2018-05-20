@@ -24,7 +24,7 @@ public class Offer_typeDAO {
 	}
 	
 	//Получение всех Offer_types в виде списка
-	public static void getAllOfferTypes(List<Offer_type> _offerTypeList) throws Exception {
+	public static void getAllOfferTypes(List<Offer_type> _offerTypeList) {
 			
 		_offerTypeList.addAll(ofy().load().type(Offer_type.class).list());
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,13 +13,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.tyaa.ctfinder.api.interfaces.IObjectifyFun;
+import org.tyaa.ctfinder.api.interfaces.IObjectifyFun2;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.Offer_typeDAO;
+import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.entity.Offer_type;
+import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.User;
+import org.tyaa.ctfinder.model.OfferTypeItem;
 import org.tyaa.ctfinder.model.RespData;
 
 import com.google.gson.Gson;
@@ -31,13 +37,15 @@ import com.googlecode.objectify.VoidWork;
  */
 @WebServlet("/offertype")
 public class OfferTypeServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
+	private static Gson gson;
 	
 	static {
 		
 		ObjectifyService.register(Offer_type.class);
-		//ObjectifyService.register(User.class);
-	}	
+		ObjectifyService.register(Static_description.class);
+	}
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -47,6 +55,18 @@ public class OfferTypeServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
+	@Override
+	public void init() throws ServletException {
+		// TODO Auto-generated method stub
+		super.init();
+		//Преобразователь из объектов Java в строки JSON
+	    gson = new Gson();
+    		//new GsonBuilder()
+    		//.setDateFormat("yyyy-MM-dd").create();
+	}
+
+
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -54,11 +74,6 @@ public class OfferTypeServlet extends HttpServlet {
 		
 		resp.setContentType("application/json");
 	    resp.setCharacterEncoding("UTF-8");
-	    
-	    //Преобразователь из объектов Java в строки JSON
-	    Gson gson =// new Gson();
-	    		new GsonBuilder()
-	    		.setDateFormat("yyyy-MM-dd").create();
 	    
 	    HttpSession session = null;
 	    try {
@@ -90,14 +105,57 @@ public class OfferTypeServlet extends HttpServlet {
 							}
 							case HttpReqParams.getAll : {
 								
-								List offerTypeList = new ArrayList<>();
+								List<Offer_type> offerTypeList = new ArrayList<>();
+								objectifyRun(
+										offerTypeList
+										, Offer_typeDAO::getAllOfferTypes
+										, out
+									);
+								//TODO get description by key n lang
+								List<OfferTypeItem> offerTypeItemList =
+									offerTypeList.stream()
+										.map(
+											ot -> {
+												Static_description st = new Static_description();
+												objectifyRun2(
+														((Offer_type)ot).getDescription_key()
+														, st
+														, Static_descriprionDAO::getStaticDescriptionByKey
+														, out);
+												return new OfferTypeItem(
+														((Offer_type)ot).getId()
+														, st.getContent()
+													);
+											})
+										.collect(Collectors.toList());
+								
+								/*
+								
+								objectifyRun2(st, (_object1, _object2) -> {
+													try {
+														Static_descriprionDAO.getStaticDescriptionByKey(
+																((Offer_type)ot).getDescription_key()
+																, _object
+															);
+													} catch (Exception e) {
+														// TODO Auto-generated catch block
+														e.printStackTrace();
+													}
+												}, out);
+												return new OfferTypeItem(
+														((Offer_type)ot).getId()
+														, st.getContent()
+													);
+								
+								*/
+								
 		                    	
-		                    	try {
+		                    	/*try {
 		                    		
 		                    		ObjectifyService.run(new VoidWork() {
 		                    		    public void vrun() {
 		                    		    	try {
-		                    		    		Offer_typeDAO.getAllOfferTypes(offerTypeList);;
+		                    		    		Offer_typeDAO.getAllOfferTypes(offerTypeList);
 		    								} catch (Exception ex) {
 		    									
 		    									RespData result = new RespData(ex.getMessage());
@@ -106,13 +164,15 @@ public class OfferTypeServlet extends HttpServlet {
 		    								}
 		                    		    }
 		                    		});
+		                    		
+		                    		
 		                    	} catch (Exception ex) {
 		                            
 		                    		RespData result = new RespData(ex.getMessage());
 		                            String resultJsonString = gson.toJson(result);
 		                            out.print(resultJsonString);
-		                    	}
-		                    	RespData result = new RespData(offerTypeList);
+		                    	}*/
+		                    	RespData result = new RespData(offerTypeItemList);
 		                        String resultJsonString = gson.toJson(result);
 		                        out.print(resultJsonString);
 	                        	break;
@@ -177,5 +237,44 @@ public class OfferTypeServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-
+	
+	private static <T> void objectifyRun(T _object, IObjectifyFun<T> _function, PrintWriter _out) {
+		try {
+    		ObjectifyService.run(new VoidWork() {
+    		    public void vrun() {
+    		    	try {
+    		    		_function.doWork(_object);
+					} catch (Exception ex) {
+						RespData result = new RespData(ex.getMessage());
+                        String resultJsonString = gson.toJson(result);
+                        _out.print(resultJsonString);
+					}
+    		    }
+    		});
+    	} catch (Exception ex) {
+    		RespData result = new RespData(ex.getMessage());
+            String resultJsonString = gson.toJson(result);
+            _out.print(resultJsonString);
+    	}
+	}
+	
+	private static <T1, T2> void objectifyRun2(T1 _object1, T2 _object2, IObjectifyFun2<T1, T2> _function, PrintWriter _out) {
+		try {
+    		ObjectifyService.run(new VoidWork() {
+    		    public void vrun() {
+    		    	try {
+    		    		_function.doWork(_object1, _object2);
+					} catch (Exception ex) {
+						RespData result = new RespData(ex.getMessage());
+                        String resultJsonString = gson.toJson(result);
+                        _out.print(resultJsonString);
+					}
+    		    }
+    		});
+    	} catch (Exception ex) {
+    		RespData result = new RespData(ex.getMessage());
+            String resultJsonString = gson.toJson(result);
+            _out.print(resultJsonString);
+    	}
+	}
 }
