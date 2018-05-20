@@ -2,19 +2,20 @@ package org.tyaa.ctfinder.model;
 
 import java.util.ArrayList;
 //import java.util.List;
+import java.util.List;
 
 import com.google.gson.annotations.Expose;
 
 public class RespData {
 
 	@Expose
-	public ArrayList result = new ArrayList();
+	public List result = new ArrayList();
 	@Expose
 	public String error = "";
 	
 	public RespData() {}
 	
-	public RespData(ArrayList result) {
+	public RespData(List result) {
 		
 		super();
 		if(result != null && result.size() > 0) {
@@ -29,7 +30,7 @@ public class RespData {
 		this.error = error;
 	}
 	
-	public RespData(ArrayList result, String error) {
+	public RespData(List result, String error) {
 		
 		super();
 		if(result != null && result.size() > 0) {

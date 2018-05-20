@@ -183,9 +183,9 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});
+			});*/
 			
-			Static_description volunteerAssistanceEnSd = new Static_description();
+			/*Static_description volunteerAssistanceEnSd = new Static_description();
 			//TODO key generator
 			volunteerAssistanceEnSd.setKey("volunteer_assistance_offer_type");
 			volunteerAssistanceEnSd.setLang_id(englishLanguage.getId());
@@ -210,6 +210,38 @@ public class InitServlet extends HttpServlet {
 				public void vrun() {
 					try {
 						Offer_typeDAO.createOffer_type(volunteerAssistanceOt);
+					} catch (Exception ex) {
+
+						String errorJson = gson.toJson(ex.getMessage());
+						out.print(errorJson);
+					}
+				}
+			});*/
+			
+			/*Static_description  graphicDesignEnSd = new Static_description();
+			graphicDesignEnSd.setKey("graphic_design_offer_type");
+			graphicDesignEnSd.setLang_id(englishLanguage.getId());
+			graphicDesignEnSd.setContent("graphic design");
+			
+			ObjectifyService.run(new VoidWork() {
+				public void vrun() {
+					try {
+						Static_descriprionDAO.createStatic_descriprion(graphicDesignEnSd);
+					} catch (Exception ex) {
+
+						String errorJson = gson.toJson(ex.getMessage());
+						out.print(errorJson);
+					}
+				}
+			});
+			
+			Offer_type graphicDesignOt = new Offer_type();
+			graphicDesignOt.setDescription_key(graphicDesignEnSd.getKey());
+			
+			ObjectifyService.run(new VoidWork() {
+				public void vrun() {
+					try {
+						Offer_typeDAO.createOffer_type(graphicDesignOt);
 					} catch (Exception ex) {
 
 						String errorJson = gson.toJson(ex.getMessage());

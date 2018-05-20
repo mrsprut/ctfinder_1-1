@@ -2,6 +2,8 @@ package org.tyaa.ctfinder.controller;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.List;
+
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_title;
@@ -19,6 +21,12 @@ public class Offer_typeDAO {
 			_offer_type.setId(offer_type.getId());
 			_offer_type.setDescription_key(offer_type.getDescription_key());
 		}
+	}
+	
+	//Получение всех Offer_types в виде списка
+	public static void getAllOfferTypes(List<Offer_type> _offerTypeList) throws Exception {
+			
+		_offerTypeList.addAll(ofy().load().type(Offer_type.class).list());
 	}
 
 	public static void createOffer_type(Offer_type _offer_type) {

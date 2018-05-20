@@ -3,6 +3,7 @@ package org.tyaa.ctfinder.api.publ;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,12 +16,15 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.Offer_typeDAO;
+import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.model.RespData;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.VoidWork;
 
 /**
  * Servlet implementation class TasksServlet
@@ -31,7 +35,7 @@ public class OfferTypeServlet extends HttpServlet {
 	
 	static {
 		
-		//ObjectifyService.register(State.class);
+		ObjectifyService.register(Offer_type.class);
 		//ObjectifyService.register(User.class);
 	}	
        
@@ -86,14 +90,32 @@ public class OfferTypeServlet extends HttpServlet {
 							}
 							case HttpReqParams.getAll : {
 								
-								
-								
-								ArrayList<String> al = new ArrayList<>();
-								al.add(HttpRespWords.created);
-								RespData rd = new RespData(al);
-								String successJson = gson.toJson(rd);
-								out.print(successJson);
-								break;
+								List offerTypeList = new ArrayList<>();
+		                    	
+		                    	try {
+		                    		
+		                    		ObjectifyService.run(new VoidWork() {
+		                    		    public void vrun() {
+		                    		    	try {
+		                    		    		Offer_typeDAO.getAllOfferTypes(offerTypeList);;
+		    								} catch (Exception ex) {
+		    									
+		    									RespData result = new RespData(ex.getMessage());
+		    		                            String resultJsonString = gson.toJson(result);
+		    		                            out.print(resultJsonString);
+		    								}
+		                    		    }
+		                    		});
+		                    	} catch (Exception ex) {
+		                            
+		                    		RespData result = new RespData(ex.getMessage());
+		                            String resultJsonString = gson.toJson(result);
+		                            out.print(resultJsonString);
+		                    	}
+		                    	RespData result = new RespData(offerTypeList);
+		                        String resultJsonString = gson.toJson(result);
+		                        out.print(resultJsonString);
+	                        	break;
 							}
 							case HttpReqParams.delete : {
 								
