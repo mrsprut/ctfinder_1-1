@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_title;
@@ -160,7 +161,7 @@ public class AuthServlet extends HttpServlet {
 
 					try {
 						
-						session.setAttribute("user_id", user.getId());
+						session.setAttribute(SessionAttributes.userId, user.getId());
 						ArrayList al = new ArrayList();
 						al.add(user);
 						RespData rd = new RespData(al);
@@ -182,7 +183,7 @@ public class AuthServlet extends HttpServlet {
 				}
 			} else {
 				
-				session.removeAttribute("user_id");
+				session.removeAttribute(SessionAttributes.userId);
 				ArrayList al = new ArrayList();
 				al.add("logout");
 				RespData rd = new RespData(al);

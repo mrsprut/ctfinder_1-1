@@ -1,6 +1,7 @@
 package org.tyaa.ctfinder.entity;
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.gson.annotations.Expose;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -13,11 +14,11 @@ public class Offer {
 	@Index
 	@Expose
 	//Идентификатор типа задания, например: техника, ИТ, помощь, природа 
-	private int offer_type_id;
+	private Long offer_type_id;
 	@Index
 	@Expose
 	//Идентификатор состояния задания, например: создано, выполняется, завершено, отменено 
-	private int state_id;
+	private Long state_id;
 	@Index
 	@Expose
 	//Ключ заголовка
@@ -28,15 +29,23 @@ public class Offer {
 	@Index
 	@Expose
 	//ИД пользователя
-	private int user_id;
+	private Long user_id;
 	@Index
 	@Expose
 	//ИД страны
-	private int country_id;
+	private Long country_id;
 	@Index
 	@Expose
 	//ИД города
-	private int city_id;
+	private Long city_id;
+	@Index
+	@Expose
+	//вакантное число соавторов (-1 - undefined, -2 - unbounded)
+	private Integer collaborators_count;
+	@Index
+	@Expose
+	//основное изображение предложения
+	private Blob image;
 	@Index
 	@Expose
 	//Дата желаемого старта
@@ -66,44 +75,54 @@ public class Offer {
 		super();
 	}
 
-	public Offer(int offer_type_id, String title_key, String description_key, int user_id, int country_id, int city_id,
-			Date start_date, Date finish_date) {
+	public Offer(Long offer_type_id, Long state_id, String title_key, String description_key, Long user_id,
+			Long country_id, Long city_id, Integer collaborators_count, Blob image, Date start_date, Date finish_date,
+			Date started_at, Date completed_at, Date created_at, Date updated_at) {
 		super();
 		this.offer_type_id = offer_type_id;
+		this.state_id = state_id;
 		this.title_key = title_key;
 		this.description_key = description_key;
 		this.user_id = user_id;
 		this.country_id = country_id;
 		this.city_id = city_id;
+		this.collaborators_count = collaborators_count;
+		this.image = image;
 		this.start_date = start_date;
 		this.finish_date = finish_date;
+		this.started_at = started_at;
+		this.completed_at = completed_at;
+		this.created_at = created_at;
+		this.updated_at = updated_at;
 	}
+
+
 
 	/**
 	 * @return the offer_type_id
 	 */
-	public int getOffer_type_id() {
+	public Long getOffer_type_id() {
 		return offer_type_id;
 	}
 
 	/**
 	 * @param offer_type_id the offer_type_id to set
 	 */
-	public void setOffer_type_id(int offer_type_id) {
+	public void setOffer_type_id(Long offer_type_id) {
 		this.offer_type_id = offer_type_id;
 	}
 
 	/**
 	 * @return the state_id
 	 */
-	public int getState_id() {
+	public Long getState_id() {
 		return state_id;
 	}
 
 	/**
 	 * @param state_id the state_id to set
 	 */
-	public void setState_id(int state_id) {
+	public void setState_id(Long state_id) {
 		this.state_id = state_id;
 	}
 
@@ -138,42 +157,42 @@ public class Offer {
 	/**
 	 * @return the user_id
 	 */
-	public int getUser_id() {
+	public Long getUser_id() {
 		return user_id;
 	}
 
 	/**
 	 * @param user_id the user_id to set
 	 */
-	public void setUser_id(int user_id) {
+	public void setUser_id(Long user_id) {
 		this.user_id = user_id;
 	}
 
 	/**
 	 * @return the country_id
 	 */
-	public int getCountry_id() {
+	public Long getCountry_id() {
 		return country_id;
 	}
 
 	/**
 	 * @param country_id the country_id to set
 	 */
-	public void setCountry_id(int country_id) {
+	public void setCountry_id(Long country_id) {
 		this.country_id = country_id;
 	}
 
 	/**
 	 * @return the city_id
 	 */
-	public int getCity_id() {
+	public Long getCity_id() {
 		return city_id;
 	}
 
 	/**
 	 * @param city_id the city_id to set
 	 */
-	public void setCity_id(int city_id) {
+	public void setCity_id(Long city_id) {
 		this.city_id = city_id;
 	}
 
@@ -266,5 +285,25 @@ public class Offer {
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getCollaborators_count() {
+		return collaborators_count;
+	}
+
+	public void setCollaborators_count(Integer collaborators_count) {
+		this.collaborators_count = collaborators_count;
+	}
+
+	public Blob getImage() {
+		return image;
+	}
+
+	public void setImage(Blob image) {
+		this.image = image;
 	}
 }

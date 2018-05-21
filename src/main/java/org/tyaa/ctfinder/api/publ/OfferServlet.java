@@ -2,7 +2,11 @@ package org.tyaa.ctfinder.api.publ;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +19,11 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.entity.Offer;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.model.RespData;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
@@ -25,20 +31,20 @@ import com.googlecode.objectify.ObjectifyService;
 /**
  * Servlet implementation class TasksServlet
  */
-@WebServlet("/tasks")
-public class TasksServlet extends HttpServlet {
+@WebServlet("/offer")
+public class OfferServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	static {
 		
-		//ObjectifyService.register(State.class);
+		ObjectifyService.register(Offer.class);
 		//ObjectifyService.register(User.class);
 	}	
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public TasksServlet() {
+    public OfferServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -76,6 +82,31 @@ public class TasksServlet extends HttpServlet {
 						switch(actionString) {
 						
 							case HttpReqParams.create : {
+								
+								//TODO set locale
+								DateFormat format =
+									new SimpleDateFormat("dd.mm.yyyy", Locale.ENGLISH);
+								
+								Offer offer =
+									new Offer(
+											Long.getLong(req.getParameter("offer_type_id"))
+											, Long.getLong(req.getParameter("state_id"))
+											//TODO generate
+											, "title_key"
+											, "description_key"
+											, (Long)session.getAttribute(SessionAttributes.userId)
+											, Long.getLong(req.getParameter("country_id"))
+											, Long.getLong(req.getParameter("city_id"))
+											, Integer.getInteger(req.getParameter("collaborators_count"))
+											//TODO base64 to blob
+											, new Blob(req.getParameter("image").getBytes())
+											, format.parse(req.getParameter("start_date"))
+											, format.parse(req.getParameter("finish_date"))
+											, format.parse(req.getParameter("started_at"))
+											, format.parse(req.getParameter("completed_at"))
+											, format.parse(req.getParameter("created_at"))
+											, format.parse(req.getParameter("updated_at"))
+										);
 								
 								ArrayList<String> al = new ArrayList<>();
 								al.add(HttpRespWords.created);
