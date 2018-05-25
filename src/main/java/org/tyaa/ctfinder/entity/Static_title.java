@@ -1,5 +1,6 @@
 package org.tyaa.ctfinder.entity;
 
+import com.google.gson.annotations.Expose;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -8,12 +9,16 @@ import com.googlecode.objectify.annotation.Index;
 public class Static_title {
 	
 	@Id
+	@Expose (serialize = false, deserialize = false)
 	private Long id;
 	@Index
+	@Expose
 	private String key;
 	@Index
+	@Expose (serialize = false, deserialize = false)
 	private Long lang_id;
 	@Index
+	@Expose
 	private String content;
 
 	public Static_title() {

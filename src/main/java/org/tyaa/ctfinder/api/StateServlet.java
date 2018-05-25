@@ -1,12 +1,13 @@
-package org.tyaa.ctfinder.api.publ;
+package org.tyaa.ctfinder.api;
+
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,35 +20,50 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.SessionAttributes;
-import org.tyaa.ctfinder.entity.Offer;
-import org.tyaa.ctfinder.entity.User;
+import org.tyaa.ctfinder.controller.StateDAO;
+import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.entity.State;
+import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.model.RespData;
+import org.tyaa.ctfinder.model.StateItem;
 
-import com.google.appengine.api.datastore.Blob;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
 
 /**
  * Servlet implementation class TasksServlet
  */
-@WebServlet("/offer")
-public class OfferServlet extends HttpServlet {
+@WebServlet("/state")
+public class StateServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
+	private static Gson gson;
 	
 	static {
 		
-		ObjectifyService.register(Offer.class);
-		//ObjectifyService.register(User.class);
-	}	
+		ObjectifyService.register(State.class);
+		ObjectifyService.register(Static_title.class);
+	}
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public OfferServlet() {
+    public StateServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
+
+	@Override
+	public void init() throws ServletException {
+		// TODO Auto-generated method stub
+		super.init();
+		//Преобразователь из объектов Java в строки JSON
+	    gson = new Gson();
+    		//new GsonBuilder()
+    		//.setDateFormat("yyyy-MM-dd").create();
+	}
+
+
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -56,11 +72,6 @@ public class OfferServlet extends HttpServlet {
 		
 		resp.setContentType("application/json");
 	    resp.setCharacterEncoding("UTF-8");
-	    
-	    //Преобразователь из объектов Java в строки JSON
-	    Gson gson =// new Gson();
-	    		new GsonBuilder()
-	    		.setDateFormat("yyyy-MM-dd").create();
 	    
 	    HttpSession session = null;
 	    try {
@@ -83,38 +94,45 @@ public class OfferServlet extends HttpServlet {
 						
 							case HttpReqParams.create : {
 								
-								//TODO set locale
-								DateFormat format =
-									new SimpleDateFormat("dd.mm.yyyy", Locale.ENGLISH);
-								
-								Offer offer =
-									new Offer(
-											Long.getLong(req.getParameter("offer_type_id"))
-											//TODO get state id from db
-											, Long.getLong(req.getParameter("state_id"))
-											//TODO generate
-											, "title_key"
-											, "description_key"
-											, (Long)session.getAttribute(SessionAttributes.userId)
-											, Long.getLong(req.getParameter("country_id"))
-											, Long.getLong(req.getParameter("city_id"))
-											, Integer.getInteger(req.getParameter("collaborators_count"))
-											//TODO base64 to blob
-											, new Blob(req.getParameter("image").getBytes())
-											, format.parse(req.getParameter("start_date"))
-											, format.parse(req.getParameter("finish_date"))
-											, format.parse(req.getParameter("started_at"))
-											, format.parse(req.getParameter("completed_at"))
-											, format.parse(req.getParameter("created_at"))
-											, format.parse(req.getParameter("updated_at"))
-										);
-								
 								ArrayList<String> al = new ArrayList<>();
 								al.add(HttpRespWords.created);
 								RespData rd = new RespData(al);
 								String successJson = gson.toJson(rd);
 								out.print(successJson);
 								break;
+							}
+							case HttpReqParams.getAll : {
+								
+								List<State> stateList = new ArrayList<>();
+								objectifyRun(
+										stateList
+										, StateDAO::getAllStates
+										, out
+										, gson
+									);
+								//TODO get description by key n lang
+								List<StateItem> stateItemList =
+									stateList.stream()
+										.map(
+											s -> {
+												Static_title st = new Static_title();
+												objectifyRun2(
+														((State)s).getTitle_key()
+														, st
+														, Static_titleDAO::getStaticTitleByKey
+														, out
+														, gson);
+												return new StateItem(
+														((State)s).getId()
+														, st.getContent()
+													);
+											})
+										.collect(Collectors.toList());
+								
+		                    	RespData result = new RespData(stateItemList);
+		                        String resultJsonString = gson.toJson(result);
+		                        out.print(resultJsonString);
+	                        	break;
 							}
 							case HttpReqParams.delete : {
 								
@@ -176,5 +194,4 @@ public class OfferServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-
 }

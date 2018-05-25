@@ -1,4 +1,7 @@
-package org.tyaa.ctfinder.api.publ;
+package org.tyaa.ctfinder.api;
+
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.tyaa.ctfinder.api.interfaces.IObjectifyFun;
-import org.tyaa.ctfinder.api.interfaces.IObjectifyFun2;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
@@ -23,14 +24,11 @@ import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_description;
-import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.model.OfferTypeItem;
 import org.tyaa.ctfinder.model.RespData;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.VoidWork;
 
 /**
  * Servlet implementation class TasksServlet
@@ -110,6 +108,7 @@ public class OfferTypeServlet extends HttpServlet {
 										offerTypeList
 										, Offer_typeDAO::getAllOfferTypes
 										, out
+										, gson
 									);
 								//TODO get description by key n lang
 								List<OfferTypeItem> offerTypeItemList =
@@ -121,7 +120,8 @@ public class OfferTypeServlet extends HttpServlet {
 														((Offer_type)ot).getDescription_key()
 														, st
 														, Static_descriprionDAO::getStaticDescriptionByKey
-														, out);
+														, out
+														, gson);
 												return new OfferTypeItem(
 														((Offer_type)ot).getId()
 														, st.getContent()
@@ -238,43 +238,5 @@ public class OfferTypeServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	private static <T> void objectifyRun(T _object, IObjectifyFun<T> _function, PrintWriter _out) {
-		try {
-    		ObjectifyService.run(new VoidWork() {
-    		    public void vrun() {
-    		    	try {
-    		    		_function.doWork(_object);
-					} catch (Exception ex) {
-						RespData result = new RespData(ex.getMessage());
-                        String resultJsonString = gson.toJson(result);
-                        _out.print(resultJsonString);
-					}
-    		    }
-    		});
-    	} catch (Exception ex) {
-    		RespData result = new RespData(ex.getMessage());
-            String resultJsonString = gson.toJson(result);
-            _out.print(resultJsonString);
-    	}
-	}
 	
-	private static <T1, T2> void objectifyRun2(T1 _object1, T2 _object2, IObjectifyFun2<T1, T2> _function, PrintWriter _out) {
-		try {
-    		ObjectifyService.run(new VoidWork() {
-    		    public void vrun() {
-    		    	try {
-    		    		_function.doWork(_object1, _object2);
-					} catch (Exception ex) {
-						RespData result = new RespData(ex.getMessage());
-                        String resultJsonString = gson.toJson(result);
-                        _out.print(resultJsonString);
-					}
-    		    }
-    		});
-    	} catch (Exception ex) {
-    		RespData result = new RespData(ex.getMessage());
-            String resultJsonString = gson.toJson(result);
-            _out.print(resultJsonString);
-    	}
-	}
 }
