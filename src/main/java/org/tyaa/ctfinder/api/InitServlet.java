@@ -1,6 +1,7 @@
 package org.tyaa.ctfinder.api;
 
 import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,11 +14,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.tyaa.ctfinder.controller.CityDAO;
 import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.entity.City;
 import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer_type;
@@ -47,6 +50,7 @@ public class InitServlet extends HttpServlet {
 		ObjectifyService.register(Static_description.class);
 		ObjectifyService.register(Offer_type.class);
 		ObjectifyService.register(Country.class);
+		ObjectifyService.register(City.class);
 		ObjectifyService.register(Static_title.class);
 	}
 	
@@ -178,7 +182,7 @@ public class InitServlet extends HttpServlet {
 			//Создаем в БД записи для описаний типов предложений
 			
 			//Получаем из БД объект английского языка
-			/*Language englishLanguage = new Language();
+			Language englishLanguage = new Language();
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
@@ -189,7 +193,7 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});*/
+			});
 			
 			/*Static_description volunteerAssistanceEnSd = new Static_description();
 			//TODO key generator
@@ -301,6 +305,119 @@ public class InitServlet extends HttpServlet {
 			objectifyRun(
 					russiaCountry
 					, CountryDAO::createCountry
+					, out
+					, gson
+				);*/
+			
+			
+			/* Migration 4 */
+			
+			// Create Kiev n Mariupol cities
+			
+			/*Country ukraineCountry =
+					new Country();
+			
+			objectifyRun2(
+					"ukraine_country"
+					, ukraineCountry
+					, CountryDAO::getCountryByTitleKey
+					, out
+					, gson
+				);
+			
+			Static_title kievCitySt =
+					new Static_title(
+							"kiev_city"
+							, englishLanguage.getId()
+							, "Kiev");		
+			objectifyRun(
+					kievCitySt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			City kievCity =
+					new City(ukraineCountry.getId(), kievCitySt.getKey());
+			objectifyRun(
+					kievCity
+					, CityDAO::createCity
+					, out
+					, gson
+				);
+			
+			Static_title mariupolCitySt =
+					new Static_title(
+							"mariupol_city"
+							, englishLanguage.getId()
+							, "Mariupol");		
+			objectifyRun(
+					mariupolCitySt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			City mariupolCity =
+					new City(ukraineCountry.getId(), mariupolCitySt.getKey());
+			objectifyRun(
+					mariupolCity
+					, CityDAO::createCity
+					, out
+					, gson
+				);
+			
+			// Create Moscow n Petersburg cities
+			
+			Country russiaCountry =
+					new Country();
+			
+			objectifyRun2(
+					"russia_country"
+					, russiaCountry
+					, CountryDAO::getCountryByTitleKey
+					, out
+					, gson
+				);
+			
+			Static_title moscowCitySt =
+					new Static_title(
+							"moscow_city"
+							, englishLanguage.getId()
+							, "Moscow");		
+			objectifyRun(
+					moscowCitySt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			City moscowCity =
+					new City(ukraineCountry.getId(), moscowCitySt.getKey());
+			objectifyRun(
+					moscowCity
+					, CityDAO::createCity
+					, out
+					, gson
+				);
+			
+			Static_title petersburgCitySt =
+					new Static_title(
+							"petersburg_city"
+							, englishLanguage.getId()
+							, "Petersburg");		
+			objectifyRun(
+					petersburgCitySt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			City petersburgCity =
+					new City(ukraineCountry.getId(), petersburgCitySt.getKey());
+			objectifyRun(
+					petersburgCity
+					, CityDAO::createCity
 					, out
 					, gson
 				);*/

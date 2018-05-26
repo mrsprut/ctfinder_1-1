@@ -8,15 +8,15 @@ import org.tyaa.ctfinder.entity.Country;
 
 public class CountryDAO {
 	
-	public static void getCountry(String _id, Country _Country) {
+	public static void getCountry(String _id, Country _сountry) {
 		
-		Country Country =
+		Country сountry =
 				ofy().load().type(Country.class).id(Long.valueOf(_id)).now();
 		
-		if(Country != null) {
+		if(сountry != null) {
 			
-			_Country.setId(Country.getId());
-			_Country.setTitle_key(Country.getTitle_key());
+			_сountry.setId(сountry.getId());
+			_сountry.setTitle_key(сountry.getTitle_key());
 		}
 	}
 	
@@ -26,12 +26,24 @@ public class CountryDAO {
 		_CountryList.addAll(ofy().load().type(Country.class).list());
 	}
 	
-	//1. "substring"
-	//2. allCountries -> allCountryTitles
-	//3. allCountryTitles where (lang && content.contains("substring"))
+	public static void getCountryByTitleKey(String _titleKey, Country _сountry) {
+		
+		Country сountry =
+				ofy().load()
+				.type(Country.class)
+				.filter("title_key", _titleKey)
+				.first()
+				.now();
+		
+		if(сountry != null) {
+			
+			_сountry.setId(сountry.getId());
+			_сountry.setTitle_key(сountry.getTitle_key());
+		}
+	}
 
-	public static void createCountry(Country _Country) {
+	public static void createCountry(Country _country) {
 
-		ofy().save().entity(_Country).now();
+		ofy().save().entity(_country).now();
 	}
 }
