@@ -224,13 +224,15 @@
 					        },
 					        cache : false
 					    }).done(function(newAutocompleteItems) {
-					        
-					    	//console.log(newAutocompleteItems);
-					    	//console.log(JSON.parse(newAutocompleteItems));
-					    	//console.log(newAutocompleteItems.result);
-					    	//console.log(JSON.parse(newAutocompleteItems.result));
-					    	//countryAutocomplete.updateData(JSON.parse(newAutocompleteItems.result));
-					    	countryAutocomplete.updateData(JSON.parse(newAutocompleteItems.result));
+					    	
+					    	var newAutocompleteItemsObj =
+					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
+					  		  		acc[cur] = null;
+					  		  		return acc;
+					  			}, {});
+					    	countryAutocomplete.updateData(newAutocompleteItemsObj);
+					    	//countryAutocomplete.open();
+					    	console.log(countryAutocomplete);
 					});
 				 }
 				 else {
