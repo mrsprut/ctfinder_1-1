@@ -1,5 +1,7 @@
 package org.tyaa.ctfinder.api;
 
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -11,9 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
+import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_description;
@@ -41,7 +46,8 @@ public class InitServlet extends HttpServlet {
 		ObjectifyService.register(User_type.class);
 		ObjectifyService.register(Static_description.class);
 		ObjectifyService.register(Offer_type.class);
-		//ObjectifyService.register(User.class);
+		ObjectifyService.register(Country.class);
+		ObjectifyService.register(Static_title.class);
 	}
 	
 	/**
@@ -249,6 +255,55 @@ public class InitServlet extends HttpServlet {
 					}
 				}
 			});*/
+			
+			/* Migration 3 */
+			
+			//Ukraine country en
+			//TODO key generator
+			/*Static_title ukraineCountrySt =
+					new Static_title(
+							"ukraine_country"
+							, englishLanguage.getId()
+							, "Ukraine");		
+			objectifyRun(
+					ukraineCountrySt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			Country ukraineCountry =
+					new Country(ukraineCountrySt.getKey());
+			
+			objectifyRun(
+					ukraineCountry
+					, CountryDAO::createCountry
+					, out
+					, gson
+				);
+			
+			//Russia country en
+			Static_title russiaCountrySt =
+					new Static_title(
+							"russia_country"
+							, englishLanguage.getId()
+							, "Russia");		
+			objectifyRun(
+					russiaCountrySt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			Country russiaCountry =
+					new Country(russiaCountrySt.getKey());
+			
+			objectifyRun(
+					russiaCountry
+					, CountryDAO::createCountry
+					, out
+					, gson
+				);*/
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();

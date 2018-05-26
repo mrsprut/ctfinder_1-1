@@ -9,4 +9,7 @@ public class HttpReqParams {
 	public final static String delete = "delete";
 	
 	public final static String id = "id";
+	
+	public final static String autocomplete = "autocomplete";
+	public final static String substring = "substring";
 }

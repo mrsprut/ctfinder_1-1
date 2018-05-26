@@ -23,6 +23,13 @@ public class Static_title {
 
 	public Static_title() {
 	}
+	
+	public Static_title(String key, Long lang_id, String content) {
+		super();
+		this.key = key;
+		this.lang_id = lang_id;
+		this.content = content;
+	}
 
 	public Long getId() {
 		return id;

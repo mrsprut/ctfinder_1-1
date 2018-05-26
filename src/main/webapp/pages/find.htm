@@ -129,13 +129,13 @@
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
 	
-	$('input#country-input').autocomplete({
+	/*$('input#country-input').autocomplete({
       data: {
         "USA": null,
         "Россия": null,
         "Украина": null
       },
-    });
+    });*/
 
     $('input#city-input').autocomplete({
       data: {
@@ -153,6 +153,8 @@
 
 		return function(params) {
 
+			var countryAutocompleteItems = {};
+			
 			$.ajax({
 				type: 'POST',
 				url: '/offertype?action=get-all',
@@ -177,6 +179,63 @@
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
 				console.log(textStatus);
+			});
+			
+			var onCountryAutocompleteCallback = function(){
+
+		        /*$('#events-container').html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>');
+		        $.ajax({
+		            url: "/events-ajax",
+		            type: "POST",
+		            data: {
+		                //'type': this.id
+		                'action': 'fetch-events-by-title'
+		                , 'title': $('input#search').val()
+		            },
+		            cache : false
+		        }).done(function(data) {
+		            
+		            //помещаем на веб-страницу
+		            $('#events-container').html(data);
+		        });*/
+				console.log("autocompleted");
+			}
+			
+			//country autocomplete
+		    $('input#country-input').autocomplete({
+		        data: countryAutocompleteItems
+		        , onAutocomplete: onCountryAutocompleteCallback
+			});
+			
+		    var countryAutocomplete =
+		    	M.Autocomplete.getInstance($('input#country-input'));
+			
+			$('input#country-input').keydown(function(e) { 
+					
+				// only user-triggered event
+				 if (e.originalEvent) {
+				 	
+					 $.ajax({
+					        url: "/country",
+					        type: "POST",
+					        data: {
+					            'action': 'autocomplete'
+					            , 'substring': $('input#country-input').val()
+					        },
+					        cache : false
+					    }).done(function(newAutocompleteItems) {
+					        
+					    	//console.log(newAutocompleteItems);
+					    	//console.log(JSON.parse(newAutocompleteItems));
+					    	//console.log(newAutocompleteItems.result);
+					    	//console.log(JSON.parse(newAutocompleteItems.result));
+					    	//countryAutocomplete.updateData(JSON.parse(newAutocompleteItems.result));
+					    	countryAutocomplete.updateData(JSON.parse(newAutocompleteItems.result));
+					});
+				 }
+				 else {
+				   // code-triggered event
+				 }
 			});
 
 			var preloaderHide = function() {
