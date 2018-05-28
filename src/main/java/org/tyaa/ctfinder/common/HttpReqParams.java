@@ -11,5 +11,6 @@ public class HttpReqParams {
 	public final static String id = "id";
 	
 	public final static String autocomplete = "autocomplete";
+	public final static String text = "text";
 	public final static String substring = "substring";
 }

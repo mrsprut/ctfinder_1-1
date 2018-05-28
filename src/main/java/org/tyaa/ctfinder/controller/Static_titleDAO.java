@@ -40,26 +40,28 @@ public class Static_titleDAO {
 		}
 	}
 	
-	/*public static void getStaticTitleByKeyAndSubstring(
-			String _key
-			, Static_title _Static_title
-			, String _substring) {
+	public static void getStaticTitleByContentAndLang(
+			String _content
+			, Long _langId
+			, Static_title _static_title
+			) {
 		
 		Static_title Static_title =
 				ofy().load()
 				.type(Static_title.class)
-				.filter("key", _key)
+				.filter("content", _content)
+				.filter("lang_id", _langId)
 				.first()
 				.now();
 		
 		if(Static_title != null) {
 			
-			_Static_title.setId(Static_title.getId());
-			_Static_title.setKey(Static_title.getKey());
-			_Static_title.setLang_id(Static_title.getLang_id());
-			_Static_title.setContent(Static_title.getContent());
+			_static_title.setId(Static_title.getId());
+			_static_title.setKey(Static_title.getKey());
+			_static_title.setLang_id(Static_title.getLang_id());
+			_static_title.setContent(Static_title.getContent());
 		}
-	}*/
+	}
 
 	public static void createStatic_title(Static_title _static_title) {
 
