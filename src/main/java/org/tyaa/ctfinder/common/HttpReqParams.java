@@ -13,4 +13,6 @@ public class HttpReqParams {
 	public final static String autocomplete = "autocomplete";
 	public final static String text = "text";
 	public final static String substring = "substring";
+	
+	public final static String country = "country";
 }

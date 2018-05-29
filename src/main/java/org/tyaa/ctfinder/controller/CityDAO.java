@@ -21,9 +21,19 @@ public class CityDAO {
 	}
 	
 	//Получение всех Countries в виде списка
-	public static void getAllCountries(List<City> _сityList) {
+	public static void getAllCities(List<City> _сityList) {
 			
 		_сityList.addAll(ofy().load().type(City.class).list());
+	}
+	
+	public static void getCitiesByCountryId(Long _countryId, List<City> _сityList) {
+		
+		_сityList.addAll(
+				ofy().load()
+				.type(City.class)
+				.filter("country_id", _countryId)
+				.list()
+			);
 	}
 	
 	public static void getCityByTitleKey(String _titleKey, City _city) {

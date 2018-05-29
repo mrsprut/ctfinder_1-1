@@ -21,6 +21,7 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.CityDAO;
 import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
@@ -46,6 +47,8 @@ public class CityServlet extends HttpServlet {
 		
 		ObjectifyService.register(Country.class);
 		ObjectifyService.register(City.class);
+		ObjectifyService.register(Static_title.class);
+		ObjectifyService.register(Language.class);
 	}
        
     /**
@@ -117,10 +120,10 @@ public class CityServlet extends HttpServlet {
 										, gson
 									);
 								
-								//Get static title by content and lang for some Country
+								//Get static title by content and lang for selected Country
 								Static_title selectedCountrySt = new Static_title();
 								objectifyRun3(
-										req.getParameter(HttpReqParams.text)
+										req.getParameter(HttpReqParams.country)
 										, englishLanguage.getId()
 										, selectedCountrySt
 										, Static_titleDAO::getStaticTitleByContentAndLang
@@ -128,23 +131,33 @@ public class CityServlet extends HttpServlet {
 										, gson
 									);
 								
-								List<Country> countryList = new ArrayList<>();
-								objectifyRun(
-										countryList
-										, CountryDAO::getAllCountries
+								//Get selected country
+								Country selectedCountry = new Country();
+								objectifyRun2(
+										selectedCountrySt.getKey()
+										, selectedCountry
+										, CountryDAO::getCountryByTitleKey
 										, out
 										, gson
 									);
-								//TODO get description by key n lang
-								List<String> countryNameList =
-									countryList.stream()
+								
+								List<City> countryCitiesList = new ArrayList<>();
+								objectifyRun2(
+										selectedCountry.getId()
+										, countryCitiesList
+										, CityDAO::getCitiesByCountryId
+										, out
+										, gson
+									);
+								//TODO get city titles by key n lang
+								List<String> countryCitiesNameList =
+										countryCitiesList.stream()
 										.map(
 											c -> {
 												Static_title st = new Static_title();
 												objectifyRun2(
-													((Country)c).getTitle_key()
+													((City)c).getTitle_key()
 													, st
-													//, req.getParameter(HttpReqParams.autocomplete)
 													, Static_titleDAO::getStaticTitleByKey
 													, out
 													, gson
@@ -162,7 +175,7 @@ public class CityServlet extends HttpServlet {
 										)
 										.collect(Collectors.toList());
 								
-		                    	RespData result = new RespData(countryNameList);
+		                    	RespData result = new RespData(countryCitiesNameList);
 		                        String resultJsonString = gson.toJson(result);
 		                        out.print(resultJsonString);
 	                        	break;

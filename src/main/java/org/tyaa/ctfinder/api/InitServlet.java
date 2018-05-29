@@ -182,7 +182,7 @@ public class InitServlet extends HttpServlet {
 			//Создаем в БД записи для описаний типов предложений
 			
 			//Получаем из БД объект английского языка
-			Language englishLanguage = new Language();
+			/*Language englishLanguage = new Language();
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
@@ -193,7 +193,7 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});
+			});*/
 			
 			/*Static_description volunteerAssistanceEnSd = new Static_description();
 			//TODO key generator
@@ -393,7 +393,7 @@ public class InitServlet extends HttpServlet {
 				);
 			
 			City moscowCity =
-					new City(ukraineCountry.getId(), moscowCitySt.getKey());
+					new City(russiaCountry.getId(), moscowCitySt.getKey());
 			objectifyRun(
 					moscowCity
 					, CityDAO::createCity
@@ -414,7 +414,7 @@ public class InitServlet extends HttpServlet {
 				);
 			
 			City petersburgCity =
-					new City(ukraineCountry.getId(), petersburgCitySt.getKey());
+					new City(russiaCountry.getId(), petersburgCitySt.getKey());
 			objectifyRun(
 					petersburgCity
 					, CityDAO::createCity

@@ -137,13 +137,13 @@
       },
     });*/
 
-    $('input#city-input').autocomplete({
+    /*$('input#city-input').autocomplete({
       data: {
         "Киев": null,
         "Львов": null,
         "Мариуполь": null
       },
-    });
+    });*/
 	
 	app.handler(function() {
 
@@ -154,6 +154,7 @@
 		return function(params) {
 
 			var countryAutocompleteItems = {};
+			var cityAutocompleteItems = {};
 			
 			$.ajax({
 				type: 'POST',
@@ -198,7 +199,12 @@
 		            //помещаем на веб-страницу
 		            $('#events-container').html(data);
 		        });*/
-				console.log("autocompleted");
+				console.log("country autocompleted");
+			}
+			
+			var onCityAutocompleteCallback = function(){
+
+				console.log("city autocompleted");
 			}
 			
 			//country autocomplete
@@ -214,7 +220,7 @@
 					
 				// only user-triggered event
 				 if (e.originalEvent) {
-				 	
+					 $('input#city-input').val("");
 					 $.ajax({
 					        url: "/country",
 					        type: "POST",
@@ -231,12 +237,63 @@
 					  		  		return acc;
 					  			}, {});
 					    	countryAutocomplete.updateData(newAutocompleteItemsObj);
-					    	//countryAutocomplete.open();
+					    	//
 					    	console.log(countryAutocomplete);
+					    	countryAutocomplete.open();
+					    	//$('input#country-input').keydown();
+					    	/*if(typeof countryAutocomplete.open === 'function') {
+					    		
+					    		countryAutocomplete.open();
+					    	}*/
 					});
 				 }
 				 else {
 				   // code-triggered event
+					 //$('input#country-input').keyup();
+				 }
+			});
+			
+			//city autocomplete
+		    $('input#city-input').autocomplete({
+		        data: cityAutocompleteItems
+		        , onAutocomplete: onCityAutocompleteCallback
+			});
+			
+		    var cityAutocomplete =
+		    	M.Autocomplete.getInstance($('input#city-input'));
+			
+			$('input#city-input').keydown(function(e) { 
+					
+				// only user-triggered event
+				 if (e.originalEvent) {
+				 	
+					 $.ajax({
+					        url: "/city",
+					        type: "POST",
+					        data: {
+					            'action': 'autocomplete'
+				            	, 'country': $('input#country-input').val()
+					            , 'substring': $('input#city-input').val()
+					        },
+					        cache : false
+					    }).done(function(newAutocompleteItems) {
+					    	
+					    	var newAutocompleteItemsObj =
+					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
+					  		  		acc[cur] = null;
+					  		  		return acc;
+					  			}, {});
+					    	cityAutocomplete.updateData(newAutocompleteItemsObj);
+					    	console.log(cityAutocomplete);
+							
+					    	cityAutocomplete.open();
+					    	
+					    	//$('input#city-input').keydown();
+					});
+				 }
+				 else {
+				   // code-triggered event
+					 //$('input#city-input').keyup();
 				 }
 			});
 

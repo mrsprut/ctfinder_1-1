@@ -41,7 +41,7 @@ public class CoutryServlet extends HttpServlet {
 	static {
 		
 		ObjectifyService.register(Country.class);
-		//ObjectifyService.register(City.class);
+		ObjectifyService.register(Static_title.class);
 	}
        
     /**
