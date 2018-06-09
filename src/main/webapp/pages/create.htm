@@ -4,7 +4,7 @@
 			<h5>Создать</h5>
 			<div class="card">
 				<div class="card-content">
-					<form>
+					<form id="create-offer-form">
 	                    <label for="title">title:</label>
 	                    <input type="text" name="title" id="title">
 	                    <label for="content">content:</label>
@@ -15,7 +15,15 @@
 			                	<option disabled="" selected="" value="">Offer type</option>
 			                </select>
 						</div>
-	                    <button id="submit-button2" class="btn waves-effect waves-light" type="submit" name="action">Submit
+						<div class="input-field">
+							<input type="text" id="country-input" class="autocomplete">
+							<label for="country-input">Страна</label>
+						</div>
+						<div class="input-field">
+							<input type="text" id="city-input" class="autocomplete">
+							<label for="city-input">Город</label>
+						</div>
+	                    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
 	                        <i class="material-icons right">send</i>
 	                    </button>
 					</form>
@@ -75,6 +83,41 @@
 		//console.log('container ' + $container);
 
 		return function(params) {
+			
+			var countryAutocompleteItems = {};
+			var cityAutocompleteItems = {};
+			
+			//Блокируем кнопк, пока не будет
+			//$("form#create-offer-form button").attr('disabled', '');
+			
+			$('form#create-offer-form').validate({
+		        rules: {
+		        	title: {
+		                required: true
+		            },
+		            content: {
+		            	required: true
+		            }
+		        }
+		    });
+			
+			var isFormValid = function(){
+				
+				if ($('form#create-offer-form').valid()) {
+		        	
+		            $('form#create-offer-form button').prop('disabled', false);
+		        } else {
+		        	
+		            $('form#create-offer-form button').prop('disabled', 'disabled');
+		        }
+			}
+			
+			isFormValid();
+		
+		    $('form#create-offer-form input').on('keyup blur', function () {
+		    	
+		    	isFormValid();
+		    });
 
 			$.ajax({
 				type: 'POST',
@@ -104,35 +147,101 @@
 				console.log(textStatus);
 			});
 			
-			/*$.ajax({
-				type: 'POST',
-				url: '/prostogae?action=get-data-by-section&section=home',
-				//contentType: 'text/plain',
-				cache: false
-			}).done(function(responseText, textStatus, jqXHR) {
-				  //if got code 200
-				  if(responseText !== '' && responseText !== 'error'){
-					  
-						//
-						console.log(responseText.content);
-						//$('section#copyright p#p-content').text(responseText.content);
+			var onCountryAutocompleteCallback = function(){
 
-					  	var template = Hogan.compile("<p>{{content}}</p>");
-						//var output = template.render(responseText);
-						//var $container = $(this).find("section#copyright #page-container");
-					  	$container.html(template.render(responseText));
-				  } else {
-					  
-				  //
-				  }
-				  //stopLoadingAnimation();
-				  $(".loader").css("display", "none");
-			}).fail(function(jqXHR, textStatus, errorThrown) {
-				  
-				//if got code 404 or 500, etc.
-				//stopLoadingAnimation();
-				$(".loader").css("display", "none");
-			});*/
+				console.log("country autocompleted");
+			}
+			
+			var onCityAutocompleteCallback = function(){
+
+				console.log("city autocompleted");
+			}
+			
+			//country autocomplete
+		    $('form#create-offer-form input#country-input').autocomplete({
+		        data: countryAutocompleteItems
+		        , onAutocomplete: onCountryAutocompleteCallback
+			});
+			
+			//get created Autocomplete Instance from country-input
+		    var countryAutocomplete =
+		    	M.Autocomplete.getInstance($('form#create-offer-form input#country-input'));
+			
+			//handler for country-input keydown event
+		    $('form#create-offer-form input#country-input').keydown(function(e) { 
+				
+				// only user-triggered event
+				 if (e.originalEvent) {
+					 
+					 //clear city-input
+					 $('form#create-offer-form input#city-input').val("");
+					 //request data for country's Autocomplete
+					 $.ajax({
+					        url: "/country",
+					        type: "POST",
+					        data: {
+					            'action': 'autocomplete'
+					            , 'substring': $('form#create-offer-form input#country-input').val()
+					        },
+					        cache : false
+					    }).done(function(newAutocompleteItems) {
+					    	
+					    	var newAutocompleteItemsObj =
+					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
+					  		  		acc[cur] = null;
+					  		  		return acc;
+					  			}, {});
+					    	countryAutocomplete.updateData(newAutocompleteItemsObj);
+					    	//
+					    	//console.log(countryAutocomplete);
+					    	countryAutocomplete.open();
+					});
+				 }
+				 else {
+				   // code-triggered event
+				 }
+			});
+			
+		  	//city autocomplete
+		    $('form#create-offer-form input#city-input').autocomplete({
+		        data: cityAutocompleteItems
+		        , onAutocomplete: onCityAutocompleteCallback
+			});
+			
+		    var cityAutocomplete =
+		    	M.Autocomplete.getInstance($('form#create-offer-form input#city-input'));
+			
+			$('form#create-offer-form input#city-input').keydown(function(e) { 
+					
+				// only user-triggered event
+				 if (e.originalEvent) {
+				 	
+					 $.ajax({
+					        url: "/city",
+					        type: "POST",
+					        data: {
+					            'action': 'autocomplete'
+				            	, 'country': $('form#create-offer-form input#country-input').val()
+					            , 'substring': $('form#create-offer-form input#city-input').val()
+					        },
+					        cache : false
+					    }).done(function(newAutocompleteItems) {
+					    	
+					    	var newAutocompleteItemsObj =
+					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
+					  		  		acc[cur] = null;
+					  		  		return acc;
+					  			}, {});
+					    	cityAutocomplete.updateData(newAutocompleteItemsObj);
+					    	//console.log(cityAutocomplete);
+							
+					    	cityAutocomplete.open();
+					});
+				 }
+				 else {
+				   // code-triggered event
+				 }
+			});
 
 			var preloaderHide = function() {
 
