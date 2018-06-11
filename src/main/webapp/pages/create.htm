@@ -23,6 +23,27 @@
 							<input type="text" id="city-input" class="autocomplete">
 							<label for="city-input">Город</label>
 						</div>
+						<div class="input-field">
+							<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="&infin;">
+							<label for="c-count-input">Вакантных мест</label>
+						</div>
+						<div class="input-field">
+                      		<input type="text" id="start-date-input" class="datepicker">
+                      		<label for="start-date-input">Дата желаемого старта</label>
+						</div>
+						<div class="input-field">
+                      		<input type="text" id="finish-date-input" class="datepicker">
+                      		<label for="finish-date-input">Дата желаемого окончания</label>
+						</div>
+						<div class="file-field input-field">
+					      <div class="btn">
+					        <span>Изображение</span>
+					        <input type="file" id="image-input">
+					      </div>
+					      <div class="file-path-wrapper">
+					        <input class="file-path validate" type="text">
+					      </div>
+					    </div>
 	                    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
 	                        <i class="material-icons right">send</i>
 	                    </button>
@@ -76,6 +97,38 @@
 	</div>
 </div>
 <script type="text/javascript">
+
+	//Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
+	Date.prototype.toDateInputValue = (function() {
+	    var local = new Date(this);
+	    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+	    return local.toJSON().slice(0,10);
+	});
+	
+	//Устанавливаем в элемент ввода Дата (Календарь) текущую дату,
+    //вызывая на ней предварительно нашу корректирующую функцию
+	$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
+		.val(new Date().toDateInputValue());
+	
+	//Задаем календарю окно допустимых дат - от текущей включительно -> infinity
+    var minDate = new Date();
+    $('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
+	    .attr({
+	       "min" : minDate.toDateInputValue(),
+		});
+    
+    //console.log($('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input'));
+  	//активация выбора даты
+    $('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input').datepicker({
+	    	'format':'dd-mm-yyyy'
+	    	//, 'defaultDate':formatDate(new Date().toDateInputValue())
+	    	, 'setDefaultDate':true
+	    	, 'autoClose':true
+		});
+    
+  	//Блокируем кнопк, пока не будет
+    $('form#create-offer-form button').prop('disabled', 'disabled');
+
 	app.handler(function() {
 
 		//console.log('this ' + $(this));
@@ -241,6 +294,46 @@
 				 else {
 				   // code-triggered event
 				 }
+			});
+			
+			var imageBase64 = "";
+			//console.log($('form#create-offer-form input#image-input'));
+			$('form#create-offer-form input#image-input').change(function(ev){
+				
+				  //console.log($('form#create-offer-form input#image-input'));
+				  var file = ev.target.files[0];
+				  var reader = new FileReader();
+				  reader.onloadend = function() {
+		                        
+		                        /*$.ajax({
+		                            url: "/TestImgWebApp/image",
+		                            type:'POST',
+		                            data: {
+		                                'image':reader.result
+		                            }
+		                          }).done(function(resp) {
+		                              console.log(resp);
+		                              $('img').attr('src',resp);
+		                          });*/
+		                        console.log('RESULT', reader.result);
+		                        imageBase64 = reader.result;
+				  }
+				  reader.readAsDataURL(file);
+			});
+			
+			$('form#create-offer-form button').click(function(ev){
+				
+				ev.preventDefault();
+				//console.log($('form#create-offer-form c-count-input').val());
+				var data = $('form#create-offer-form').serializeArray();
+				data.push({name: 'offer-type', value: $('form#create-offer-form #offer-type-select select option:selected').val()});
+				data.push({name: 'country', value: $('form#create-offer-form input#country-input').val()});
+				data.push({name: 'city', value: $('form#create-offer-form input#city-input').val()});
+				data.push({name: 'c-count', value: $('form#create-offer-form input#c-count-input').val()});
+				data.push({name: 'start-date', value: $('form#create-offer-form input#start-date-input').val()});
+				data.push({name: 'finish-date', value: $('form#create-offer-form input#finish-date-input').val()});
+				data.push({name: 'image', value: imageBase64});
+				console.log(data);
 			});
 
 			var preloaderHide = function() {
