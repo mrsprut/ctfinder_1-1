@@ -1,5 +1,8 @@
 package org.tyaa.ctfinder.api.publ;
 
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -18,8 +21,16 @@ import javax.servlet.http.HttpSession;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
+import org.tyaa.ctfinder.common.KeyGen;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.LanguageDAO;
+import org.tyaa.ctfinder.controller.StateDAO;
+import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.entity.Description;
+import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer;
+import org.tyaa.ctfinder.entity.State;
+import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.model.RespData;
 
@@ -33,12 +44,18 @@ import com.googlecode.objectify.ObjectifyService;
  */
 @WebServlet("/offer")
 public class OfferServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
+	private static final Integer unbounded = -1;
 	
 	static {
 		
+		ObjectifyService.register(Language.class);
+		ObjectifyService.register(Title.class);
+		ObjectifyService.register(Description.class);
 		ObjectifyService.register(Offer.class);
-		//ObjectifyService.register(User.class);
+		ObjectifyService.register(User.class);
+		ObjectifyService.register(State.class);
 	}	
        
     /**
@@ -83,30 +100,82 @@ public class OfferServlet extends HttpServlet {
 						
 							case HttpReqParams.create : {
 								
-								//TODO set locale
+								//
 								DateFormat format =
-									new SimpleDateFormat("dd.mm.yyyy", Locale.ENGLISH);
+									new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH);
+								
+								//Получаем из БД объект английского языка
+								Language englishLanguage = new Language();
+								objectifyRun2(
+										"en"
+										, englishLanguage
+										, LanguageDAO::getLangByCode
+										, out
+										, gson);
+								//
+								String title =
+										req.getParameter("title");
+								Title newOfferTitle =
+									new Title(
+											KeyGen.text2KeyText(title) + "_offer_title"
+											, englishLanguage.getId()
+											, title);
+								
+								String description =
+										req.getParameter("content");
+								Description newOfferDescription =
+									new Description(
+											KeyGen.text2KeyText(description) + "_offer_description"
+											, englishLanguage.getId()
+											, description);
+								
+								State createdState = new State();
+								objectifyRun2(
+										"created_state_static_title"
+										, createdState
+										, StateDAO::getStateByTitleKey
+										, out
+										, gson
+									);
 								
 								Offer offer =
 									new Offer(
+											//offer type id
 											Long.getLong(req.getParameter("offer_type_id"))
-											//TODO get state id from db
-											, Long.getLong(req.getParameter("state_id"))
-											//TODO generate
-											, "title_key"
-											, "description_key"
+											//created state id from db
+											, createdState.getId()
+											//offer title
+											, newOfferTitle.getKey()
+											//offer description
+											, newOfferDescription.getKey()
+											//current user id
 											, (Long)session.getAttribute(SessionAttributes.userId)
+											//country_id
 											, Long.getLong(req.getParameter("country_id"))
+											//city_id
 											, Long.getLong(req.getParameter("city_id"))
-											, Integer.getInteger(req.getParameter("collaborators_count"))
-											//TODO base64 to blob
+											//count of collaborators
+											, (req.getParameter("collaborators_count") != "")
+												? Integer.getInteger(req.getParameter("collaborators_count"))
+												: OfferServlet.unbounded
+											// image base64 string to blob
 											, new Blob(req.getParameter("image").getBytes())
-											, format.parse(req.getParameter("start_date"))
-											, format.parse(req.getParameter("finish_date"))
-											, format.parse(req.getParameter("started_at"))
-											, format.parse(req.getParameter("completed_at"))
-											, format.parse(req.getParameter("created_at"))
-											, format.parse(req.getParameter("updated_at"))
+											//desired start date
+											, (req.getParameter("start_date") != "")
+												? format.parse(req.getParameter("start_date"))
+												: null
+											//desired finish date
+											, (req.getParameter("finish_date") != "")
+												? format.parse(req.getParameter("finish_date"))
+												: null
+											//started_at = null
+											, null
+											//completed_at = null
+											, null
+											//created_at = now date
+											, new Date()
+											//updated_at = now date
+											, new Date()
 										);
 								
 								ArrayList<String> al = new ArrayList<>();

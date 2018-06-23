@@ -163,3 +163,26 @@ div#g-signin2 {
   display: flex;
   flex-wrap: wrap;
 }
+
+/* validator */
+
+/*select[required] {
+  opacity: 0;
+  display: block;
+  position: absolute;
+  height: 0;
+  border: none;
+  margin-top: -50px;
+}*/
+
+label {
+    width: 100%;
+}
+.input-field label {
+    font-size: 0.8rem;
+    -webkit-transform: translateY(-140%);
+    -moz-transform: translateY(-140%);
+    -ms-transform: translateY(-140%);
+    -o-transform: translateY(-140%);
+    transform: translateY(-140%);
+}

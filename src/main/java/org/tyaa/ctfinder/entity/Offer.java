@@ -75,9 +75,23 @@ public class Offer {
 		super();
 	}
 
-	public Offer(Long offer_type_id, Long state_id, String title_key, String description_key, Long user_id,
-			Long country_id, Long city_id, Integer collaborators_count, Blob image, Date start_date, Date finish_date,
-			Date started_at, Date completed_at, Date created_at, Date updated_at) {
+	public Offer(
+			Long offer_type_id
+			, Long state_id
+			, String title_key
+			, String description_key
+			, Long user_id
+			, Long country_id
+			, Long city_id
+			, Integer collaborators_count
+			, Blob image
+			, Date start_date
+			, Date finish_date
+			, Date started_at
+			, Date completed_at
+			, Date created_at
+			, Date updated_at
+		) {
 		super();
 		this.offer_type_id = offer_type_id;
 		this.state_id = state_id;

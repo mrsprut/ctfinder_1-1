@@ -4,19 +4,36 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.List;
 
+import org.tyaa.ctfinder.entity.City;
 import org.tyaa.ctfinder.entity.State;
 
 public class StateDAO {
 	
-	public static void getState(String _id, State _State) {
+	public static void getState(String _id, State _state) {
 		
-		State State =
+		State state =
 				ofy().load().type(State.class).id(Long.valueOf(_id)).now();
 		
-		if(State != null) {
+		if(state != null) {
 			
-			_State.setId(State.getId());
-			_State.setTitle_key(State.getTitle_key());
+			_state.setId(state.getId());
+			_state.setTitle_key(state.getTitle_key());
+		}
+	}
+	
+	public static void getStateByTitleKey(String _titleKey, State _state) {
+		
+		State state =
+				ofy().load()
+				.type(State.class)
+				.filter("title_key", _titleKey)
+				.first()
+				.now();
+		
+		if(state != null) {
+			
+			_state.setId(state.getId());
+			_state.setTitle_key(state.getTitle_key());
 		}
 	}
 	

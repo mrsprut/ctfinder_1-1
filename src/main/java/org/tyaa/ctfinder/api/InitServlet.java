@@ -18,14 +18,17 @@ import org.tyaa.ctfinder.controller.CityDAO;
 import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Offer_typeDAO;
+import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
 import org.tyaa.ctfinder.entity.City;
 import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer_type;
+import org.tyaa.ctfinder.entity.State;
 import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.Static_title;
+import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User_type;
 
 import com.google.gson.Gson;
@@ -51,7 +54,8 @@ public class InitServlet extends HttpServlet {
 		ObjectifyService.register(Offer_type.class);
 		ObjectifyService.register(Country.class);
 		ObjectifyService.register(City.class);
-		ObjectifyService.register(Static_title.class);
+		ObjectifyService.register(Title.class);
+		ObjectifyService.register(State.class);
 	}
 	
 	/**
@@ -182,7 +186,7 @@ public class InitServlet extends HttpServlet {
 			//Создаем в БД записи для описаний типов предложений
 			
 			//Получаем из БД объект английского языка
-			/*Language englishLanguage = new Language();
+			Language englishLanguage = new Language();
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
@@ -193,7 +197,7 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});*/
+			});
 			
 			/*Static_description volunteerAssistanceEnSd = new Static_description();
 			//TODO key generator
@@ -421,6 +425,117 @@ public class InitServlet extends HttpServlet {
 					, out
 					, gson
 				);*/
+			
+			
+			/* Migration 5 */
+			
+			/*//Create state options
+			
+			//created
+			Static_title createdStateSt =
+					new Static_title(
+							"created_state_static_title"
+							, englishLanguage.getId()
+							, "created");		
+			objectifyRun(
+					createdStateSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			State createdState = new State(createdStateSt.getKey());
+			objectifyRun(
+					createdState
+					, StateDAO::createState
+					, out
+					, gson
+				);
+			
+			//in progress
+			Static_title inProgressStateSt =
+					new Static_title(
+							"in_progress_state_static_title"
+							, englishLanguage.getId()
+							, "in_progress");		
+			objectifyRun(
+					inProgressStateSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			State inProgressState = new State(inProgressStateSt.getKey());
+			objectifyRun(
+					inProgressState
+					, StateDAO::createState
+					, out
+					, gson
+				);
+			
+			//suspended
+			Static_title suspendedStateSt =
+					new Static_title(
+							"suspended_state_static_title"
+							, englishLanguage.getId()
+							, "suspended");		
+			objectifyRun(
+					suspendedStateSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			State suspendedState = new State(suspendedStateSt.getKey());
+			objectifyRun(
+					suspendedState
+					, StateDAO::createState
+					, out
+					, gson
+				);
+			
+			//cancelled
+			Static_title cancelledStateSt =
+					new Static_title(
+							"cancelled_state_static_title"
+							, englishLanguage.getId()
+							, "cancelled");		
+			objectifyRun(
+					cancelledStateSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			State cancelledState = new State(cancelledStateSt.getKey());
+			objectifyRun(
+					cancelledState
+					, StateDAO::createState
+					, out
+					, gson
+				);
+			
+			//fulfilled
+			Static_title fulfilledStateSt =
+					new Static_title(
+							"fulfilled_state_static_title"
+							, englishLanguage.getId()
+							, "fulfilled");		
+			objectifyRun(
+					fulfilledStateSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			State fulfilledState = new State(fulfilledStateSt.getKey());
+			objectifyRun(
+					fulfilledState
+					, StateDAO::createState
+					, out
+					, gson
+				);*/
+			
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();

@@ -6,13 +6,21 @@ import com.googlecode.objectify.annotation.Index;
 
 @Entity
 public class State {
+	
 	@Id
 	private Long id;
 	@Index
 	private String title_key;
-
-	// private Long offer_type_id;
-	//public State(Long id, String title_key, Long offer_type_id) {
+	
+	public State() {
+		super();
+	}
+	
+	public State(String title_key) {
+		super();
+		this.title_key = title_key;
+	}
+	
 	public State(Long id, String title_key) {
 		super();
 		this.id = id;

@@ -5,14 +5,18 @@
 			<div class="card">
 				<div class="card-content">
 					<form id="create-offer-form">
-	                    <label for="title">title:</label>
-	                    <input type="text" name="title" id="title">
-	                    <label for="content">content:</label>
-	                    <input type="text" name="content" id="content">
+						<div class="input-field">
+		                    <input type="text" name="title" id="title">
+		                    <label for="title">title:</label>
+	                    </div>
+	                    <div class="input-field">
+		                    <label for="content">content:</label>
+		                    <textarea name="content" id="content" class="materialize-textarea"></textarea>
+	                    </div>
 	                    <!-- Сюда при помощи jquery помещается шаблон, заполненный offer types -->
                         <div id="offer-type-select" class="input-field">
-                        	<select disabled>
-			                	<option disabled="" selected="" value="">Offer type</option>
+                        	<select id="offertypeselector" name="offertypeselector" required="required" class="validate">
+			                	<option disabled selected="selected" value="">Тип задания</option>
 			                </select>
 						</div>
 						<div class="input-field">
@@ -23,17 +27,28 @@
 							<input type="text" id="city-input" class="autocomplete">
 							<label for="city-input">Город</label>
 						</div>
+						<br>
 						<div class="input-field">
-							<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="&infin;">
+							<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
 							<label for="c-count-input">Вакантных мест</label>
 						</div>
-						<div class="input-field">
-                      		<input type="text" id="start-date-input" class="datepicker">
-                      		<label for="start-date-input">Дата желаемого старта</label>
+						<div class="row">
+							<div class="input-field col s9">
+	                      		<input type="text" id="start-date-input" class="datepicker">
+	                      		<label for="start-date-input">Желаемая дата старта</label>
+                      		</div>
+                      		<div class="input-field col s3">
+                      			<input type="button" class="waves-effect waves-light btn" id="remove-start-date" value="X">
+							</div>
 						</div>
-						<div class="input-field">
-                      		<input type="text" id="finish-date-input" class="datepicker">
-                      		<label for="finish-date-input">Дата желаемого окончания</label>
+						<div class="row">
+							<div class="input-field col s9">
+	                      		<input type="text" id="finish-date-input" class="datepicker">
+	                      		<label for="finish-date-input">Желаемая дата окончания</label>
+	                   		</div>
+	                   		<div class="input-field col s3">
+						        <input type="button" class="waves-effect waves-light btn" id="remove-finish-date" value="X">
+		                    </div>
 						</div>
 						<div class="file-field input-field">
 					      <div class="btn">
@@ -125,6 +140,18 @@
 	    	, 'setDefaultDate':true
 	    	, 'autoClose':true
 		});
+  	
+    $('form#create-offer-form input#remove-start-date').click(function(ev){
+		
+		ev.preventDefault();
+		$('form#create-offer-form input#start-date-input').val("");
+    });
+    
+	$('form#create-offer-form input#remove-finish-date').click(function(ev){
+		
+		ev.preventDefault();
+		$('form#create-offer-form input#finish-date-input').val("");
+    });
     
   	//Блокируем кнопк, пока не будет
     $('form#create-offer-form button').prop('disabled', 'disabled');
@@ -141,7 +168,44 @@
 			var cityAutocompleteItems = {};
 			
 			//Блокируем кнопк, пока не будет
-			//$("form#create-offer-form button").attr('disabled', '');
+			$("form#create-offer-form button").attr('disabled', '');
+			
+			$.validator.setDefaults(
+					{
+						ignore: [],
+						errorClass: 'invalid',
+					    validClass: "valid",
+					    errorPlacement: function (error, element) {
+					        $(element)
+					            .closest("form")
+					            .find("label[for='" + element.attr("id") + "']")
+					            .attr('data-error', error.text());
+					    },
+					    submitHandler: function (form) {
+					        console.log('form ok');
+					    }
+					}
+				);
+			
+			/*if($('form#create-offer-form #offer-type-select select option:selected').val() == ""){
+				
+				$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
+				$('form#create-offer-form button').prop('disabled', 'disabled');
+				console.log('setCustomValidity -');
+			} else {
+				
+				$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
+				$('form#create-offer-form button').prop('disabled', false);
+				console.log('setCustomValidity +');
+			}*/
+			
+			/*$('form#create-offer-form #offer-type-select select').change(function(){
+				
+				//$('form#create-offer-form #offer-type-select select').valid();
+				$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
+				$('form#create-offer-form button').prop('disabled', false);
+				console.log('changed');
+			});*/
 			
 			$('form#create-offer-form').validate({
 		        rules: {
@@ -150,7 +214,19 @@
 		            },
 		            content: {
 		            	required: true
+		            },
+		            "country-input": {
+		                required: true
+		            },
+		            "city-input": {
+		            	required: true
 		            }
+		        },
+		        messages: {
+		        	title: "Заголовок не заполнен",
+		        	content: "Описание не заполнено",
+		        	"country-input": "Страна не выбрана",
+		        	"city-input": "Город не выбран"
 		        }
 		    });
 			
@@ -163,12 +239,32 @@
 		        	
 		            $('form#create-offer-form button').prop('disabled', 'disabled');
 		        }
+				
+				if($('form#create-offer-form #offer-type-select select option:selected').val() == ""){
+					
+					$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
+					$('form#create-offer-form button').prop('disabled', 'disabled');
+					console.log('setCustomValidity -');
+				} else {
+					
+					$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
+					$('form#create-offer-form button').prop('disabled', false);
+					console.log('setCustomValidity +');
+				}
 			}
 			
 			isFormValid();
 		
 		    $('form#create-offer-form input').on('keyup blur', function () {
 		    	
+		    	isFormValid();
+		    });
+		    
+		    $(document).on(
+		    		'change'
+		    		, 'form#create-offer-form #offer-type-select select'
+		    		, function() {
+		        
 		    	isFormValid();
 		    });
 
@@ -315,7 +411,7 @@
 		                              console.log(resp);
 		                              $('img').attr('src',resp);
 		                          });*/
-		                        console.log('RESULT', reader.result);
+		                        //console.log('RESULT', reader.result);
 		                        imageBase64 = reader.result;
 				  }
 				  reader.readAsDataURL(file);
@@ -326,7 +422,9 @@
 				ev.preventDefault();
 				//console.log($('form#create-offer-form c-count-input').val());
 				var data = $('form#create-offer-form').serializeArray();
-				data.push({name: 'offer-type', value: $('form#create-offer-form #offer-type-select select option:selected').val()});
+				
+				data.push({name: 'action', value: 'create'});
+				data.push({name: 'offer_type_id', value: $('form#create-offer-form #offer-type-select select option:selected').val()});
 				data.push({name: 'country', value: $('form#create-offer-form input#country-input').val()});
 				data.push({name: 'city', value: $('form#create-offer-form input#city-input').val()});
 				data.push({name: 'c-count', value: $('form#create-offer-form input#c-count-input').val()});
@@ -334,6 +432,19 @@
 				data.push({name: 'finish-date', value: $('form#create-offer-form input#finish-date-input').val()});
 				data.push({name: 'image', value: imageBase64});
 				console.log(data);
+				
+				$.ajax({
+			        url: "/offer",
+			        type: "POST",
+			        data: data,
+			        cache : false
+			    }).done(function(resp) {
+			    	
+			    	console.log(resp);
+			    	if(resp.error != ""){
+			    		alert("Ошибка добавления задания");
+			    	}
+				});
 			});
 
 			var preloaderHide = function() {
