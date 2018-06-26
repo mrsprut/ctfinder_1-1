@@ -62,10 +62,16 @@ $('#signout-li').click(signOut);
 
 function signOut() {
 	
+	preloaderOn();
     var auth2 = gapi.auth2.getAuthInstance();
     
     auth2.signOut().then(function () {
     	
-      
+    	preloaderOff();
     });
-  }
+}
+
+$('div#g-signin2').click(function(){
+	
+	preloaderOn();
+});

@@ -7,25 +7,26 @@
   // show the "page" with optional parameter
   function show(pageName,param) {
 
-    $(".preloader-wrapper").css("display", "block");
-    //console.log($(".loader"));
-    // invoke page handler
-    var ph = pageHandlers[pageName]; 
+	  //$(".preloader-wrapper").css("display", "block");
+	  preloaderOn();
     
-    // activate the page  
-    $("nav a.active").removeClass("active");
-    $("nav a[href='#"+pageName+"']").addClass("active");
-    //TODO hide only old section
-    $(document.body).attr("page",pageName)
-                    .find("section").fadeOut(1000).removeClass("active")
-                    .filter("section#" + pageName).fadeIn(1000).addClass("active");
-    //$(document.body).find("section#" + pageName).fadeIn(1000).addClass("active");
-    //console.log($(document.body).find("section#" + pageName));
-    
-    if( ph ) { 
-        var $page = $("section#" + pageName);
-        ph.call( $page.length ? $page[0] : null,param ); // call "page" handler
-      }
+	    // invoke page handler
+	    var ph = pageHandlers[pageName]; 
+	    
+	    // activate the page  
+	    $("nav a.active").removeClass("active");
+	    $("nav a[href='#"+pageName+"']").addClass("active");
+	    //TODO hide only old section
+	    $(document.body).attr("page",pageName)
+	                    .find("section").fadeOut(1000).removeClass("active")
+	                    .filter("section#" + pageName).fadeIn(1000).addClass("active");
+	    //$(document.body).find("section#" + pageName).fadeIn(1000).addClass("active");
+	    //console.log($(document.body).find("section#" + pageName));
+	    
+	    if( ph ) { 
+	        var $page = $("section#" + pageName);
+	        ph.call( $page.length ? $page[0] : null,param ); // call "page" handler
+	    }
   }  
 
   function app(pageName,param) {

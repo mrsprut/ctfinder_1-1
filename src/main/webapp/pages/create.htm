@@ -19,6 +19,7 @@
 			                	<option disabled selected="selected" value="">Тип задания</option>
 			                </select>
 						</div>
+						<br>
 						<div class="input-field">
 							<input type="text" id="country-input" class="autocomplete">
 							<label for="country-input">Страна</label>
@@ -27,7 +28,6 @@
 							<input type="text" id="city-input" class="autocomplete">
 							<label for="city-input">Город</label>
 						</div>
-						<br>
 						<div class="input-field">
 							<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
 							<label for="c-count-input">Вакантных мест</label>
@@ -214,19 +214,11 @@
 		            },
 		            content: {
 		            	required: true
-		            },
-		            "country-input": {
-		                required: true
-		            },
-		            "city-input": {
-		            	required: true
 		            }
 		        },
 		        messages: {
 		        	title: "Заголовок не заполнен",
-		        	content: "Описание не заполнено",
-		        	"country-input": "Страна не выбрана",
-		        	"city-input": "Город не выбран"
+		        	content: "Описание не заполнено"
 		        }
 		    });
 			
@@ -244,12 +236,12 @@
 					
 					$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
 					$('form#create-offer-form button').prop('disabled', 'disabled');
-					console.log('setCustomValidity -');
+					//console.log('setCustomValidity -');
 				} else {
 					
 					$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
 					$('form#create-offer-form button').prop('disabled', false);
-					console.log('setCustomValidity +');
+					//console.log('setCustomValidity +');
 				}
 			}
 			
@@ -275,7 +267,7 @@
 				cache: false
 			}).done(function(responseText, textStatus, jqXHR) {
 				  
-				console.log(responseText);
+				//console.log(responseText);
 				//Готовим шаблон списка при помощи библиотеки Hogan
 	            var template = Hogan.compile(
             		'<select>'
@@ -293,7 +285,8 @@
 				
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
-				console.log(textStatus);
+				//console.log(textStatus);
+				alert("Ошибка получения списка типов заданий: " + jqXHR);
 			});
 			
 			var onCountryAutocompleteCallback = function(){
@@ -360,6 +353,7 @@
 		    var cityAutocomplete =
 		    	M.Autocomplete.getInstance($('form#create-offer-form input#city-input'));
 			
+		    $('form#create-offer-form input#city-input').unbind("keydown");
 			$('form#create-offer-form input#city-input').keydown(function(e) { 
 					
 				// only user-triggered event
@@ -393,7 +387,7 @@
 			});
 			
 			var imageBase64 = "";
-			//console.log($('form#create-offer-form input#image-input'));
+			$('form#create-offer-form input#image-input').unbind("change");
 			$('form#create-offer-form input#image-input').change(function(ev){
 				
 				  //console.log($('form#create-offer-form input#image-input'));
@@ -417,6 +411,7 @@
 				  reader.readAsDataURL(file);
 			});
 			
+			$('form#create-offer-form button').unbind("click");
 			$('form#create-offer-form button').click(function(ev){
 				
 				ev.preventDefault();
@@ -425,13 +420,13 @@
 				
 				data.push({name: 'action', value: 'create'});
 				data.push({name: 'offer_type_id', value: $('form#create-offer-form #offer-type-select select option:selected').val()});
-				data.push({name: 'country', value: $('form#create-offer-form input#country-input').val()});
-				data.push({name: 'city', value: $('form#create-offer-form input#city-input').val()});
+				data.push({name: 'country_id', value: fixedEncodeURI($('form#create-offer-form input#country-input').val())});
+				data.push({name: 'city_id', value: fixedEncodeURI($('form#create-offer-form input#city-input').val())});
 				data.push({name: 'c-count', value: $('form#create-offer-form input#c-count-input').val()});
 				data.push({name: 'start-date', value: $('form#create-offer-form input#start-date-input').val()});
 				data.push({name: 'finish-date', value: $('form#create-offer-form input#finish-date-input').val()});
 				data.push({name: 'image', value: imageBase64});
-				console.log(data);
+				//console.log(data);
 				
 				$.ajax({
 			        url: "/offer",
@@ -440,19 +435,20 @@
 			        cache : false
 			    }).done(function(resp) {
 			    	
-			    	console.log(resp);
-			    	if(resp.error != ""){
+			    	
+			    	if(resp.error != "" || resp == ""){
 			    		alert("Ошибка добавления задания");
+			    		console.log(resp + " " + resp.error);
 			    	}
 				});
 			});
 
-			var preloaderHide = function() {
+			/*var preloaderHide = function() {
 
 				$(".preloader-wrapper").css("display", "none");
-			}
+			}*/
 
-			setTimeout(preloaderHide, 500);
+			setTimeout(preloaderOff, 500);
 		};
 	});
 </script>

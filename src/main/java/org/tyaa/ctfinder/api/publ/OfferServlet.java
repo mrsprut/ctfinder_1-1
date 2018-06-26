@@ -24,6 +24,7 @@ import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.KeyGen;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.LanguageDAO;
+import org.tyaa.ctfinder.controller.OfferDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
 import org.tyaa.ctfinder.entity.Description;
@@ -96,9 +97,13 @@ public class OfferServlet extends HttpServlet {
 	
 						String actionString = req.getParameter(HttpReqParams.action);
 						
+						
+						
 						switch(actionString) {
 						
 							case HttpReqParams.create : {
+								
+								
 								
 								//
 								DateFormat format =
@@ -137,6 +142,50 @@ public class OfferServlet extends HttpServlet {
 										, out
 										, gson
 									);
+								try {
+									ArrayList<String> al1 = new ArrayList<>();
+									
+									al1.add(createdState.getTitle_key().toString());
+									al1.add(createdState.getId().toString());
+									al1.add(newOfferTitle.getKey());
+									al1.add(newOfferDescription.getKey());
+									al1.add(((Long)session.getAttribute(SessionAttributes.userId)).toString());
+									al1.add((Long.getLong(req.getParameter("country_id"))).toString());
+									al1.add((Long.getLong(req.getParameter("city_id"))).toString());
+									al1.add((Long.getLong(req.getParameter("country_id"))).toString());
+									al1.add((
+											
+											(req.getParameter("collaborators_count") != "")
+											? Integer.getInteger(req.getParameter("collaborators_count"))
+											: OfferServlet.unbounded
+										).toString());
+									al1.add((new Blob(req.getParameter("image").getBytes())).toString());
+									al1.add(((req.getParameter("start_date") != "")
+											? format.parse(req.getParameter("start_date"))
+											: null).toString());
+									al1.add(((req.getParameter("finish_date") != "")
+											? format.parse(req.getParameter("finish_date"))
+											: null).toString());
+									
+									RespData rd1 = new RespData(al1);
+									String successJson1 = gson.toJson(rd1);
+									out.print(successJson1);
+								} catch (Exception ex) {
+									// TODO Auto-generated catch block
+									//try (PrintWriter out = resp.getWriter()) {
+										
+										String errorTrace = "";
+										for(StackTraceElement el: ex.getStackTrace()) {
+											errorTrace += el.toString();
+										}
+										RespData rd = new RespData(errorTrace);
+										
+										//RespData rd = new RespData(ex.getMessage());
+										String errorJson = gson.toJson(rd);
+										out.print(errorJson);
+									//}
+									ex.printStackTrace();
+								}
 								
 								Offer offer =
 									new Offer(
@@ -178,6 +227,13 @@ public class OfferServlet extends HttpServlet {
 											, new Date()
 										);
 								
+								/*objectifyRun(
+										offer
+										, OfferDAO::createOffer
+										, out
+										, gson
+									);*/
+								
 								ArrayList<String> al = new ArrayList<>();
 								al.add(HttpRespWords.created);
 								RespData rd = new RespData(al);
@@ -213,7 +269,7 @@ public class OfferServlet extends HttpServlet {
 					}
 					RespData rd = new RespData(errorTrace);*/
 					
-					RespData rd = new RespData("error");
+					RespData rd = new RespData(ex.getMessage());
 					String errorJson = gson.toJson(rd);
 					out.print(errorJson);
 				}
@@ -229,7 +285,7 @@ public class OfferServlet extends HttpServlet {
 				}
 				RespData rd = new RespData(errorTrace);*/
 				
-				RespData rd = new RespData("nosession");
+				RespData rd = new RespData(ex.getMessage());
 				String errorJson = gson.toJson(rd);
 				out.print(errorJson);
 			}

@@ -82,7 +82,10 @@ footer.page-footer {
 
 section { display:none; }
 
-.preloader-wrapper { display:none;position:absolute;left:50%;top:50%}
+/* preloader */
+
+#cover { display:none; position: fixed; height: 100%; width: 100%; top:0; left: 0; background: #003300; z-index:9998; opacity: .5}
+.preloader-wrapper { display:none; position:absolute; left:50%; top:50%; z-index:9999;}
 
 /* Navbar */
 
