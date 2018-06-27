@@ -9,7 +9,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,14 +25,19 @@ import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.KeyGen;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.CityDAO;
+import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.OfferDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.entity.City;
+import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Description;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer;
 import org.tyaa.ctfinder.entity.State;
+import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.model.RespData;
@@ -57,6 +64,9 @@ public class OfferServlet extends HttpServlet {
 		ObjectifyService.register(Offer.class);
 		ObjectifyService.register(User.class);
 		ObjectifyService.register(State.class);
+		ObjectifyService.register(Country.class);
+		ObjectifyService.register(City.class);
+		ObjectifyService.register(Static_title.class);
 	}	
        
     /**
@@ -105,7 +115,7 @@ public class OfferServlet extends HttpServlet {
 								
 								
 								
-								//
+								//Готовим формат для парсинга дат из строк
 								DateFormat format =
 									new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH);
 								
@@ -117,15 +127,16 @@ public class OfferServlet extends HttpServlet {
 										, LanguageDAO::getLangByCode
 										, out
 										, gson);
-								//
+								//Получаем из параметра запроса содержимое заголовка предложения
 								String title =
 										req.getParameter("title");
+								//Создаем и заполняем сущность заголовка предложения
 								Title newOfferTitle =
 									new Title(
 											KeyGen.text2KeyText(title) + "_offer_title"
 											, englishLanguage.getId()
 											, title);
-								
+								//Выполняем то же самое для основного содержания предложения
 								String description =
 										req.getParameter("content");
 								Description newOfferDescription =
@@ -134,6 +145,7 @@ public class OfferServlet extends HttpServlet {
 											, englishLanguage.getId()
 											, description);
 								
+								//Получаем из БД объект сотояния "создано"
 								State createdState = new State();
 								objectifyRun2(
 										"created_state_static_title"
@@ -142,6 +154,68 @@ public class OfferServlet extends HttpServlet {
 										, out
 										, gson
 									);
+								
+								//
+								List<Country> countryList = new ArrayList<>();
+								objectifyRun(
+										countryList
+										, CountryDAO::getAllCountries
+										, out
+										, gson
+									);
+								
+								List<Country> filteredCountryList =
+									countryList.stream()
+										.filter(
+											c -> {
+												Static_title st = new Static_title();
+												objectifyRun2(
+													((Country)c).getTitle_key()
+													, st
+													//, req.getParameter(HttpReqParams.autocomplete)
+													, Static_titleDAO::getStaticTitleByKey
+													, out
+													, gson
+												);
+												return st.getContent().equals(req.getParameter("country_name"));
+											})
+										.collect(Collectors.toList());
+								
+								Long countryId =
+									filteredCountryList.get(0).getId();
+								
+								//
+								List<City> countryCitiesList = new ArrayList<>();
+								objectifyRun2(
+										countryId
+										, countryCitiesList
+										, CityDAO::getCitiesByCountryId
+										, out
+										, gson
+									);
+								//
+								List<City> filteredCountryCitiesList =
+										countryCitiesList.stream()
+										.filter(
+											c -> {
+												Static_title st = new Static_title();
+												objectifyRun2(
+													((City)c).getTitle_key()
+													, st
+													, Static_titleDAO::getStaticTitleByKey
+													, out
+													, gson
+												);
+												return st.getContent().equals(req.getParameter("city_name"));
+											})
+										.collect(Collectors.toList());
+								
+								//
+								Long cityId =
+										filteredCountryCitiesList.get(0).getId();
+								
+								
+								//Тестовый ответ клиенту: список значений принятых параметров
 								try {
 									ArrayList<String> al1 = new ArrayList<>();
 									
@@ -150,21 +224,20 @@ public class OfferServlet extends HttpServlet {
 									al1.add(newOfferTitle.getKey());
 									al1.add(newOfferDescription.getKey());
 									al1.add(((Long)session.getAttribute(SessionAttributes.userId)).toString());
-									al1.add((Long.getLong(req.getParameter("country_id"))).toString());
-									al1.add((Long.getLong(req.getParameter("city_id"))).toString());
-									al1.add((Long.getLong(req.getParameter("country_id"))).toString());
-									al1.add((
+									al1.add(countryId.toString());
+									al1.add(cityId.toString());
+									al1.add(String.valueOf(
 											
-											(req.getParameter("collaborators_count") != "")
+											(req.getParameter("c-count") != "")
 											? Integer.getInteger(req.getParameter("collaborators_count"))
 											: OfferServlet.unbounded
-										).toString());
+										));
 									al1.add((new Blob(req.getParameter("image").getBytes())).toString());
-									al1.add(((req.getParameter("start_date") != "")
-											? format.parse(req.getParameter("start_date"))
+									al1.add(((req.getParameter("start-date") != "")
+											? format.parse(req.getParameter("start-date"))
 											: null).toString());
-									al1.add(((req.getParameter("finish_date") != "")
-											? format.parse(req.getParameter("finish_date"))
+									al1.add(((req.getParameter("finish-date") != "")
+											? format.parse(req.getParameter("finish-date"))
 											: null).toString());
 									
 									RespData rd1 = new RespData(al1);
@@ -187,7 +260,7 @@ public class OfferServlet extends HttpServlet {
 									ex.printStackTrace();
 								}
 								
-								Offer offer =
+								/*Offer offer =
 									new Offer(
 											//offer type id
 											Long.getLong(req.getParameter("offer_type_id"))
@@ -225,7 +298,7 @@ public class OfferServlet extends HttpServlet {
 											, new Date()
 											//updated_at = now date
 											, new Date()
-										);
+										);*/
 								
 								/*objectifyRun(
 										offer
@@ -234,11 +307,11 @@ public class OfferServlet extends HttpServlet {
 										, gson
 									);*/
 								
-								ArrayList<String> al = new ArrayList<>();
+								/*ArrayList<String> al = new ArrayList<>();
 								al.add(HttpRespWords.created);
 								RespData rd = new RespData(al);
 								String successJson = gson.toJson(rd);
-								out.print(successJson);
+								out.print(successJson);*/
 								break;
 							}
 							case HttpReqParams.delete : {
