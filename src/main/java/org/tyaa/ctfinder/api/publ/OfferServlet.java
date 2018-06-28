@@ -27,10 +27,12 @@ import org.tyaa.ctfinder.common.KeyGen;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.CityDAO;
 import org.tyaa.ctfinder.controller.CountryDAO;
+import org.tyaa.ctfinder.controller.DescriptionDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.OfferDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.controller.TitleDAO;
 import org.tyaa.ctfinder.entity.City;
 import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Description;
@@ -127,118 +129,287 @@ public class OfferServlet extends HttpServlet {
 										, LanguageDAO::getLangByCode
 										, out
 										, gson);
-								//Получаем из параметра запроса содержимое заголовка предложения
-								String title =
-										req.getParameter("title");
-								//Создаем и заполняем сущность заголовка предложения
-								Title newOfferTitle =
-									new Title(
-											KeyGen.text2KeyText(title) + "_offer_title"
-											, englishLanguage.getId()
-											, title);
-								//Выполняем то же самое для основного содержания предложения
-								String description =
-										req.getParameter("content");
-								Description newOfferDescription =
-									new Description(
-											KeyGen.text2KeyText(description) + "_offer_description"
-											, englishLanguage.getId()
-											, description);
-								
-								//Получаем из БД объект сотояния "создано"
-								State createdState = new State();
-								objectifyRun2(
-										"created_state_static_title"
-										, createdState
-										, StateDAO::getStateByTitleKey
-										, out
-										, gson
-									);
 								
 								//
-								List<Country> countryList = new ArrayList<>();
-								objectifyRun(
-										countryList
-										, CountryDAO::getAllCountries
-										, out
-										, gson
-									);
-								
-								List<Country> filteredCountryList =
-									countryList.stream()
-										.filter(
-											c -> {
-												Static_title st = new Static_title();
-												objectifyRun2(
-													((Country)c).getTitle_key()
-													, st
-													//, req.getParameter(HttpReqParams.autocomplete)
-													, Static_titleDAO::getStaticTitleByKey
-													, out
-													, gson
+								try {
+									//1. Идентификатор типа задания
+									Long offerTypeId = Long.getLong(req.getParameter("offer_type_id"));
+									
+									//2. Получаем из БД объект сотояния "создано"
+									State createdState = new State();
+									objectifyRun2(
+											"created_state_static_title"
+											, createdState
+											, StateDAO::getStateByTitleKey
+											, out
+											, gson
+										);
+									Long createdStateId = createdState.getId();
+									
+									//3. 
+									//Получаем из параметра запроса содержимое заголовка предложения
+									String title =
+											req.getParameter("title");
+									//Создаем и заполняем сущность заголовка предложения
+									Title newOfferTitle =
+										new Title(
+												KeyGen.text2KeyText(title) + "_offer_title"
+												, englishLanguage.getId()
+												, title);
+									objectifyRun(
+											newOfferTitle
+											, TitleDAO::createTitle
+											, out
+											, gson
+										);
+									String offerTitleKey = newOfferTitle.getKey();
+									
+									//4. 
+									//Выполняем то же самое для основного содержания предложения
+									String description =
+											req.getParameter("content");
+									Description newOfferDescription =
+										new Description(
+												KeyGen.text2KeyText(description) + "_offer_description"
+												, englishLanguage.getId()
+												, description);
+									objectifyRun(
+											newOfferDescription
+											, DescriptionDAO::createDescriprion
+											, out
+											, gson
+										);
+									String offerDescriptionKey = newOfferDescription.getKey();
+									
+									//5
+									Long userId =
+											(Long)session.getAttribute(
+													SessionAttributes.userId
 												);
-												return st.getContent().equals(req.getParameter("country_name"));
-											})
-										.collect(Collectors.toList());
-								
-								Long countryId =
-									filteredCountryList.get(0).getId();
-								
-								//
-								List<City> countryCitiesList = new ArrayList<>();
-								objectifyRun2(
-										countryId
-										, countryCitiesList
-										, CityDAO::getCitiesByCountryId
-										, out
-										, gson
-									);
-								//
-								List<City> filteredCountryCitiesList =
-										countryCitiesList.stream()
-										.filter(
-											c -> {
-												Static_title st = new Static_title();
-												objectifyRun2(
-													((City)c).getTitle_key()
-													, st
-													, Static_titleDAO::getStaticTitleByKey
-													, out
-													, gson
-												);
-												return st.getContent().equals(req.getParameter("city_name"));
-											})
-										.collect(Collectors.toList());
-								
-								//
-								Long cityId =
-										filteredCountryCitiesList.get(0).getId();
-								
+									
+									//6
+									Long countryId = null;
+									try {
+										List<Country> countryList = new ArrayList<>();
+										objectifyRun(
+												countryList
+												, CountryDAO::getAllCountries
+												, out
+												, gson
+											);
+										List<Country> filteredCountryList =
+											countryList.stream()
+												.filter(
+													c -> {
+														Static_title st = new Static_title();
+														objectifyRun2(
+															((Country)c).getTitle_key()
+															, st
+															//, req.getParameter(HttpReqParams.autocomplete)
+															, Static_titleDAO::getStaticTitleByKey
+															, out
+															, gson
+														);
+														return st.getContent().equals(req.getParameter("country_name"));
+													})
+												.collect(Collectors.toList());
+										countryId =
+											filteredCountryList.get(0).getId();
+									} catch(Exception ex) {}
+									
+									//7
+									Long cityId = null;
+									try {
+										List<City> countryCitiesList = new ArrayList<>();
+										objectifyRun2(
+												countryId
+												, countryCitiesList
+												, CityDAO::getCitiesByCountryId
+												, out
+												, gson
+											);
+										//
+										List<City> filteredCountryCitiesList =
+												countryCitiesList.stream()
+												.filter(
+													c -> {
+														Static_title st = new Static_title();
+														objectifyRun2(
+															((City)c).getTitle_key()
+															, st
+															, Static_titleDAO::getStaticTitleByKey
+															, out
+															, gson
+														);
+														return st.getContent().equals(req.getParameter("city_name"));
+													})
+												.collect(Collectors.toList());
+										//
+										cityId =
+												filteredCountryCitiesList.get(0).getId();
+									} catch(Exception ex) {}
+									
+									//8
+									Integer collaboratorsCount = OfferServlet.unbounded;
+									try {
+										collaboratorsCount =
+												Integer.parseInt(req.getParameter("c-count"));
+									}
+									catch(Exception ex){}/* finally {
+										al1.add(Integer.toString(collaboratorsCount));
+									}*/
+									
+									//9
+									Blob image =
+											new Blob(req.getParameter("image").getBytes());
+									
+									//10
+									Date startDate = null;
+									try {
+										startDate = format.parse(req.getParameter("start-date"));
+									}
+									catch(Exception ex){}
+									
+									//11
+									Date finishDate = null;
+									try {
+										finishDate = format.parse(req.getParameter("finish-date"));
+									} catch(Exception ex){}
+									
+									//12
+									Date startedAt = null;
+									
+									//13
+									Date completedAt = null;
+									
+									//14
+									Date createdAt = new Date();
+									
+									//15
+									Date updatedAt = new Date();
+									
+									
+									
+									Offer offer =
+										new Offer(
+												//offer type id
+												offerTypeId
+												//created-state's id from db
+												, createdStateId
+												//offer title
+												, offerTitleKey
+												//offer description
+												, offerDescriptionKey
+												//current user id
+												, userId
+												//country_id
+												, countryId
+												//city_id
+												, cityId
+												//count of collaborators
+												, collaboratorsCount
+												// image base64 string to blob
+												, image
+												//desired start date
+												, startDate
+												//desired finish date
+												, finishDate
+												//started_at = null
+												, startedAt
+												//completed_at = null
+												, completedAt
+												//created_at = now date
+												, createdAt
+												//updated_at = now date
+												, updatedAt
+											);
+									
+									objectifyRun(
+											offer
+											, OfferDAO::createOffer
+											, out
+											, gson
+										);
+									
+									ArrayList<String> al = new ArrayList<>();
+									al.add(HttpRespWords.created);
+									RespData rd = new RespData(al);
+									String successJson = gson.toJson(rd);
+									out.print(successJson);
+								} catch (Exception ex) {
+									//
+									//try (PrintWriter out = resp.getWriter()) {
+										
+										String errorTrace = "";
+										for(StackTraceElement el: ex.getStackTrace()) {
+											errorTrace += el.toString();
+										}
+										RespData rd = new RespData(errorTrace);
+										
+										//RespData rd = new RespData(ex.getMessage());
+										String errorJson = gson.toJson(rd);
+										out.print(errorJson);
+									//}
+									//ex.printStackTrace();
+								}	
+									
+								break;
 								
 								//Тестовый ответ клиенту: список значений принятых параметров
-								try {
+								/*try {
 									ArrayList<String> al1 = new ArrayList<>();
 									
-									al1.add(createdState.getTitle_key().toString());
-									al1.add(createdState.getId().toString());
-									al1.add(newOfferTitle.getKey());
-									al1.add(newOfferDescription.getKey());
-									al1.add(((Long)session.getAttribute(SessionAttributes.userId)).toString());
-									al1.add(countryId.toString());
-									al1.add(cityId.toString());
-									al1.add(String.valueOf(
+									al1.add(createdState.getTitle_key().toString());//0
+									al1.add(createdState.getId().toString());//1
+									al1.add(newOfferTitle.getKey());//2
+									al1.add(newOfferDescription.getKey());//3
+									al1.add(((Long)session.getAttribute(
+											SessionAttributes.userId)).toString()
+										);//4
+									al1.add(countryId.toString());//5
+									al1.add(cityId.toString());//6
+									al1.add((
 											
 											(req.getParameter("c-count") != "")
-											? Integer.getInteger(req.getParameter("collaborators_count"))
+											? Integer.getInteger(req.getParameter("c-count"))
 											: OfferServlet.unbounded
-										));
-									al1.add((new Blob(req.getParameter("image").getBytes())).toString());
-									al1.add(((req.getParameter("start-date") != "")
+										).toString());//7
+									//al1.add(req.getParameter("c-count"));//7
+									
+									
+									
+									al1.add(
+											(new Blob(req.getParameter("image").getBytes()))
+												.toString()
+										);//8
+									
+									Date startDate = null;
+									try {
+										startDate = format.parse(req.getParameter("start-date"));
+									}
+									catch(Exception ex){
+										
+									} finally {
+										String result = (startDate != null)?startDate.toString():"null";
+										al1.add(result);
+									}
+									
+									Date finishDate = null;
+									try {
+										finishDate = format.parse(req.getParameter("finish-date"));
+									} catch(Exception ex){
+										
+									} finally {
+										String result = (finishDate != null)?finishDate.toString():"null";
+										al1.add(result);
+									}
+									
+									al1.add(((req.getParameter("start-date") != null)
 											? format.parse(req.getParameter("start-date"))
-											: null).toString());
-									al1.add(((req.getParameter("finish-date") != "")
+											: null).toString());//9
+									al1.add(((req.getParameter("finish-date") != null)
 											? format.parse(req.getParameter("finish-date"))
-											: null).toString());
+											: null).toString());//10
 									
 									RespData rd1 = new RespData(al1);
 									String successJson1 = gson.toJson(rd1);
@@ -258,61 +429,7 @@ public class OfferServlet extends HttpServlet {
 										out.print(errorJson);
 									//}
 									ex.printStackTrace();
-								}
-								
-								/*Offer offer =
-									new Offer(
-											//offer type id
-											Long.getLong(req.getParameter("offer_type_id"))
-											//created state id from db
-											, createdState.getId()
-											//offer title
-											, newOfferTitle.getKey()
-											//offer description
-											, newOfferDescription.getKey()
-											//current user id
-											, (Long)session.getAttribute(SessionAttributes.userId)
-											//country_id
-											, Long.getLong(req.getParameter("country_id"))
-											//city_id
-											, Long.getLong(req.getParameter("city_id"))
-											//count of collaborators
-											, (req.getParameter("collaborators_count") != "")
-												? Integer.getInteger(req.getParameter("collaborators_count"))
-												: OfferServlet.unbounded
-											// image base64 string to blob
-											, new Blob(req.getParameter("image").getBytes())
-											//desired start date
-											, (req.getParameter("start_date") != "")
-												? format.parse(req.getParameter("start_date"))
-												: null
-											//desired finish date
-											, (req.getParameter("finish_date") != "")
-												? format.parse(req.getParameter("finish_date"))
-												: null
-											//started_at = null
-											, null
-											//completed_at = null
-											, null
-											//created_at = now date
-											, new Date()
-											//updated_at = now date
-											, new Date()
-										);*/
-								
-								/*objectifyRun(
-										offer
-										, OfferDAO::createOffer
-										, out
-										, gson
-									);*/
-								
-								/*ArrayList<String> al = new ArrayList<>();
-								al.add(HttpRespWords.created);
-								RespData rd = new RespData(al);
-								String successJson = gson.toJson(rd);
-								out.print(successJson);*/
-								break;
+								}*/
 							}
 							case HttpReqParams.delete : {
 								

@@ -45,6 +45,12 @@ public class KeyGen {
         out = out.replace("-", "");
         out = out.trim();
         
+        //Prevent too long result
+        if(out.length() > 25) {
+        	
+        	out = out.substring(0, 25);
+        }
+        
         return out;
     }
 }
