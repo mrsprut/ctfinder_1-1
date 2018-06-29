@@ -47,13 +47,15 @@ function onSignIn(googleUser) {
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xhr.responseType = 'json';
 	xhr.onload = function() {
-	  console.log('Signed in as: ' + xhr.response.result[0].name);
-	  console.log('Signed in as: ' + xhr.response.result[0].email);
-	  console.log('Signed in as: ' + xhr.response.result[0].pictureUrl);
+	  //console.log('Signed in as: ' + xhr.response.result[0].name);
+	  //console.log('Signed in as: ' + xhr.response.result[0].email);
+	  //console.log('Signed in as: ' + xhr.response.result[0].pictureUrl);
 	  //
 	  $("#username").text(xhr.response.result[0].name);
 	  $("#useremail").text(xhr.response.result[0].email);
 	  $("#userpicture").attr("src", xhr.response.result[0].pictureUrl);
+	  
+	  preloaderOff();
 	};
 	xhr.send('idtoken=' + id_token);
 }

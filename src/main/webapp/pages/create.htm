@@ -114,6 +114,10 @@
 </div>
 <script type="text/javascript">
 
+	//TODO 1: clear textarea
+	//TODO 2: invalidate form after send
+	//TODO 3: block site areas when not auth
+
 	//Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
 	Date.prototype.toDateInputValue = (function() {
 	    var local = new Date(this);
@@ -260,35 +264,41 @@
 		        
 		    	isFormValid();
 		    });
+		    
+		    //Функция получения списка всех типов предложений
+		    var populateOfferTypesSelect = function(){
+		    	
+		    	$.ajax({
+					type: 'POST',
+					url: '/offertype?action=get-all',
+					dataType: 'json',
+					cache: false
+				}).done(function(responseText, textStatus, jqXHR) {
+					  
+					//console.log(responseText);
+					//Готовим шаблон списка при помощи библиотеки Hogan
+		            var template = Hogan.compile(
+	            		'<select>'
+	                    +'<option disabled="" selected="" value="">type choice</option>'
+	                    +'{{#result}}'                
+	                    +   '<option value="{{id}}">'
+	                    +       '{{description}}'
+	                    +   '</option>'
+	                    +'{{/result}}'
+		    			+'</select>'
+		            );
+		            //Заполняем шаблон данными и помещаем на веб-страницу
+					$('#offer-type-select').html(template.render(responseText));
+					$('#offer-type-select select').formSelect();
+					
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					  
+					//console.log(textStatus);
+					alert("Ошибка получения списка типов заданий: " + jqXHR);
+				});
+		    }
 
-			$.ajax({
-				type: 'POST',
-				url: '/offertype?action=get-all',
-				dataType: 'json',
-				cache: false
-			}).done(function(responseText, textStatus, jqXHR) {
-				  
-				//console.log(responseText);
-				//Готовим шаблон списка при помощи библиотеки Hogan
-	            var template = Hogan.compile(
-            		'<select>'
-                    +'<option disabled="" selected="" value="">type choice</option>'
-                    +'{{#result}}'                
-                    +   '<option value="{{id}}">'
-                    +       '{{description}}'
-                    +   '</option>'
-                    +'{{/result}}'
-	    			+'</select>'
-	            );
-	            //Заполняем шаблон данными и помещаем на веб-страницу
-				$('#offer-type-select').html(template.render(responseText));
-				$('#offer-type-select select').formSelect();
-				
-			}).fail(function(jqXHR, textStatus, errorThrown) {
-				  
-				//console.log(textStatus);
-				alert("Ошибка получения списка типов заданий: " + jqXHR);
-			});
+		    populateOfferTypesSelect();
 			
 			var onCountryAutocompleteCallback = function(){
 
@@ -417,6 +427,9 @@
 				
 				ev.preventDefault();
 				//console.log($('form#create-offer-form c-count-input').val());
+				
+				preloaderOn();
+				
 				var data = $('form#create-offer-form').serializeArray();
 				
 				data.push({name: 'action', value: 'create'});
@@ -444,7 +457,23 @@
 			    		
 			    		alert("Предложение успешно создано");
 			    	}
+			    	
+			    	preloaderOff();
 				});
+				
+				//Reset the form
+				$('form#create-offer-form input#title').val('');
+				$('form#create-offer-form textarea#content').html('');
+				populateOfferTypesSelect();
+				$('form#create-offer-form input#country-input').val('');
+				$('form#create-offer-form input#city-input').val('');
+				$('form#create-offer-form input#c-count-input').val('');
+				$('form#create-offer-form input#start-date-input').val('');
+				$('form#create-offer-form input#finish-date-input').val('');
+				$('form#create-offer-form input#image-input').val('');
+				$('form#create-offer-form input.file-path').val('');
+				
+				isFormValid();
 			});
 
 			/*var preloaderHide = function() {

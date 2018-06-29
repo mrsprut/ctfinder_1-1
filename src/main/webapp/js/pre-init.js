@@ -44,6 +44,7 @@ function init() {
 
 function checkSigninStatus(isSignedIn) {
 
+	preloaderOn();
 	if (isSignedIn) {
 
 		//hide login button
@@ -73,11 +74,12 @@ function checkSigninStatus(isSignedIn) {
 			$("#useremail").text("");
 			$("#userpicture").attr("src", "img/hourglass.jpeg");
 			
+			//preloaderOff();
 			//GoogleAuth.disconnect();
 		};
 		xhr.send(null);
 
 		//TODO полное отсоединение от профиля
 	}
-	preloaderOff();
+	//preloaderOff();
 }
