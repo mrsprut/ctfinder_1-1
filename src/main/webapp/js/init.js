@@ -65,11 +65,24 @@ $('#signout-li').click(signOut);
 function signOut() {
 	
 	preloaderOn();
+	$(document.body).find("section#find, section#create").html("");
     var auth2 = gapi.auth2.getAuthInstance();
     
     auth2.signOut().then(function () {
     	
+    	//$(document.body).find("section#find, section#create").html("");
     	preloaderOff();
+    	
+    	/*var xhr = new XMLHttpRequest();
+    	xhr.open('POST', 'https://creativetfinder.appspot.com/auth');
+    	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    	xhr.responseType = 'json';
+    	xhr.onload = function() {
+    	  //
+    		$(document.body).find("section#find, section#create").html("");
+    		preloaderOff();
+    	};
+    	xhr.send(null);*/
     });
 }
 

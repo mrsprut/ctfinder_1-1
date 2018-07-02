@@ -5,4 +5,9 @@
 	<sessions-enabled>true</sessions-enabled>
 	<runtime>java8</runtime>
 
+	<!-- <static-files>
+		<include path="/pages/*">
+			<http-header name="Access-Control-Allow-Origin" value="https://accounts.google.com" />
+		</include>
+	</static-files> -->
 </appengine-web-app>

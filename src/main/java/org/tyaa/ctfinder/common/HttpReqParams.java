@@ -8,6 +8,9 @@ public class HttpReqParams {
 	public final static String getAll = "get-all";
 	public final static String delete = "delete";
 	
+	public final static String navigate = "navigate";
+	public final static String page = "page";
+	
 	public final static String id = "id";
 	
 	public final static String autocomplete = "autocomplete";

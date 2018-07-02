@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.tyaa.ctfinder.common.ErrorStrings;
+import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.entity.Language;
@@ -181,8 +183,33 @@ public class AuthServlet extends HttpServlet {
 					String errorJson = gson.toJson(rd);
 					out.print(errorJson);
 				}
-			} else {
+			} else if(req.getParameterMap().keySet().contains(HttpReqParams.action)) {
 				
+					
+				String actionString = req.getParameter(HttpReqParams.action);
+				switch(actionString) {
+					
+					case HttpReqParams.navigate:{
+						
+						String pageString = req.getParameter(HttpReqParams.page);
+						if(SessionAttributes.isSessionAttrSet(session, SessionAttributes.userId)
+								|| pageString.equals("home")
+								|| pageString.equals("about")) {
+							
+							
+							resp.sendRedirect("pages/" + pageString + ".htm");
+						} else {
+							resp.setContentType("text/plain");
+							/*RespData rd = new RespData(ErrorStrings.noSession);
+							String errorJson = gson.toJson(rd);
+							out.print(errorJson);*/
+							out.print(ErrorStrings.noSession);
+						}
+					}
+				}
+				
+			} else {
+				//LogOut
 				session.removeAttribute(SessionAttributes.userId);
 				ArrayList al = new ArrayList();
 				al.add("logout");
@@ -200,5 +227,8 @@ public class AuthServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		doPost(req, resp);
+	}
 }

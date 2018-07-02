@@ -114,10 +114,6 @@
 </div>
 <script type="text/javascript">
 
-	//TODO 1: clear textarea
-	//TODO 2: invalidate form after send
-	//TODO 3: block site areas when not auth
-
 	//Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
 	Date.prototype.toDateInputValue = (function() {
 	    var local = new Date(this);
@@ -474,6 +470,10 @@
 				$('form#create-offer-form input.file-path').val('');
 				
 				isFormValid();
+				$("form#create-offer-form button").attr('disabled', '');
+				
+				console.log($('form#create-offer-form textarea#content'));
+				console.log($('form#create-offer-form textarea#content').html());
 			});
 
 			/*var preloaderHide = function() {
