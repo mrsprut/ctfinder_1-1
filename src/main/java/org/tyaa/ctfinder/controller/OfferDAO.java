@@ -10,6 +10,10 @@ import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User_type;
 
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.QueryResultIterator;
+import com.googlecode.objectify.cmd.Query;
+
 public class OfferDAO {
 	
 	public static void getOffer(String _id, Offer _offer) {
@@ -41,6 +45,38 @@ public class OfferDAO {
 	public static void getAllOffers(List<Offer> _offerList) {
 			
 		_offerList.addAll(ofy().load().type(Offer.class).list());
+	}
+	
+	//Получение в виде списка
+	public static void getOffersRange(
+			List<Offer> _offerList
+			, Integer _limit
+			, String[] _cursorStr) {
+			
+		_offerList.clear();
+		Query<Offer> query = ofy().load().type(Offer.class).limit(_limit);
+		if (_cursorStr[0] != null) {
+			
+	        query = query.startAt(Cursor.fromWebSafeString(_cursorStr[0]));
+		}
+		
+		boolean continu = false;
+	    QueryResultIterator<Offer> iterator = query.iterator();
+	    while (iterator.hasNext()) {
+	    	
+	    	Offer offer = iterator.next();
+	    	_offerList.add(offer);
+	    	continu = true;
+	    }
+	    
+	    if (continu) {
+	    	
+	        Cursor cursor = iterator.getCursor();
+	        _cursorStr[0] = cursor.toWebSafeString();
+	    } else {
+	    	
+	    	_cursorStr[0] = null;
+	    }
 	}
 
 	public static void createOffer(Offer _offer) {

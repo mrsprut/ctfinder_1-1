@@ -2,6 +2,7 @@ package org.tyaa.ctfinder.api.publ;
 
 import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
 import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun3;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -42,6 +43,7 @@ import org.tyaa.ctfinder.entity.State;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
+import org.tyaa.ctfinder.model.ContinuData;
 import org.tyaa.ctfinder.model.RespData;
 
 import com.google.appengine.api.datastore.Blob;
@@ -114,8 +116,6 @@ public class OfferServlet extends HttpServlet {
 						switch(actionString) {
 						
 							case HttpReqParams.create : {
-								
-								
 								
 								//Готовим формат для парсинга дат из строк
 								DateFormat format =
@@ -351,7 +351,7 @@ public class OfferServlet extends HttpServlet {
 										out.print(errorJson);
 									//}
 									//ex.printStackTrace();
-								}	
+								}
 									
 								break;
 								
@@ -431,6 +431,48 @@ public class OfferServlet extends HttpServlet {
 									ex.printStackTrace();
 								}*/
 							}
+							case HttpReqParams.get : {
+								
+								try {
+									List<Offer> offers = new ArrayList<>();
+									Integer limit =
+											Integer.parseInt(req.getParameter(HttpReqParams.limit));
+									String[] cursorStr =
+											(req.getParameterMap().keySet().contains(HttpReqParams.cursor))
+											? new String[] {req.getParameter(HttpReqParams.cursor)}
+											: new String[] {null};
+									
+									objectifyRun3(
+											offers
+											, limit
+											, cursorStr
+											, OfferDAO::getOffersRange
+											, out
+											, gson
+										);
+									
+									List al = new ArrayList<>();
+									//al.add(offers);
+									String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
+									al.add(new ContinuData(offers, nextCursorString));
+									RespData rd = new RespData(al);
+									String successJson = gson.toJson(rd);
+									out.print(successJson);
+								} catch (Exception ex) {
+									
+									/*String errorTrace = "";
+									for(StackTraceElement el: ex.getStackTrace()) {
+										errorTrace += el.toString();
+									}
+									RespData rd = new RespData(errorTrace);*/
+									
+									RespData rd = new RespData(ex.getMessage());
+									String errorJson = gson.toJson(rd);
+									out.print(errorJson);
+									ex.printStackTrace();
+								}	
+								break;
+							}
 							case HttpReqParams.delete : {
 								
 								ArrayList<String> al = new ArrayList<>();
@@ -479,7 +521,7 @@ public class OfferServlet extends HttpServlet {
 				String errorJson = gson.toJson(rd);
 				out.print(errorJson);
 			}
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		 
 	}
