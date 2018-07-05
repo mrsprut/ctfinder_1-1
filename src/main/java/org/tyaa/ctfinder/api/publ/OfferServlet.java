@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.tyaa.ctfinder.common.DateTransform;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
@@ -43,6 +44,7 @@ import org.tyaa.ctfinder.entity.State;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
+import org.tyaa.ctfinder.filter.OfferFilter;
 import org.tyaa.ctfinder.model.ContinuData;
 import org.tyaa.ctfinder.model.RespData;
 
@@ -111,16 +113,14 @@ public class OfferServlet extends HttpServlet {
 	
 						String actionString = req.getParameter(HttpReqParams.action);
 						
-						
+						//Готовим формат для парсинга дат из строк
+						DateFormat reversedFormat =
+							new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 						
 						switch(actionString) {
 						
 							case HttpReqParams.create : {
-								
-								//Готовим формат для парсинга дат из строк
-								DateFormat format =
-									new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH);
-								
+																
 								//Получаем из БД объект английского языка
 								Language englishLanguage = new Language();
 								objectifyRun2(
@@ -264,29 +264,31 @@ public class OfferServlet extends HttpServlet {
 											new Blob(req.getParameter("image").getBytes());
 									
 									//10
-									Date startDate = null;
+									String startDate = null;
 									try {
-										startDate = format.parse(req.getParameter("start-date"));
+										startDate =
+											DateTransform.DirectToReversed(req.getParameter("start-date"));
 									}
 									catch(Exception ex){}
 									
 									//11
-									Date finishDate = null;
+									String finishDate = null;
 									try {
-										finishDate = format.parse(req.getParameter("finish-date"));
+										finishDate =
+											DateTransform.DirectToReversed(req.getParameter("finish-date"));
 									} catch(Exception ex){}
 									
 									//12
-									Date startedAt = null;
+									String startedAt = null;
 									
 									//13
-									Date completedAt = null;
+									String completedAt = null;
 									
 									//14
-									Date createdAt = new Date();
+									String createdAt = reversedFormat.format(new Date());
 									
 									//15
-									Date updatedAt = new Date();
+									String updatedAt = reversedFormat.format(new Date());
 									
 									
 									
@@ -352,86 +354,9 @@ public class OfferServlet extends HttpServlet {
 									//}
 									//ex.printStackTrace();
 								}
-									
 								break;
-								
-								//Тестовый ответ клиенту: список значений принятых параметров
-								/*try {
-									ArrayList<String> al1 = new ArrayList<>();
-									
-									al1.add(createdState.getTitle_key().toString());//0
-									al1.add(createdState.getId().toString());//1
-									al1.add(newOfferTitle.getKey());//2
-									al1.add(newOfferDescription.getKey());//3
-									al1.add(((Long)session.getAttribute(
-											SessionAttributes.userId)).toString()
-										);//4
-									al1.add(countryId.toString());//5
-									al1.add(cityId.toString());//6
-									al1.add((
-											
-											(req.getParameter("c-count") != "")
-											? Integer.getInteger(req.getParameter("c-count"))
-											: OfferServlet.unbounded
-										).toString());//7
-									//al1.add(req.getParameter("c-count"));//7
-									
-									
-									
-									al1.add(
-											(new Blob(req.getParameter("image").getBytes()))
-												.toString()
-										);//8
-									
-									Date startDate = null;
-									try {
-										startDate = format.parse(req.getParameter("start-date"));
-									}
-									catch(Exception ex){
-										
-									} finally {
-										String result = (startDate != null)?startDate.toString():"null";
-										al1.add(result);
-									}
-									
-									Date finishDate = null;
-									try {
-										finishDate = format.parse(req.getParameter("finish-date"));
-									} catch(Exception ex){
-										
-									} finally {
-										String result = (finishDate != null)?finishDate.toString():"null";
-										al1.add(result);
-									}
-									
-									al1.add(((req.getParameter("start-date") != null)
-											? format.parse(req.getParameter("start-date"))
-											: null).toString());//9
-									al1.add(((req.getParameter("finish-date") != null)
-											? format.parse(req.getParameter("finish-date"))
-											: null).toString());//10
-									
-									RespData rd1 = new RespData(al1);
-									String successJson1 = gson.toJson(rd1);
-									out.print(successJson1);
-								} catch (Exception ex) {
-									// TODO Auto-generated catch block
-									//try (PrintWriter out = resp.getWriter()) {
-										
-										String errorTrace = "";
-										for(StackTraceElement el: ex.getStackTrace()) {
-											errorTrace += el.toString();
-										}
-										RespData rd = new RespData(errorTrace);
-										
-										//RespData rd = new RespData(ex.getMessage());
-										String errorJson = gson.toJson(rd);
-										out.print(errorJson);
-									//}
-									ex.printStackTrace();
-								}*/
 							}
-							case HttpReqParams.get : {
+							case HttpReqParams.getRange : {
 								
 								try {
 									List<Offer> offers = new ArrayList<>();
@@ -442,6 +367,20 @@ public class OfferServlet extends HttpServlet {
 											? new String[] {req.getParameter(HttpReqParams.cursor)}
 											: new String[] {null};
 									
+									OfferFilter.reset(OfferFilter.class);
+											
+									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
+										
+										OfferFilter.createdDateFrom =
+												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateFrom));
+									}
+									
+									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
+										
+										OfferFilter.createdDateTo =
+												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
+									}
+											
 									objectifyRun3(
 											offers
 											, limit
@@ -450,6 +389,8 @@ public class OfferServlet extends HttpServlet {
 											, out
 											, gson
 										);
+									
+									
 									
 									List al = new ArrayList<>();
 									//al.add(offers);

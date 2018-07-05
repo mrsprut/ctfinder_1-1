@@ -1,5 +1,5 @@
 package org.tyaa.ctfinder.entity;
-import java.util.Date;
+//import java.util.Date;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.gson.annotations.Expose;
@@ -49,27 +49,27 @@ public class Offer {
 	@Index
 	@Expose
 	//Дата желаемого старта
-	private Date start_date;
+	private String start_date;
 	@Index
 	@Expose
 	//Дата желаемого окончания
-	private Date finish_date;
+	private String finish_date;
 	@Index
 	@Expose
 	//Дата реального старта
-	private Date started_at;
+	private String started_at;
 	@Index
 	@Expose
 	//Дата реального окончания
-	private Date completed_at;
+	private String completed_at;
 	@Index
 	@Expose
 	//Дата создания записи
-	private Date created_at;
+	private String created_at;
 	@Index
 	@Expose
 	//Дата последнего обновления записи
-	private Date updated_at;
+	private String updated_at;
 	
 	public Offer() {
 		super();
@@ -85,12 +85,12 @@ public class Offer {
 			, Long city_id
 			, Integer collaborators_count
 			, Blob image
-			, Date start_date
-			, Date finish_date
-			, Date started_at
-			, Date completed_at
-			, Date created_at
-			, Date updated_at
+			, String start_date
+			, String finish_date
+			, String started_at
+			, String completed_at
+			, String created_at
+			, String updated_at
 		) {
 		super();
 		this.offer_type_id = offer_type_id;
@@ -213,84 +213,84 @@ public class Offer {
 	/**
 	 * @return the start_date
 	 */
-	public Date getStart_date() {
+	public String getStart_date() {
 		return start_date;
 	}
 
 	/**
 	 * @param start_date the start_date to set
 	 */
-	public void setStart_date(Date start_date) {
+	public void setStart_date(String start_date) {
 		this.start_date = start_date;
 	}
 
 	/**
 	 * @return the finish_date
 	 */
-	public Date getFinish_date() {
+	public String getFinish_date() {
 		return finish_date;
 	}
 
 	/**
 	 * @param finish_date the finish_date to set
 	 */
-	public void setFinish_date(Date finish_date) {
+	public void setFinish_date(String finish_date) {
 		this.finish_date = finish_date;
 	}
 
 	/**
 	 * @return the started_at
 	 */
-	public Date getStarted_at() {
+	public String getStarted_at() {
 		return started_at;
 	}
 
 	/**
 	 * @param started_at the started_at to set
 	 */
-	public void setStarted_at(Date started_at) {
+	public void setStarted_at(String started_at) {
 		this.started_at = started_at;
 	}
 
 	/**
 	 * @return the completed_at
 	 */
-	public Date getCompleted_at() {
+	public String getCompleted_at() {
 		return completed_at;
 	}
 
 	/**
 	 * @param completed_at the completed_at to set
 	 */
-	public void setCompleted_at(Date completed_at) {
+	public void setCompleted_at(String completed_at) {
 		this.completed_at = completed_at;
 	}
 
 	/**
 	 * @return the created_at
 	 */
-	public Date getCreated_at() {
+	public String getCreated_at() {
 		return created_at;
 	}
 
 	/**
 	 * @param created_at the created_at to set
 	 */
-	public void setCreated_at(Date created_at) {
+	public void setCreated_at(String created_at) {
 		this.created_at = created_at;
 	}
 
 	/**
 	 * @return the updated_at
 	 */
-	public Date getUpdated_at() {
+	public String getUpdated_at() {
 		return updated_at;
 	}
 
 	/**
 	 * @param updated_at the updated_at to set
 	 */
-	public void setUpdated_at(Date updated_at) {
+	public void setUpdated_at(String updated_at) {
 		this.updated_at = updated_at;
 	}
 

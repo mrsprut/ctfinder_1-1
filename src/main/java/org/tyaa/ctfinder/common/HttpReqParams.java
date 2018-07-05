@@ -23,4 +23,7 @@ public class HttpReqParams {
 	public final static String substring = "substring";
 	
 	public final static String country = "country";
+	
+	public final static String createdDateFrom = "created_date_from";
+	public final static String createdDateTo = "created_date_to";
 }

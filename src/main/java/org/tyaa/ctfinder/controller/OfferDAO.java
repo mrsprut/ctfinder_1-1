@@ -2,6 +2,7 @@ package org.tyaa.ctfinder.controller;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.Date;
 import java.util.List;
 
 import org.tyaa.ctfinder.entity.Language;
@@ -9,12 +10,15 @@ import org.tyaa.ctfinder.entity.Offer;
 import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.User_type;
+import org.tyaa.ctfinder.filter.OfferFilter;
 
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.cmd.Query;
 
 public class OfferDAO {
+	
+	//private OfferFilter filter = new OfferFilter();
 	
 	public static void getOffer(String _id, Offer _offer) {
 		
@@ -54,7 +58,22 @@ public class OfferDAO {
 			, String[] _cursorStr) {
 			
 		_offerList.clear();
-		Query<Offer> query = ofy().load().type(Offer.class).limit(_limit);
+		ofy().clear();
+		Query<Offer> query =
+				ofy().load().type(Offer.class).order("created_at");
+		
+		if(OfferFilter.createdDateFrom != null) {
+			
+			query = query.filter("created_at >=", OfferFilter.createdDateFrom);
+		}
+		
+		if(OfferFilter.createdDateTo != null) {
+			
+			query = query.filter("created_at <=", OfferFilter.createdDateTo);
+		}
+		
+		query = query.limit(_limit);
+		
 		if (_cursorStr[0] != null) {
 			
 	        query = query.startAt(Cursor.fromWebSafeString(_cursorStr[0]));
