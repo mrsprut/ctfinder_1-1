@@ -69,7 +69,7 @@ function checkSigninStatus(isSignedIn) {
 		xhr.onload = function() {
 
 			//console.log('Action: ' + xhr.response.result[0]);
-
+			preloaderOn();
 			$("#username").text("");
 			$("#useremail").text("");
 			$("#userpicture").attr("src", "img/hourglass.jpeg");

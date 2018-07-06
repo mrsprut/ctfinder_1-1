@@ -60,7 +60,7 @@ public class OfferDAO {
 		_offerList.clear();
 		ofy().clear();
 		Query<Offer> query =
-				ofy().load().type(Offer.class).order("created_at");
+				ofy().load().type(Offer.class).order("-created_at");
 		
 		if(OfferFilter.createdDateFrom != null) {
 			

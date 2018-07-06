@@ -133,7 +133,7 @@ public class OfferServlet extends HttpServlet {
 								//
 								try {
 									//1. Идентификатор типа задания
-									Long offerTypeId = Long.getLong(req.getParameter("offer_type_id"));
+									Long offerTypeId = Long.parseLong(req.getParameter("offer_type_id"));
 									
 									//2. Получаем из БД объект сотояния "создано"
 									State createdState = new State();
