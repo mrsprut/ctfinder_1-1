@@ -47,6 +47,7 @@ import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.filter.OfferFilter;
 import org.tyaa.ctfinder.model.ContinuData;
 import org.tyaa.ctfinder.model.RespData;
+import org.tyaa.ctfinder.projection.OfferProjections;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.gson.Gson;
@@ -368,6 +369,16 @@ public class OfferServlet extends HttpServlet {
 											: new String[] {null};
 									
 									OfferFilter.reset(OfferFilter.class);
+									
+									if(req.getParameterMap().keySet().contains(HttpReqParams.projection)) {
+										
+										String projectionString  = req.getParameter(HttpReqParams.projection);
+										switch(projectionString) {
+											case HttpReqParams.tableRowProjection:{
+												OfferFilter.projection = OfferProjections.tableRow;
+											}
+										}
+									}
 											
 									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
 										

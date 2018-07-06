@@ -62,6 +62,11 @@ public class OfferDAO {
 		Query<Offer> query =
 				ofy().load().type(Offer.class).order("-created_at");
 		
+		if(OfferFilter.projection != null) {
+			
+			query = query.project(OfferFilter.projection);
+		}
+		
 		if(OfferFilter.createdDateFrom != null) {
 			
 			query = query.filter("created_at >=", OfferFilter.createdDateFrom);

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datastore-indexes
+  autoGenerate="true">
+    <datastore-index kind="Offer" ancestor="false">
+        <property name="created_at" direction="desc" />
+        <!-- <property name="id" /> -->
+        <property name="offer_type_id"  />
+        <property name="state_id"  />
+        <property name="title_key"  />
+    </datastore-index>
+</datastore-indexes>

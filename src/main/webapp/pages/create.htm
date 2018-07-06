@@ -475,8 +475,9 @@
 		        var urlString =
 		        	"/offer?action=get-range"
 		        			+"&limit="+initOfferCount
-		        			+"&created_date_from=" + dateFrom
-		        			+"&created_date_to=" + dateTo;
+		        			+"&created-date-from=" + dateFrom
+		        			+"&created-date-to=" + dateTo
+		        			+"&projection=table-row";
 		        //console.log(urlString);
 		    	$.ajax({
 		            url: urlString,

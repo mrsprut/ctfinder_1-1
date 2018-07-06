@@ -6,4 +6,5 @@ public class OfferFilter extends AbstractFilter {
 
 	public static String createdDateFrom = null;
 	public static String createdDateTo = null;
+	public static String[] projection = null;
 }

@@ -24,6 +24,9 @@ public class HttpReqParams {
 	
 	public final static String country = "country";
 	
-	public final static String createdDateFrom = "created_date_from";
-	public final static String createdDateTo = "created_date_to";
+	public final static String createdDateFrom = "created-date-from";
+	public final static String createdDateTo = "created-date-to";
+	
+	public final static String projection = "projection";
+	public final static String tableRowProjection = "table-row";
 }
