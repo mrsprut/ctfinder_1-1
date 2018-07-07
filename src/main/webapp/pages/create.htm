@@ -177,8 +177,6 @@
     
   	//Блокируем кнопк, пока не будет
     $('form#create-offer-form button').prop('disabled', 'disabled');
-  	
-    var cursorString = null;
 
 	app.handler(function() {
 
@@ -187,6 +185,10 @@
 		//console.log('container ' + $container);
 
 		return function(params) {
+			
+			var cursorString = null;
+		    var offerLimit = 10;
+		    var offerCounter = 0;
 			
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
@@ -459,12 +461,12 @@
 		    			- $('div#offers-buttons').height();
 		    	var offerRowHeight =
 		    		$('div#offer-table-container thead>tr').height();
-		    	var initOfferCount = Math.ceil(offerTableHeight / offerRowHeight);
+		    	var offerLimit = Math.ceil(offerTableHeight / offerRowHeight);
 		    	console.log(offerTableHeight);
 		    	console.log(offerRowHeight);
-		    	console.log(initOfferCount);*/
+		    	console.log(offerLimit);*/
 		    	
-		    	var initOfferCount = 10;
+		    	
 		    	
 				//Добавляем на место таблицы полосу бесконечного прогресса - пока будет ожидаться ответ сервера
 		        preloaderOn();
@@ -474,7 +476,9 @@
 		        var dateTo = $('div#offers-date-filter input#calendarTo').val();
 		        var urlString =
 		        	"/offer?action=get-range"
-		        			+"&limit="+initOfferCount
+		        			+"&in_memory=true"
+		        			+"&limit=" + offerLimit
+		        			+"&start-from=" + offerCounter
 		        			+"&created-date-from=" + dateFrom
 		        			+"&created-date-to=" + dateTo
 		        			+"&projection=table-row";
@@ -486,66 +490,106 @@
 		            cache : false
 		        }).done(function(data) {
 		            
-		        	var offers = data.result[0].items;
-		            //В ответ получаем json-строку с данными о
-		            //для выбранной даты
-		            $.each(offers, function(index, value) {
-		                
-		                //Форматируем даты создания записей перед подстановкой в шаблон
-		                offers[index].created_at = formatDate(value.created_at);
-		            });
+		        	fetchedCount = data.result.length;
+		        	if(fetchedCount > 0){
+		        		
+		        		if(offerCounter == 0 && offerLimit == 10){
+			        		
+			        		offerLimit = 1;
+			        		offerCounter += fetchedCount;
+			        	} else if(offerLimit == 1) {
+			        		
+			        		offerCounter++;
+			        	}
+			        	//var offers = data.result[0].items;
+			            //В ответ получаем json-строку с данными о
+			            //для выбранной даты
+			            /*$.each(offers, function(index, value) {
+			                
+			                //Форматируем даты создания записей перед подстановкой в шаблон
+			                offers[index].created_at = formatDate(value.created_at);
+			            });*/
 
-		            //Готовим шаблон таблицы заказов (расписания) при помощи библиотеки Hogan
-				  	var template = Hogan.compile(
-			  			'{{#items}}'
-						+ 	'<tr>'
-						+   	'<th scope="row">{{id}}</th>'
-						+             '<td>{{title_key}}</td>'
-		                +             '<td>type_id</td>'
-		                +             '<td>image_icon</td>'
-		                +             '<td>{{state_id}}</td>'
-		                +             '<td>{{created_at}}</td>'
-		                +          '</tr>'
-			      		+ '{{/items}}'
-			  		);
-				  	//Заполняем шаблон данными и помещаем на веб-страницу
-			  		$('#offer-table-container tbody').html(template.render(data.result[0]));
+			            //Готовим шаблон таблицы заказов (расписания) при помощи библиотеки Hogan
+					  	var template = Hogan.compile(
+				  			'{{#result}}'
+							+ 	'<tr>'
+							+   	'<th scope="row">{{id}}</th>'
+							+             '<td>{{title}}</td>'
+			                +             '<td>{{offer_type}}</td>'
+			                +             '<td>image_icon</td>'
+			                +             '<td>{{state}}</td>'
+			                +             '<td>{{created_at}}</td>'
+			                +          '</tr>'
+				      		+ '{{/result}}'
+				  		);
+					  	//Заполняем шаблон данными и помещаем на веб-страницу
+					  	//$('#offer-table-container tbody').html(template.render(data.result[0]));
+						if(offerCounter == 0){
+			            	
+							$('#offer-table-container tbody').html(template.render(data));
+			            } else {
+			            	
+			            	$('#offer-table-container tbody').append(template.render(data));
+			            }
+				  		
 
-			  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
-		            $("table td:contains('забронирован')").parent().addClass("BlueRow");
-		            $("table td:contains('выполнен')").parent().addClass("GreenRow");
-		            //$("table td:contains('отменен')").parent().addClass("RedRow");
-		            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
-		            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
-		            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
-		            $("table tr:not(:first)").unbind("click");
-		            $("table tr:not(:first)").click(function(){
+				  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
+			            $("table td:contains('забронирован')").parent().addClass("BlueRow");
+			            $("table td:contains('выполнен')").parent().addClass("GreenRow");
+			            //$("table td:contains('отменен')").parent().addClass("RedRow");
+			            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
+			            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
+			            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
+			            $("table tr:not(:first)").unbind("click");
+			            $("table tr:not(:first)").click(function(){
 
-		                //Разблокируем кнопки, когда выбрана строка таблицы
-		                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
-		                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
-		                //(оно могло быть ранее установлено на одну из строк)
-		                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
-		            });
-		            //Очищаем списки в форме
-		            $('#manicurists-select select')
-		                .find('option')
-		                .remove();
+			                //Разблокируем кнопки, когда выбрана строка таблицы
+			                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
+			                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
+			                //(оно могло быть ранее установлено на одну из строк)
+			                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
+			            });
+			            //Очищаем списки в форме
+			            $('#manicurists-select select')
+			                .find('option')
+			                .remove();
 
-		            $('#time-select select')
-		                .find('option')
-		                .remove();
-		            //Отключаем элементы ввода в форме
-		            $('#time-select select').attr('disabled', '');
-		            $('form#create-order button').attr('disabled', '');
-		            //Заполняем список выбора мастеров
-		            populateManicuristsList();
-		            //Активируем список выбора времени
-		            $('#time-select select').formSelect();*/
+			            $('#time-select select')
+			                .find('option')
+			                .remove();
+			            //Отключаем элементы ввода в форме
+			            $('#time-select select').attr('disabled', '');
+			            $('form#create-order button').attr('disabled', '');
+			            //Заполняем список выбора мастеров
+			            populateManicuristsList();
+			            //Активируем список выбора времени
+			            $('#time-select select').formSelect();*/
+		        	} else {
+		        		
+		        		offerCounter = "full";
+		        	}
+		        	preloaderOff();
 		        });
 		    }
-		    //Вызываем функцию заполнения таблицы данными о заказах
-			populateOfferTable();
+			
+		    if(offerCounter != "full"){
+			    //Вызываем функцию заполнения таблицы данными о заказах
+				populateOfferTable();
+		    }
+		    
+			$(window).scroll(function() {
+				
+				if(offerCounter != "full"){
+					
+					if ($(window).scrollTop() ==
+							$(document).height()
+								- $(window).height()) {
+					      
+				    	populateOfferTable();
+				    }
+				}
+			});
 			
 			var imageBase64 = "";
 			$('form#create-offer-form input#image-input').unbind("change");

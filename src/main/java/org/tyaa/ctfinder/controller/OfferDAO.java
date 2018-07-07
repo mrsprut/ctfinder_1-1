@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer;
@@ -14,11 +15,21 @@ import org.tyaa.ctfinder.filter.OfferFilter;
 
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.Query;
 
 public class OfferDAO {
 	
 	//private OfferFilter filter = new OfferFilter();
+	public static enum Params {
+		
+		OfferList
+		, Limit
+		, CursorStringArray
+		, UserId
+		, Filter
+		, InMemory
+	}
 	
 	public static void getOffer(String _id, Offer _offer) {
 		
@@ -52,55 +63,76 @@ public class OfferDAO {
 	}
 	
 	//Получение в виде списка
-	public static void getOffersRange(
-			List<Offer> _offerList
-			, Integer _limit
-			, String[] _cursorStr) {
+	public static void getOffersRange(Map<Params, Object> _paramsMap) {
 			
+		List<Offer> _offerList =
+				(List<Offer>) _paramsMap.get(Params.OfferList);
 		_offerList.clear();
 		ofy().clear();
 		Query<Offer> query =
-				ofy().load().type(Offer.class).order("-created_at");
+				ofy().load().type(Offer.class);
 		
-		if(OfferFilter.projection != null) {
+		if((boolean) _paramsMap.get(Params.InMemory)) {
 			
-			query = query.project(OfferFilter.projection);
-		}
-		
-		if(OfferFilter.createdDateFrom != null) {
+			Long userId = (Long) _paramsMap.get(Params.UserId);
+			query = query.filter("user_id", userId);
+			_offerList.addAll(query.list());
+		} else {
 			
-			query = query.filter("created_at >=", OfferFilter.createdDateFrom);
-		}
-		
-		if(OfferFilter.createdDateTo != null) {
+			Integer _limit = (Integer) _paramsMap.get(Params.Limit);
+			String[] _cursorStr = (String[]) _paramsMap.get(Params.CursorStringArray);
 			
-			query = query.filter("created_at <=", OfferFilter.createdDateTo);
-		}
-		
-		query = query.limit(_limit);
-		
-		if (_cursorStr[0] != null) {
+			OfferFilter offerFilter = (OfferFilter) _paramsMap.get(Params.Filter);
 			
-	        query = query.startAt(Cursor.fromWebSafeString(_cursorStr[0]));
+			
+			
+			/*Iterable<Key<Offer>> userOffersKeys =
+					ofy().load().type(Offer.class).keys();*/
+			
+			//.order("-created_at");
+			
+			/*if(offerFilter.createdDateFrom != null) {
+				
+				query = query.filter("created_at >=", offerFilter.createdDateFrom);
+			}*/
+			
+			/*if(offerFilter.createdDateTo != null) {
+				
+				query = query.filter("created_at <=", offerFilter.createdDateTo);
+			}*/
+			
+			//query = query.filter("user_id", userId);
+			
+			/*if(offerFilter.projection != null) {
+			
+				query = query.project(offerFilter.projection);
+			}*/
+			
+			//query = query.limit(_limit);
+			
+			if (_cursorStr[0] != null) {
+				
+		        query = query.startAt(Cursor.fromWebSafeString(_cursorStr[0]));
+			}
+			
+			boolean continu = false;
+		    QueryResultIterator<Offer> iterator = query.iterator();
+		    while (iterator.hasNext()) {
+		    	
+		    	Offer offer = iterator.next();
+		    	_offerList.add(offer);
+		    	continu = true;
+		    }
+		    
+		    if (continu) {
+		    	
+		        Cursor cursor = iterator.getCursor();
+		        _cursorStr[0] = cursor.toWebSafeString();
+		    } else {
+		    	
+		    	_cursorStr[0] = null;
+		    }
 		}
-		
-		boolean continu = false;
-	    QueryResultIterator<Offer> iterator = query.iterator();
-	    while (iterator.hasNext()) {
-	    	
-	    	Offer offer = iterator.next();
-	    	_offerList.add(offer);
-	    	continu = true;
-	    }
-	    
-	    if (continu) {
-	    	
-	        Cursor cursor = iterator.getCursor();
-	        _cursorStr[0] = cursor.toWebSafeString();
-	    } else {
-	    	
-	    	_cursorStr[0] = null;
-	    }
 	}
 
 	public static void createOffer(Offer _offer) {

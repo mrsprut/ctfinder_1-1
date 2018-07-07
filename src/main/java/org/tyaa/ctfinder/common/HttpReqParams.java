@@ -16,6 +16,7 @@ public class HttpReqParams {
 	public final static String id = "id";
 	public final static String cursor = "cursor";
 	public final static String limit = "limit";
+	public final static String startFrom = "start-from";
 	public final static String userId = "user-id";
 	
 	public final static String autocomplete = "autocomplete";
@@ -27,6 +28,7 @@ public class HttpReqParams {
 	public final static String createdDateFrom = "created-date-from";
 	public final static String createdDateTo = "created-date-to";
 	
+	public final static String inMemory = "in_memory";
 	public final static String projection = "projection";
 	public final static String tableRowProjection = "table-row";
 }

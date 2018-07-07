@@ -40,6 +40,29 @@ public class Static_titleDAO {
 		}
 	}
 	
+	public static void getStaticTitleByKeyAndLang(
+			String _key
+			, Long _langId
+			, Static_title _Static_title
+			) {
+		
+		Static_title Static_title =
+				ofy().load()
+				.type(Static_title.class)
+				.filter("key", _key)
+				.filter("lang_id", _langId)
+				.first()
+				.now();
+		
+		if(Static_title != null) {
+			
+			_Static_title.setId(Static_title.getId());
+			_Static_title.setKey(Static_title.getKey());
+			_Static_title.setLang_id(Static_title.getLang_id());
+			_Static_title.setContent(Static_title.getContent());
+		}
+	}
+	
 	public static void getStaticTitleByContentAndLang(
 			String _content
 			, Long _langId

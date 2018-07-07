@@ -4,7 +4,8 @@ package org.tyaa.ctfinder.filter;
 
 public class OfferFilter extends AbstractFilter {
 
-	public static String createdDateFrom = null;
-	public static String createdDateTo = null;
-	public static String[] projection = null;
+	public String createdDateFrom = null;
+	public String createdDateTo = null;
+	public String[] projection = null;
+	//public Long userId = null;
 }

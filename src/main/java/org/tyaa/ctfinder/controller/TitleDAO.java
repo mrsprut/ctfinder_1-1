@@ -39,28 +39,28 @@ public class TitleDAO {
 		}
 	}
 	
-	/*public static void getStaticTitleByContentAndLang(
-			String _content
+	public static void getTitleByKeyAndLang(
+			String _key
 			, Long _langId
-			, Static_title _static_title
+			, Title _title
 			) {
 		
-		Static_title Static_title =
+		Title title =
 				ofy().load()
-				.type(Static_title.class)
-				.filter("content", _content)
+				.type(Title.class)
+				.filter("key", _key)
 				.filter("lang_id", _langId)
 				.first()
 				.now();
 		
-		if(Static_title != null) {
+		if(title != null) {
 			
-			_static_title.setId(Static_title.getId());
-			_static_title.setKey(Static_title.getKey());
-			_static_title.setLang_id(Static_title.getLang_id());
-			_static_title.setContent(Static_title.getContent());
+			_title.setId(title.getId());
+			_title.setKey(title.getKey());
+			_title.setLang_id(title.getLang_id());
+			_title.setContent(title.getContent());
 		}
-	}*/
+	}
 
 	public static void createTitle(Title _title) {
 

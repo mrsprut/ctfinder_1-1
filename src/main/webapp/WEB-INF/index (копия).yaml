@@ -1,0 +1,10 @@
+indexes:
+
+- kind: Offer
+  properties:
+  - name: created_at
+    direction: desc
+  - name: offer_type_id
+  - name: state_id
+  - name: title_key
+  - name: user_id

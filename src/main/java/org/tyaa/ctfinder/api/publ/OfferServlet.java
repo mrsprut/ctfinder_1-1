@@ -7,12 +7,18 @@ import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun3;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +38,9 @@ import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.DescriptionDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.OfferDAO;
+import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
+import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
 import org.tyaa.ctfinder.controller.TitleDAO;
 import org.tyaa.ctfinder.entity.City;
@@ -40,12 +48,15 @@ import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Description;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer;
+import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.State;
+import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.filter.OfferFilter;
 import org.tyaa.ctfinder.model.ContinuData;
+import org.tyaa.ctfinder.model.OfferTableRow;
 import org.tyaa.ctfinder.model.RespData;
 import org.tyaa.ctfinder.projection.OfferProjections;
 
@@ -74,6 +85,8 @@ public class OfferServlet extends HttpServlet {
 		ObjectifyService.register(Country.class);
 		ObjectifyService.register(City.class);
 		ObjectifyService.register(Static_title.class);
+		ObjectifyService.register(Static_description.class);
+		ObjectifyService.register(Offer_type.class);
 	}	
        
     /**
@@ -360,7 +373,187 @@ public class OfferServlet extends HttpServlet {
 							case HttpReqParams.getRange : {
 								
 								try {
-									List<Offer> offers = new ArrayList<>();
+									
+									//Получаем из БД объект английского языка
+									Language englishLanguage = new Language();
+									objectifyRun2(
+											"en"
+											, englishLanguage
+											, LanguageDAO::getLangByCode
+											, out
+											, gson);
+									
+									if(req.getParameterMap().keySet().contains(HttpReqParams.inMemory)) {
+										
+										List<Offer> offers = new ArrayList<>();
+										List<OfferTableRow> offersOut = new ArrayList<>();
+										
+										Integer limit =
+												Integer.parseInt(req.getParameter(HttpReqParams.limit));
+										Integer startFrom =
+												Integer.parseInt(req.getParameter(HttpReqParams.startFrom));
+										
+										OfferFilter offerFilter = new OfferFilter();
+										
+										Long userId =
+												(Long)session.getAttribute(
+														SessionAttributes.userId
+													);
+										
+										Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
+										paramsMap.put(OfferDAO.Params.OfferList, offers);
+										paramsMap.put(OfferDAO.Params.UserId, userId);
+										paramsMap.put(OfferDAO.Params.InMemory, true);
+										objectifyRun(
+												paramsMap
+												, OfferDAO::getOffersRange
+												, out
+												, gson
+											);
+										
+										Stream<Offer> offerStream = offers.stream()
+												.sorted(Comparator.comparing(Offer::getCreated_at).reversed()) ;
+										
+										if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
+											
+											offerFilter.createdDateFrom =
+													DateTransform.DirectToReversed(
+															req.getParameter(HttpReqParams.createdDateFrom)
+														);
+											offerStream =
+												offerStream.filter(
+														o ->
+															((Offer)o).getCreated_at().compareTo(offerFilter.createdDateFrom)
+															 	>= 0
+													);
+										}
+										
+										if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
+											
+											offerFilter.createdDateTo =
+													DateTransform.DirectToReversed(
+															req.getParameter(HttpReqParams.createdDateTo)
+														);
+											offerStream =
+													offerStream.filter(
+															o ->
+																((Offer)o).getCreated_at().compareTo(offerFilter.createdDateTo)
+																 	<= 0
+														);
+										}
+										
+										if(startFrom != null && startFrom != 0) {
+											
+											offerStream =
+													offerStream.skip(startFrom);
+										}
+										
+										if(limit != null && limit != 0) {
+											
+											offerStream =
+													offerStream.limit(limit);
+										}
+										
+										Stream<OfferTableRow> offerTableRowStream =
+												offerStream.map(
+													
+														o -> {
+															
+															String offerTypeDescriptionString = "-";
+															if(o.getOffer_type_id() != null) {
+																Offer_type offerType = new Offer_type();
+																objectifyRun2(
+																		o.getOffer_type_id()
+																		, offerType
+																		, Offer_typeDAO::getOffer_type
+																		, out
+																		, gson
+																	);
+																//offerTypeDescriptionString = "+";
+																Static_description offerTypeDescription =
+																		new Static_description();
+																objectifyRun3(
+																	offerType.getDescription_key()
+																	, englishLanguage.getId()
+																	, offerTypeDescription
+																	, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
+																	, out
+																	, gson
+																);
+																if(offerTypeDescription.getContent() != null) {
+																	offerTypeDescriptionString =
+																			offerTypeDescription.getContent();
+																}
+															}
+															
+															String titleString = "-";
+															if(o.getTitle_key() != null
+																	&& !o.getTitle_key().equals("")) {
+																Title title = new Title();
+																objectifyRun3(
+																	o.getTitle_key()
+																	, englishLanguage.getId()
+																	, title
+																	, TitleDAO::getTitleByKeyAndLang
+																	, out
+																	, gson
+																);
+																titleString = title.getContent();
+															}
+															
+															String offerStateString = "-";
+															if(o.getState_id() != null) {
+																State state = new State();
+																objectifyRun2(
+																		o.getState_id()
+																		, state
+																		, StateDAO::getState
+																		, out
+																		, gson
+																	);
+																/*if(state.getId() != null) {}
+																offerStateString =
+																		state.getId().toString() + " " + state.getTitle_key();*/
+																Static_title stateTitle = new Static_title();
+																objectifyRun3(
+																	state.getTitle_key()
+																	, englishLanguage.getId()
+																	, stateTitle
+																	, Static_titleDAO::getStaticTitleByKeyAndLang
+																	, out
+																	, gson
+																);
+																if(stateTitle.getContent() != null) {
+																	offerStateString = stateTitle.getContent();
+																}
+																
+															}
+															
+															try {
+																return new OfferTableRow(
+																		o.getId()
+																		, offerTypeDescriptionString
+																		, titleString
+																		, offerStateString
+																		, DateTransform.ReversedToDirect(o.getCreated_at()));
+															} catch (ParseException e) {
+																
+																return new OfferTableRow();
+															}
+														}
+													);
+										
+										offersOut =
+												offerTableRowStream.collect(Collectors.toList());
+										
+										//List al = new ArrayList<>();
+										//al.add(offersOut);
+										RespData rd = new RespData(offersOut);
+										String successJson = gson.toJson(rd);
+										out.print(successJson);
+									}
+									/*List<Offer> offers = new ArrayList<>();
+									List<Offer> offersOut = new ArrayList<>();
 									Integer limit =
 											Integer.parseInt(req.getParameter(HttpReqParams.limit));
 									String[] cursorStr =
@@ -368,48 +561,57 @@ public class OfferServlet extends HttpServlet {
 											? new String[] {req.getParameter(HttpReqParams.cursor)}
 											: new String[] {null};
 									
-									OfferFilter.reset(OfferFilter.class);
+									OfferFilter offerFilter = new OfferFilter();
+									//OfferFilter.reset(offerFilter, OfferFilter.class);
+											
+									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
+										
+										offerFilter.createdDateFrom =
+												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateFrom));
+									}
+									
+									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
+										
+										offerFilter.createdDateTo =
+												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
+									}
+									
+									Long userId =
+											(Long)session.getAttribute(
+													SessionAttributes.userId
+												);
+									
+									Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
+									paramsMap.put(OfferDAO.Params.OfferList, offers);
+									paramsMap.put(OfferDAO.Params.Limit, limit);
+									paramsMap.put(OfferDAO.Params.CursorStringArray, cursorStr);
+									paramsMap.put(OfferDAO.Params.UserId, userId);
+									paramsMap.put(OfferDAO.Params.Filter, offerFilter);
+									objectifyRun(
+											paramsMap
+											, OfferDAO::getOffersRange
+											, out
+											, gson
+										);
 									
 									if(req.getParameterMap().keySet().contains(HttpReqParams.projection)) {
 										
 										String projectionString  = req.getParameter(HttpReqParams.projection);
 										switch(projectionString) {
 											case HttpReqParams.tableRowProjection:{
-												OfferFilter.projection = OfferProjections.tableRow;
+												//offerFilter.projection = OfferProjections.tableRow;
+												
 											}
 										}
 									}
-											
-									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
-										
-										OfferFilter.createdDateFrom =
-												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateFrom));
-									}
-									
-									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
-										
-										OfferFilter.createdDateTo =
-												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
-									}
-											
-									objectifyRun3(
-											offers
-											, limit
-											, cursorStr
-											, OfferDAO::getOffersRange
-											, out
-											, gson
-										);
-									
-									
-									
+									//
 									List al = new ArrayList<>();
 									//al.add(offers);
 									String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
 									al.add(new ContinuData(offers, nextCursorString));
 									RespData rd = new RespData(al);
 									String successJson = gson.toJson(rd);
-									out.print(successJson);
+									out.print(successJson);*/
 								} catch (Exception ex) {
 									
 									/*String errorTrace = "";
@@ -421,7 +623,7 @@ public class OfferServlet extends HttpServlet {
 									RespData rd = new RespData(ex.getMessage());
 									String errorJson = gson.toJson(rd);
 									out.print(errorJson);
-									ex.printStackTrace();
+									//ex.printStackTrace();
 								}	
 								break;
 							}

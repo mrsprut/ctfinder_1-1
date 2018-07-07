@@ -23,6 +23,18 @@ public class Offer_typeDAO {
 		}
 	}
 	
+	public static void getOffer_type(Long _id, Offer_type _offer_type) {
+		
+		Offer_type offer_type =
+				ofy().load().type(Offer_type.class).id(_id).now();
+		
+		if(offer_type != null) {
+			
+			_offer_type.setId(offer_type.getId());
+			_offer_type.setDescription_key(offer_type.getDescription_key());
+		}
+	}
+	
 	//Получение всех Offer_types в виде списка
 	public static void getAllOfferTypes(List<Offer_type> _offerTypeList) {
 			

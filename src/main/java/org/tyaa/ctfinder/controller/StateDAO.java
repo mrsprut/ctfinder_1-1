@@ -21,6 +21,18 @@ public class StateDAO {
 		}
 	}
 	
+	public static void getState(Long _id, State _state) {
+		
+		State state =
+				ofy().load().type(State.class).id(_id).now();
+		
+		if(state != null) {
+			
+			_state.setId(state.getId());
+			_state.setTitle_key(state.getTitle_key());
+		}
+	}
+	
 	public static void getStateByTitleKey(String _titleKey, State _state) {
 		
 		State state =

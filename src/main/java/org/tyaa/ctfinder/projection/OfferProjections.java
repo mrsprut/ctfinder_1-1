@@ -8,5 +8,6 @@ public class OfferProjections {
 					, "title_key"
 					, "state_id"
 					, "created_at"
+					//, "user_id"
 				};
 }
