@@ -1,8 +1,10 @@
 var GoogleAuth; // Google Auth object
 
-function preloaderOn() {
+function preloaderOn(nocover) {
 	
-	$("#cover").css("display", "block");
+	if(nocover == undefined){
+		$("#cover").css("display", "block");
+	}
 	$(".preloader-wrapper").css("display", "block");
 }
 

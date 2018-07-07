@@ -189,6 +189,7 @@
 			var cursorString = null;
 		    var offerLimit = 10;
 		    var offerCounter = 0;
+		    var offerTablePopulating = false;
 			
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
@@ -469,7 +470,7 @@
 		    	
 		    	
 				//Добавляем на место таблицы полосу бесконечного прогресса - пока будет ожидаться ответ сервера
-		        preloaderOn();
+		        preloaderOn("nocover");
 		    	//Отправляем асинхронный запрос на сервер (в файл api/orders.php)
 		        //с указанием действия Получить заказы и выбранной даты
 		        var dateFrom = $('div#offers-date-filter input#calendarFrom').val();
@@ -570,6 +571,7 @@
 		        		offerCounter = "full";
 		        	}
 		        	preloaderOff();
+		        	offerTablePopulating = false;
 		        });
 		    }
 			
@@ -580,12 +582,14 @@
 		    
 			$(window).scroll(function() {
 				
-				if(offerCounter != "full"){
+				if(offerCounter != "full" && !offerTablePopulating){
 					
-					if ($(window).scrollTop() ==
-							$(document).height()
-								- $(window).height()) {
-					      
+					var footerHeight = 283;
+					if ($(window).scrollTop() >=
+							($(document).height()
+								- footerHeight
+								- $(window).height())) {
+						offerTablePopulating = true;  
 				    	populateOfferTable();
 				    }
 				}
