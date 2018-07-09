@@ -81,25 +81,22 @@ public class OfferDAO {
 			
 			Integer _limit = (Integer) _paramsMap.get(Params.Limit);
 			String[] _cursorStr = (String[]) _paramsMap.get(Params.CursorStringArray);
-			
 			OfferFilter offerFilter = (OfferFilter) _paramsMap.get(Params.Filter);
-			
-			
 			
 			/*Iterable<Key<Offer>> userOffersKeys =
 					ofy().load().type(Offer.class).keys();*/
 			
 			//.order("-created_at");
 			
-			/*if(offerFilter.createdDateFrom != null) {
+			if(offerFilter.createdDateFrom != null) {
 				
 				query = query.filter("created_at >=", offerFilter.createdDateFrom);
-			}*/
+			}
 			
-			/*if(offerFilter.createdDateTo != null) {
+			if(offerFilter.createdDateTo != null) {
 				
 				query = query.filter("created_at <=", offerFilter.createdDateTo);
-			}*/
+			}
 			
 			//query = query.filter("user_id", userId);
 			
@@ -108,7 +105,7 @@ public class OfferDAO {
 				query = query.project(offerFilter.projection);
 			}*/
 			
-			//query = query.limit(_limit);
+			query = query.limit(_limit);
 			
 			if (_cursorStr[0] != null) {
 				

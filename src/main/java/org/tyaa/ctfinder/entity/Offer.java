@@ -54,6 +54,10 @@ public class Offer {
 	@Expose
 	//Дата желаемого окончания
 	private String finish_date;
+	//Срочность в днях - разность между start_date n finish_date
+	@Index
+	@Expose
+	private String urgency_in_days;
 	@Index
 	@Expose
 	//Дата реального старта
@@ -71,6 +75,8 @@ public class Offer {
 	//Дата последнего обновления записи
 	private String updated_at;
 	
+	
+	
 	public Offer() {
 		super();
 	}
@@ -87,6 +93,7 @@ public class Offer {
 			, Blob image
 			, String start_date
 			, String finish_date
+			, String urgency_in_days
 			, String started_at
 			, String completed_at
 			, String created_at
@@ -104,6 +111,7 @@ public class Offer {
 		this.image = image;
 		this.start_date = start_date;
 		this.finish_date = finish_date;
+		this.urgency_in_days = urgency_in_days;
 		this.started_at = started_at;
 		this.completed_at = completed_at;
 		this.created_at = created_at;
@@ -236,6 +244,20 @@ public class Offer {
 	 */
 	public void setFinish_date(String finish_date) {
 		this.finish_date = finish_date;
+	}
+	
+	/**
+	 * @return the urgency_in_days
+	 */
+	public String getUrgency_in_days() {
+		return urgency_in_days;
+	}
+
+	/**
+	 * @param urgency_in_days the urgency_in_days to set
+	 */
+	public void setUrgency_in_days(String urgency_in_days) {
+		this.urgency_in_days = urgency_in_days;
 	}
 
 	/**

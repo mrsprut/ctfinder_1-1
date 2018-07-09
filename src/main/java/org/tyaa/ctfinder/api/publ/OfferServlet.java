@@ -292,19 +292,32 @@ public class OfferServlet extends HttpServlet {
 											DateTransform.DirectToReversed(req.getParameter("finish-date"));
 									} catch(Exception ex){}
 									
-									//12
+									//13
 									String startedAt = null;
 									
-									//13
+									//14
 									String completedAt = null;
 									
-									//14
+									//15
 									String createdAt = reversedFormat.format(new Date());
 									
-									//15
+									//16
 									String updatedAt = reversedFormat.format(new Date());
 									
-									
+									//12
+									String urgencyInDays = null;
+									if(startDate != null && finishDate != null) {
+										
+										urgencyInDays =
+												DateTransform.ReversedToDiff(startDate, finishDate);
+									} else if(finishDate != null) {
+										
+										urgencyInDays =
+												DateTransform.ReversedToDiff(createdAt, finishDate);
+									} else {
+										//unbounded
+										urgencyInDays = "36500";
+									}
 									
 									Offer offer =
 										new Offer(
@@ -330,6 +343,8 @@ public class OfferServlet extends HttpServlet {
 												, startDate
 												//desired finish date
 												, finishDate
+												//urgency in days
+												, urgencyInDays
 												//started_at = null
 												, startedAt
 												//completed_at = null

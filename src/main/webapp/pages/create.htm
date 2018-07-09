@@ -60,7 +60,7 @@
 							  <input class="file-path validate" type="text">
 							</div>
 					    </div>
-	                    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+	                    <button id="submit-new-order" class="btn waves-effect waves-light" type="submit" name="action">Submit
 	                        <i class="material-icons right">send</i>
 	                    </button>
 					</form>
@@ -140,10 +140,10 @@
 	
 	//Задаем календарю окно допустимых дат - от текущей включительно -> infinity
     var minDate = new Date();
-    $('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
+    /*$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
 	    .attr({
 	       "min" : minDate.toDateInputValue(),
-		});
+		});*/
     
     //Date range filter
     var nowDate = new Date();
@@ -156,12 +156,19 @@
     
     //console.log($('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input'));
   	//активация выбора даты
-    $('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input, div#offers-date-filter input#calendarFrom, div#offers-date-filter input#calendarTo').datepicker({
+    $('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input').datepicker({
 	    	'format':'dd-mm-yyyy'
 	    	//, 'defaultDate':formatDate(new Date().toDateInputValue())
+	    	, 'minDate':minDate
 	    	, 'setDefaultDate':true
 	    	, 'autoClose':true
 		});
+  	
+    $('div#offers-date-filter input#calendarFrom, div#offers-date-filter input#calendarTo').datepicker({
+    	'format':'dd-mm-yyyy'
+    	, 'setDefaultDate':true
+    	, 'autoClose':true
+	});
   	
     $('form#create-offer-form input#remove-start-date').click(function(ev){
 		
@@ -176,7 +183,7 @@
     });
     
   	//Блокируем кнопк, пока не будет
-    $('form#create-offer-form button').prop('disabled', 'disabled');
+    $('form#create-offer-form #submit-new-order').prop('disabled', 'disabled');
 
 	app.handler(function() {
 
@@ -194,8 +201,17 @@
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
 			
+			function resetInfinityScrollInfo(){
+				
+				offerLimit = 10;
+			    offerCounter = 0;
+			    offerTablePopulating = false;
+			    
+			    $('#offer-table-container tbody').html('');
+			}
+			
 			//Блокируем кнопк, пока не будет
-			$("form#create-offer-form button").attr('disabled', '');
+			$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
 			
 			$.validator.setDefaults(
 					{
@@ -234,6 +250,37 @@
 				console.log('changed');
 			});*/
 			
+			/*$.validator.addMethod("dateGreaterThan", function(value, element) {
+				
+				console.log('value = ' + value);
+				console.log('$(params).val() = ' + $(params).val());
+				
+				if (value != '' && $(params).val() != '') {
+			        return value >= $(params).val();
+			    } else {
+			    	return true;
+			    }
+			}, "End Date should be greater than Start Date.");
+				
+			$('form#create-offer-form').validate({
+		        rules: {
+		        	title: {
+		                required: true
+		            },
+		            content: {
+		            	required: true
+		            },
+		            'finish-date-input': {
+		            	dateGreaterThan: "#start-date-input"
+		            }
+		        },
+		        messages: {
+		        	title: "Заголовок не заполнен",
+		        	content: "Описание не заполнено",
+		        	'finish-date-input': "Дата окончания меньше даты начала"
+		        }
+		    });*/
+			
 			$('form#create-offer-form').validate({
 		        rules: {
 		        	title: {
@@ -251,28 +298,62 @@
 			
 			var isFormValid = function(){
 				
+				var isTitleContentValid = false;
+				var isTypeValid = false;
+				var isDateRangeValid = false;
+				
 				if ($('form#create-offer-form').valid()) {
 		        	
-		            $('form#create-offer-form button').prop('disabled', false);
+		            //$('form#create-offer-form button').prop('disabled', false);
+					isTitleContentValid = true;
 		        } else {
 		        	
-		            $('form#create-offer-form button').prop('disabled', 'disabled');
+		            //$('form#create-offer-form button').prop('disabled', 'disabled');
 		        }
 				
 				if($('form#create-offer-form #offer-type-select select option:selected').val() == ""){
 					
-					$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
-					$('form#create-offer-form button').prop('disabled', 'disabled');
+					//$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
+					//$('form#create-offer-form button').prop('disabled', 'disabled');
 					//console.log('setCustomValidity -');
+					
 				} else {
 					
-					$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
-					$('form#create-offer-form button').prop('disabled', false);
+					//$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
+					//$('form#create-offer-form button').prop('disabled', false);
 					//console.log('setCustomValidity +');
+					isTypeValid = true;
+				}
+				
+				var startDateInputVal = $('form#create-offer-form input#start-date-input').val();
+				var finishDateInputVal = $('form#create-offer-form input#finish-date-input').val();
+				
+				if(startDateInputVal != '' && finishDateInputVal != ''){
+
+					//console.log('startDateInputVal = ' + startDateInputVal);
+					//console.log('finishDateInputVal = ' + finishDateInputVal);
+					//console.log('finishDateInputVal.localeCompare(startDateInputVal) = ' + finishDateInputVal.localeCompare(startDateInputVal));
+					if(finishDateInputVal.localeCompare(startDateInputVal) >= 0){
+						
+						isDateRangeValid = true;
+						//$('form#create-offer-form button').prop('disabled', 'disabled');
+					} else {
+						
+						//$('form#create-offer-form button').prop('disabled', false);
+					}
+				} else {
+					
+					isDateRangeValid = true;
+				}
+				
+				if(isTitleContentValid && isTypeValid && isDateRangeValid){
+					
+					$('form#create-offer-form #submit-new-order').prop('disabled', false);
+				} else {
+					
+					$('form#create-offer-form #submit-new-order').prop('disabled', 'disabled');
 				}
 			}
-			
-			isFormValid();
 		
 		    $('form#create-offer-form input').on('keyup blur', function () {
 		    	
@@ -286,6 +367,16 @@
 		        
 		    	isFormValid();
 		    });
+		    
+		    $(document).on(
+		    		'change'
+		    		, 'form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input'
+		    		, function() {
+		        
+		    	isFormValid();
+		    });
+		    
+		    isFormValid();
 		    
 		    //Функция получения списка всех типов предложений
 		    var populateOfferTypesSelect = function(){
@@ -526,13 +617,13 @@
 				  		);
 					  	//Заполняем шаблон данными и помещаем на веб-страницу
 					  	//$('#offer-table-container tbody').html(template.render(data.result[0]));
-						if(offerCounter == 0){
+						//if(offerCounter >= 1){
 			            	
-							$('#offer-table-container tbody').html(template.render(data));
-			            } else {
+							//$('#offer-table-container tbody').html(template.render(data));
+			            //} else {
 			            	
 			            	$('#offer-table-container tbody').append(template.render(data));
-			            }
+			            //}
 				  		
 
 				  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
@@ -594,6 +685,15 @@
 				    }
 				}
 			});
+		    
+		    $(document).on(
+		    		'change'
+		    		, 'div#offers-date-filter input#calendarFrom, div#offers-date-filter input#calendarTo'
+		    		, function() {
+		        
+	    			resetInfinityScrollInfo();
+		    		populateOfferTable();
+		    });
 			
 			var imageBase64 = "";
 			$('form#create-offer-form input#image-input').unbind("change");
@@ -609,8 +709,8 @@
 				  reader.readAsDataURL(file);
 			});
 			
-			$('form#create-offer-form button').unbind("click");
-			$('form#create-offer-form button').click(function(ev){
+			$('form#create-offer-form #submit-new-order').unbind("click");
+			$('form#create-offer-form #submit-new-order').click(function(ev){
 				
 				ev.preventDefault();
 				//console.log($('form#create-offer-form c-count-input').val());
@@ -656,6 +756,7 @@
 			    	} else if (resp.result[0] == "created"){
 			    		
 			    		alert("Предложение успешно создано");
+			    		resetInfinityScrollInfo();
 			    		populateOfferTable();
 			    	}
 			    	
@@ -675,7 +776,7 @@
 				$('form#create-offer-form input.file-path').val('');
 				
 				isFormValid();
-				$("form#create-offer-form button").attr('disabled', '');
+				$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
 				
 				//console.log($('form#create-offer-form textarea#content'));
 				//console.log($('form#create-offer-form textarea#content').html());
