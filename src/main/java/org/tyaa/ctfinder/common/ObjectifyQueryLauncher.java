@@ -20,16 +20,14 @@ public class ObjectifyQueryLauncher {
     		    	try {
     		    		_function.doWork(_object);
 					} catch (Exception ex) {
-						RespData result = new RespData(ex.getMessage());
-                        String resultJsonString = _gson.toJson(result);
-                        _out.print(resultJsonString);
+						
+                        printException(ex, _out, _gson);
 					}
     		    }
     		});
     	} catch (Exception ex) {
-    		RespData result = new RespData(ex.getMessage());
-            String resultJsonString = _gson.toJson(result);
-            _out.print(resultJsonString);
+    		
+    		printException(ex, _out, _gson);
     	}
 	}
 	
@@ -40,16 +38,14 @@ public class ObjectifyQueryLauncher {
     		    	try {
     		    		_function.doWork(_object1, _object2);
 					} catch (Exception ex) {
-						RespData result = new RespData(ex.getMessage());
-                        String resultJsonString = _gson.toJson(result);
-                        _out.print(resultJsonString);
+						
+						printException(ex, _out, _gson);
 					}
     		    }
     		});
     	} catch (Exception ex) {
-    		RespData result = new RespData(ex.getMessage());
-            String resultJsonString = _gson.toJson(result);
-            _out.print(resultJsonString);
+    		
+    		printException(ex, _out, _gson);
     	}
 	}
 	
@@ -67,16 +63,40 @@ public class ObjectifyQueryLauncher {
     		    	try {
     		    		_function.doWork(_object1, _object2, _object3);
 					} catch (Exception ex) {
-						RespData result = new RespData(ex.getMessage());
-                        String resultJsonString = _gson.toJson(result);
-                        _out.print(resultJsonString);
+						
+						printException(ex, _out, _gson);
 					}
     		    }
     		});
     	} catch (Exception ex) {
-    		RespData result = new RespData(ex.getMessage());
+    		/*RespData result = new RespData(ex.getMessage());
             String resultJsonString = _gson.toJson(result);
-            _out.print(resultJsonString);
+            _out.print(resultJsonString);*/
+            printException(ex, _out, _gson);
     	}
+	}
+	
+	public static void printException(Exception _ex, PrintWriter _out, Gson _gson) {
+		
+		RespData rd = new RespData("exception");
+		if(_ex.getMessage() == null) {
+			
+			String errorTrace = "";
+			for(StackTraceElement el: _ex.getStackTrace()) {
+				errorTrace += el.toString();
+			}
+			if(errorTrace.equals("")) {
+				//printException(_ex, _out, _gson);
+				
+			} else {
+				rd = new RespData(errorTrace);
+			}
+		} else {
+		
+			rd = new RespData(_ex.getMessage());
+			//rd = new RespData("unknown_exception");
+		}
+		String errorJson = _gson.toJson(rd);
+		_out.print(errorJson);
 	}
 }

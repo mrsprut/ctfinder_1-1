@@ -32,6 +32,7 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.KeyGen;
+import org.tyaa.ctfinder.common.ObjectifyQueryLauncher;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.CityDAO;
 import org.tyaa.ctfinder.controller.CountryDAO;
@@ -368,20 +369,8 @@ public class OfferServlet extends HttpServlet {
 									String successJson = gson.toJson(rd);
 									out.print(successJson);
 								} catch (Exception ex) {
-									//
-									//try (PrintWriter out = resp.getWriter()) {
-										
-										String errorTrace = "";
-										for(StackTraceElement el: ex.getStackTrace()) {
-											errorTrace += el.toString();
-										}
-										RespData rd = new RespData(errorTrace);
-										
-										//RespData rd = new RespData(ex.getMessage());
-										String errorJson = gson.toJson(rd);
-										out.print(errorJson);
-									//}
-									//ex.printStackTrace();
+									
+									ObjectifyQueryLauncher.printException(ex, out, gson);
 								}
 								break;
 							}
@@ -398,6 +387,8 @@ public class OfferServlet extends HttpServlet {
 											, out
 											, gson);
 									
+									//Фильтрация, сортировка и проектция преимущественно
+									//средствами Java Stream API
 									if(req.getParameterMap().keySet().contains(HttpReqParams.inMemory)) {
 										
 										List<Offer> offers = new ArrayList<>();
@@ -551,8 +542,9 @@ public class OfferServlet extends HttpServlet {
 																		, titleString
 																		, offerStateString
 																		, DateTransform.ReversedToDirect(o.getCreated_at()));
-															} catch (ParseException e) {
+															} catch (ParseException ex) {
 																
+																ObjectifyQueryLauncher.printException(ex, out, gson);
 																return new OfferTableRow();
 															}
 														}
@@ -566,79 +558,129 @@ public class OfferServlet extends HttpServlet {
 										RespData rd = new RespData(offersOut);
 										String successJson = gson.toJson(rd);
 										out.print(successJson);
-									}
-									/*List<Offer> offers = new ArrayList<>();
-									List<Offer> offersOut = new ArrayList<>();
-									Integer limit =
-											Integer.parseInt(req.getParameter(HttpReqParams.limit));
-									String[] cursorStr =
-											(req.getParameterMap().keySet().contains(HttpReqParams.cursor))
-											? new String[] {req.getParameter(HttpReqParams.cursor)}
-											: new String[] {null};
-									
-									OfferFilter offerFilter = new OfferFilter();
-									//OfferFilter.reset(offerFilter, OfferFilter.class);
-											
-									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
+									} else {
+										//Фильтрация, сортировка и проектция преимущественно
+										//средствами СУБД
+										List<Offer> offers = new ArrayList<>();
+										//List<Offer> offersOut = new ArrayList<>();
+										Integer limit =
+												Integer.parseInt(req.getParameter(HttpReqParams.limit));
+										String[] cursorStr =
+												(req.getParameterMap().keySet().contains(HttpReqParams.cursor))
+												? new String[] {req.getParameter(HttpReqParams.cursor)}
+												: new String[] {null};
 										
-										offerFilter.createdDateFrom =
-												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateFrom));
-									}
-									
-									if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
-										
-										offerFilter.createdDateTo =
-												DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
-									}
-									
-									Long userId =
-											(Long)session.getAttribute(
-													SessionAttributes.userId
-												);
-									
-									Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
-									paramsMap.put(OfferDAO.Params.OfferList, offers);
-									paramsMap.put(OfferDAO.Params.Limit, limit);
-									paramsMap.put(OfferDAO.Params.CursorStringArray, cursorStr);
-									paramsMap.put(OfferDAO.Params.UserId, userId);
-									paramsMap.put(OfferDAO.Params.Filter, offerFilter);
-									objectifyRun(
-											paramsMap
-											, OfferDAO::getOffersRange
-											, out
-											, gson
-										);
-									
-									if(req.getParameterMap().keySet().contains(HttpReqParams.projection)) {
-										
-										String projectionString  = req.getParameter(HttpReqParams.projection);
-										switch(projectionString) {
-											case HttpReqParams.tableRowProjection:{
-												//offerFilter.projection = OfferProjections.tableRow;
+										OfferFilter offerFilter = new OfferFilter();
+										//OfferFilter.reset(offerFilter, OfferFilter.class);
 												
-											}
+										if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
+											
+											offerFilter.createdDateFrom =
+													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateFrom));
 										}
+										
+										if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
+											
+											offerFilter.createdDateTo =
+													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
+										}
+										
+										//Order by ...
+										if(req.getParameterMap().keySet().contains(HttpReqParams.orderBy)) {
+											
+											String orderBy = req.getParameter(HttpReqParams.orderBy);
+											switch(orderBy) {
+											
+												case HttpReqParams.sortCreatedAsc : {
+													
+													offerFilter.orderByCreated = OfferFilter.Order.Asc;
+													break;
+												}
+												case HttpReqParams.sortCreatedDesc : {
+													
+													offerFilter.orderByCreated = OfferFilter.Order.Desc;
+													break;
+												}
+												case HttpReqParams.sortUrgencyAsc : {
+													
+													offerFilter.orderByUrgency = OfferFilter.Order.Asc;
+													break;
+												}
+												case HttpReqParams.sortUrgencyDesc : {
+													
+													offerFilter.orderByUrgency = OfferFilter.Order.Desc;
+													break;
+												}
+												case HttpReqParams.sortStartAsc : {
+													
+													offerFilter.orderByStart = OfferFilter.Order.Asc;
+													break;
+												}
+												case HttpReqParams.sortStartDesc : {
+													
+													offerFilter.orderByStart = OfferFilter.Order.Desc;
+													break;
+												}
+												case HttpReqParams.sortFinishAsc : {
+													
+													offerFilter.orderByFinish = OfferFilter.Order.Asc;
+													break;
+												}
+												case HttpReqParams.sortFinishDesc : {
+													
+													offerFilter.orderByFinish = OfferFilter.Order.Desc;
+													break;
+												}
+											}
+											
+											/*offerFilter.createdDateTo =
+													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));*/
+										}
+										
+										//TODO фильтрация по пользователю
+										//(чтобы можно было искать предложения определенного автора)
+										/*Long userId =
+												(Long)session.getAttribute(
+														SessionAttributes.userId
+													);*/
+										
+										Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
+										paramsMap.put(OfferDAO.Params.OfferList, offers);
+										paramsMap.put(OfferDAO.Params.Limit, limit);
+										paramsMap.put(OfferDAO.Params.CursorStringArray, cursorStr);
+										//paramsMap.put(OfferDAO.Params.UserId, userId);
+										paramsMap.put(OfferDAO.Params.Filter, offerFilter);
+										objectifyRun(
+												paramsMap
+												, OfferDAO::getOffersRange
+												, out
+												, gson
+											);
+										
+										//Задание проекции, чтобы получить из БД значения только для части
+										//полей объекта модели
+										/*if(req.getParameterMap().keySet().contains(HttpReqParams.projection)) {
+											
+											String projectionString  = req.getParameter(HttpReqParams.projection);
+											switch(projectionString) {
+												case HttpReqParams.tableRowProjection:{
+													//offerFilter.projection = OfferProjections.tableRow;
+													
+												}
+											}
+										}*/
+										//
+										List al = new ArrayList<>();
+										//al.add(offers);
+										String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
+										al.add(new ContinuData(offers, nextCursorString));
+										RespData rd = new RespData(al);
+										String successJson = gson.toJson(rd);
+										out.print(successJson);
 									}
-									//
-									List al = new ArrayList<>();
-									//al.add(offers);
-									String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
-									al.add(new ContinuData(offers, nextCursorString));
-									RespData rd = new RespData(al);
-									String successJson = gson.toJson(rd);
-									out.print(successJson);*/
 								} catch (Exception ex) {
 									
-									/*String errorTrace = "";
-									for(StackTraceElement el: ex.getStackTrace()) {
-										errorTrace += el.toString();
-									}
-									RespData rd = new RespData(errorTrace);*/
-									
-									RespData rd = new RespData(ex.getMessage());
-									String errorJson = gson.toJson(rd);
-									out.print(errorJson);
-									//ex.printStackTrace();
+									ObjectifyQueryLauncher.printException(ex, out, gson);
 								}	
 								break;
 							}
@@ -664,33 +706,16 @@ public class OfferServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				try (PrintWriter out = resp.getWriter()) {
 					
-					/*String errorTrace = "";
-					for(StackTraceElement el: ex.getStackTrace()) {
-						errorTrace += el.toString();
-					}
-					RespData rd = new RespData(errorTrace);*/
-					
-					RespData rd = new RespData(ex.getMessage());
-					String errorJson = gson.toJson(rd);
-					out.print(errorJson);
+					ObjectifyQueryLauncher.printException(ex, out, gson);
 				}
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 	    } catch (Exception ex) {
-			// TODO Auto-generated catch block
-			try (PrintWriter out = resp.getWriter()) {
+	    	
+	    	try (PrintWriter out = resp.getWriter()) {
 				
-				/*String errorTrace = "";
-				for(StackTraceElement el: ex.getStackTrace()) {
-					errorTrace += el.toString();
-				}
-				RespData rd = new RespData(errorTrace);*/
-				
-				RespData rd = new RespData(ex.getMessage());
-				String errorJson = gson.toJson(rd);
-				out.print(errorJson);
+	    		ObjectifyQueryLauncher.printException(ex, out, gson);
 			}
-			//ex.printStackTrace();
 		}
 		 
 	}

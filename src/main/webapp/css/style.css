@@ -189,3 +189,9 @@ label {
     -o-transform: translateY(-140%);
     transform: translateY(-140%);
 }
+
+/* Pointers */
+
+#pointer-down {
+	display: none;
+}

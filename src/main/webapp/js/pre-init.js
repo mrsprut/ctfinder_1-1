@@ -1,5 +1,24 @@
 var GoogleAuth; // Google Auth object
 
+//Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
+Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+
+//Форматирование даты, в которой год, месяц и день изначально переставлены местами
+function formatDate(date){
+
+    //Разрезаем строку даты на массив из трех елементов
+    var pieces = date.split('-');
+    //Меняем элементы местами
+    pieces.reverse();
+    //Склеиваем строку даты из массива
+    var reversed = pieces.join('-');
+    return reversed;
+}
+
 function preloaderOn(nocover) {
 	
 	if(nocover == undefined){

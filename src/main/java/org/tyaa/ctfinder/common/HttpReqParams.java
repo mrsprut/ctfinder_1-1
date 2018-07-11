@@ -29,6 +29,25 @@ public class HttpReqParams {
 	public final static String createdDateTo = "created-date-to";
 	
 	public final static String inMemory = "in_memory";
+	
+	/* Projections */
+	
 	public final static String projection = "projection";
 	public final static String tableRowProjection = "table-row";
+	
+	/* Sort */
+	
+	public final static String orderBy = "order-by";
+	
+	public final static String sortCreatedDesc = "sort-created-desc";
+	public final static String sortCreatedAsc = "sort-created-asc";
+	
+	public final static String sortUrgencyDesc = "sort-urgency-desc";
+	public final static String sortUrgencyAsc = "sort-urgency-asc";
+	
+	public final static String sortStartDesc = "sort-start-desc";
+	public final static String sortStartAsc = "sort-start-asc";
+	
+	public final static String sortFinishDesc = "sort-finish-desc";
+	public final static String sortFinishAsc = "sort-finish-asc";
 }

@@ -72,7 +72,7 @@ public class OfferDAO {
 		Query<Offer> query =
 				ofy().load().type(Offer.class);
 		
-		if((boolean) _paramsMap.get(Params.InMemory)) {
+		if(_paramsMap.get(Params.InMemory) != null && (boolean) _paramsMap.get(Params.InMemory)) {
 			
 			Long userId = (Long) _paramsMap.get(Params.UserId);
 			query = query.filter("user_id", userId);
@@ -96,6 +96,40 @@ public class OfferDAO {
 			if(offerFilter.createdDateTo != null) {
 				
 				query = query.filter("created_at <=", offerFilter.createdDateTo);
+			}
+			
+			if(offerFilter.orderByCreated == OfferFilter.Order.Asc) {
+				
+				query = query.order("created_at");
+			} else if(offerFilter.orderByCreated == OfferFilter.Order.Desc) {
+				
+				query = query.order("-created_at");
+			}
+			
+			if(offerFilter.orderByUrgency == OfferFilter.Order.Asc) {
+				
+				query = query.order("-created_at");
+				query = query.order("urgency");
+			} else if(offerFilter.orderByUrgency == OfferFilter.Order.Desc) {
+				
+				query = query.order("-created_at");
+				query = query.order("-urgency");
+			}
+			
+			if(offerFilter.orderByStart == OfferFilter.Order.Asc) {
+				
+				query = query.order("start_date");
+			} else if(offerFilter.orderByStart == OfferFilter.Order.Desc) {
+				
+				query = query.order("-start_date");
+			}
+			
+			if(offerFilter.orderByFinish == OfferFilter.Order.Asc) {
+				
+				query = query.order("finish_date");
+			} else if(offerFilter.orderByFinish == OfferFilter.Order.Desc) {
+				
+				query = query.order("-finish_date");
 			}
 			
 			//query = query.filter("user_id", userId);

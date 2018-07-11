@@ -1,4 +1,4 @@
-<div class="container">
+<div id="find-container" class="container">
 	<div class="row flex">
 		<div class="col s1 valign-wrapper">
 			<ul id="slide-out" class="sidenav">
@@ -10,7 +10,7 @@
 							</div>
 							<div class="collapsible-body">
 								<form id="categories" action="#">
-									<p>
+									<!-- <p>
 										<label for="category-1"> <input id="category-1"
 											type="checkbox" /><span>волонтерская помощь</span>
 										</label>
@@ -51,7 +51,7 @@
 										<label> <input type="checkbox" /> <span>общественные
 												науки</span>
 										</label>
-									</p>
+									</p> -->
 								</form>
 							</div>
 						</li>
@@ -60,27 +60,26 @@
 								<i class="material-icons">filter_list</i>Фильтр
 							</div>
 							<div class="collapsible-body">
-								<div class="row">
-									<div class="input-field col s12">
-										<input type="text" id="country-input" class="autocomplete">
-										<label for="country-input">Страна</label>
+								<form id="filters" action="#">
+									<div class="row">
+										<div class="input-field col s12">
+											<input type="text" id="country-input" class="autocomplete">
+											<label for="country-input">Страна</label>
+										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="input-field col s12">
-										<input type="text" id="city-input" class="autocomplete">
-										<label for="city-input">Город</label>
+									<div class="row">
+										<div class="input-field col s12">
+											<input type="text" id="city-input" class="autocomplete">
+											<label for="city-input">Город</label>
+										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="input-field col s12">
-										<label for="manicurists-select">
-				                            TODO:
-				                        </label>
-		                                <!-- Сюда при помощи jquery помещается шаблон, заполненный states -->
-										<div id="manicurists-select" class="input-field"></div>
+									<div class="row">
+										<div class="input-field col s12">
+											<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
+											<label for="c-count-input">Вакантных мест</label>
+										</div>
 									</div>
-								</div>
+								</form>
 							</div>
 						</li>
 						<li>
@@ -88,20 +87,41 @@
 								<i class="material-icons">sort</i>Сортировка
 							</div>
 							<div class="collapsible-body">
-								<form action="#">
+								<form  id="order-rules" action="#">
 									<p>
-										<label> <input name="sort-group" type="radio" checked />
-											<span>новизна</span>
+										<label> <input id="sort-created-desc" name="sort-group" type="radio" checked />
+											<span>сначала новые по дате создания</span>
 										</label>
 									</p>
 									<p>
-										<label> <input name="sort-group" type="radio" /> <span>от
-												срочных к не срочным</span>
+										<label> <input  id="sort-created-asc" name="sort-group" type="radio" />
+											<span>сначала старые по дате создания</span>
 										</label>
 									</p>
 									<p>
-										<label> <input name="sort-group" type="radio" /> <span>от
-												не срочных к срочным</span>
+										<label> <input id="sort-urgency-asc" name="sort-group" type="radio" /> <span>от
+												краткосрочных к длительным</span>
+										</label>
+									</p>
+									<p>
+										<label> <input id="sort-urgency-desc" name="sort-group" type="radio" /> <span>от
+												длительных к краткосрочным</span>
+										</label>
+									</p>
+									<p>
+										<label> <input id="sort-start-asc" name="sort-group" type="radio" /> <span>сначала ближайшие по дате старта</span>
+										</label>
+									</p>
+									<p>
+										<label> <input id="sort-start-desc" name="sort-group" type="radio" /> <span>сначала позднейшие по дате старта</span>
+										</label>
+									</p>
+									<p>
+										<label> <input id="sort-finish-asc" name="sort-group" type="radio" /> <span>сначала ближайшие по дате окончания</span>
+										</label>
+									</p>
+									<p>
+										<label> <input id="sort-finish-desc" name="sort-group" type="radio" /> <span>сначала позднейшие по дате окончания</span>
 										</label>
 									</p>
 								</form>
@@ -114,20 +134,63 @@
 				class="material-icons" style="pointer-events: none">settings</i></a>
 		</div>
 		<div class="col s11">
-			<form>
-				<div class="input-field">
-					<input id="search" type="search" required> <label
-						class="label-icon" for="search"><i class="material-icons">search</i></label>
-					<i class="material-icons">close</i>
+			<div class="row">
+				<div class="col s12">
+					<form>
+						<div class="input-field">
+							<input id="search" class="autocomplete" type="search" required> <label
+								class="label-icon" for="search"><i class="material-icons">search</i></label>
+						</div>
+					</form>
 				</div>
-			</form>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<form>
+						<label for="calendarFrom"> Начиная с: </label>
+						<input id="calendarFrom" name="calendarFrom" type="text" class="datepicker"> </input>
+					</form>
+				</div>
+				<div class="col s6">
+					<form>
+						<label for="calendarTo"> по: </label>
+						<input id="calendarTo" name="calendarTo" type="text" class="datepicker"> </input>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Сюда при помощи jquery помещается шаблон grid, заполненный данными offers -->
+	<div class="row">
+		<div class="col s12 m12 l12 xl12">
+			<div id="offer-grid-container">
+				<div class="row"></div>
+			</div>
+		</div>
+	</div>
+	<div class="row center">
+		<div class="col s12 m12 l12 xl12">
+			<img id="pointer-down" src="../img/pointer_down.gif" alt="pointer down">
 		</div>
 	</div>
 </div>
 <script type="text/javascript">
 
+	//активируем боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
+	//Определяем текущую дату
+	var nowDate = new Date();
+	//Устанавливаем в элементы ввода Дата (Календарь) текущую дату,
+    //вызывая на ней предварительно нашу корректирующую функцию
+	$('#find-container #calendarFrom, #find-container #calendarTo')
+		.val(new Date().toDateInputValue());
+	//активируем элементы ввода Дата (Календарь)
+	$('#find-container #calendarFrom, #find-container #calendarTo').datepicker({
+    	'format':'dd-mm-yyyy'
+    	, 'setDefaultDate':true
+    	, 'autoClose':true
+	});
 	
 	/*$('input#country-input').autocomplete({
       data: {
@@ -153,9 +216,35 @@
 
 		return function(params) {
 
+			//Пустые объекты для хранения данных автодолнения
+			//выбора страны и города, которые будут приходить с сервера 
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
 			
+			//Начальные настройки бесконечной прокрутки предложений
+			var cursorString = null;
+		    var offerLimit = 4;
+		    var offerCounter = 0;
+		    var cursor = null;
+		    var offerTablePopulating = false;
+		    
+		    //Функция сброса бесконечной прокрутки предложений
+		    //в начальное состояние
+			function resetInfinityScrollInfo(){
+				
+				offerLimit = 10;
+			    offerCounter = 0;
+			    offerTablePopulating = false;
+			    cursor = null;
+			    
+			    $('#offer-grid-container > div').html('');
+			}
+			
+			//Настройка календарей - верхней и нижней границ временного диапазона
+			
+			
+			//Получаем с сервера все типы событий
+			//и заполняем ими раздел "категрии" в боковой панели
 			$.ajax({
 				type: 'POST',
 				url: '/offertype?action=get-all',
@@ -181,6 +270,8 @@
 				  
 				console.log(textStatus);
 			});
+			
+			/* Filter: country n city autocomplete */
 			
 			var onCountryAutocompleteCallback = function(){
 
@@ -296,6 +387,145 @@
 					 //$('input#city-input').keyup();
 				 }
 			});
+			
+			/* Filter: submit */
+			
+			var doFilter = function(orderByParam){
+
+				populateOffersGrid(orderByParam);
+		    	/*$.ajax({
+		            url: "/events-ajax",
+		            type: "POST",
+		            data: {
+		                //'type': this.id
+		                'action': 'fetch-filtered-events'
+		                , 'type': $('form#event-types-filter input[type=radio]:checked').attr('id')
+		                , 'date': $('.datepicker').val()
+		            },
+		            cache : false
+		        }).done(function(data) {
+		            
+		            //помещаем на веб-страницу
+		            $('#events-container').html(data);
+		        });*/
+			}
+			
+			//обработчик выбора одного из чекбоксов фильтра по	
+			$('form#order-rules input[type=radio]').change(function() {
+
+			    if(this.checked) {
+					
+			    	doFilter({
+		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+					});
+			    }
+			});
+			
+			/* Offers grid */
+			
+			var populateOffersGrid = function(orderByParam){
+		    	
+				//Добавляем на место таблицы полосу бесконечного прогресса -
+				//пока будет ожидаться ответ сервера
+		        preloaderOn("nocover");
+				//Собираем отформатированные даты из элементов Календарь
+		        var dateFrom = $('div#offers-date-filter input#calendarFrom').val();
+		        var dateTo = $('div#offers-date-filter input#calendarTo').val();
+		        //Составляем строку запроса на сервер
+		        //для получения отфильтрованных данных о заданиях
+		        var urlString =
+		        	"/offer?action=get-range"
+		        			+"&limit=" + offerLimit
+		        			+"&created-date-from=" + dateFrom
+		        			+"&created-date-to=" + dateTo
+		        			+ ((cursor != null) ? ("&cursor=" + cursor) : "");
+		      	//+"&order-by=sort-created-desc"
+				
+		    	$.ajax({
+		            url: urlString,
+		            type: "POST",
+		            data: orderByParam,
+		            cache : false
+		        }).done(function(data) {
+		            
+		            //помещаем на веб-страницу
+		            //$('#events-container').html(data);
+		            
+		        	fetchedCount = data.result[0].items.length;
+		        	if(data.result[0].cursor_str != "end"){
+		        		
+		        		offerCounter += fetchedCount;
+		        		var offerCounterTail = offerCounter % 4;
+		        		if(offerCounterTail != 0 && offerLimit == 4){
+			        		
+			        		offerLimit += 4 - offerCounterTail;
+			        		
+			        	} else if(offerLimit != 4) {
+			        		
+			        		offerLimit = 4;
+			        	}
+
+		        		if(fetchedCount > 0){
+				            //Готовим шаблон offer grid item при помощи библиотеки Hogan
+				            //TODO
+						  	var template = Hogan.compile(
+					  			'{{#items}}'
+								+ 	'<tr>'
+								+   	'<th scope="row">{{id}}</th>'
+								+             '<td>{{title}}</td>'
+				                +             '<td>{{offer_type}}</td>'
+				                +             '<td>image_icon</td>'
+				                +             '<td>{{state}}</td>'
+				                +             '<td>{{created_at}}</td>'
+				                +          '</tr>'
+					      		+ '{{/items}}'
+					  		);
+						  	//Заполняем шаблон данными и помещаем на веб-страницу
+							$('#offer-grid-container > div').append(template.render(data.result[0]));
+						  	//
+							$('#find-container #pointer-down').css('display', 'block');
+						}
+
+				  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
+			            $("table td:contains('забронирован')").parent().addClass("BlueRow");
+			            $("table td:contains('выполнен')").parent().addClass("GreenRow");
+			            //$("table td:contains('отменен')").parent().addClass("RedRow");
+			            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
+			            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
+			            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
+			            $("table tr:not(:first)").unbind("click");
+			            $("table tr:not(:first)").click(function(){
+
+			                //Разблокируем кнопки, когда выбрана строка таблицы
+			                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
+			                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
+			                //(оно могло быть ранее установлено на одну из строк)
+			                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
+			            });
+			            //Очищаем списки в форме
+			            $('#manicurists-select select')
+			                .find('option')
+			                .remove();
+
+			            $('#time-select select')
+			                .find('option')
+			                .remove();
+			            //Отключаем элементы ввода в форме
+			            $('#time-select select').attr('disabled', '');
+			            $('form#create-order button').attr('disabled', '');
+			            //Заполняем список выбора мастеров
+			            populateManicuristsList();
+			            //Активируем список выбора времени
+			            $('#time-select select').formSelect();*/
+		        	} else {
+		        		
+		        		$('#find-container #pointer-down').css('display', 'none');
+		        		offerCounter = "full";
+		        	}
+		        	preloaderOff();
+		        	offerTablePopulating = false;
+		        });
+			}
 
 			/*var preloaderHide = function() {
 
