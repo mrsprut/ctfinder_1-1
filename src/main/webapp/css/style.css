@@ -178,6 +178,8 @@ div#g-signin2 {
   margin-top: -50px;
 }*/
 
+/* Forms */
+
 label {
     width: 100%;
 }
@@ -193,5 +195,13 @@ label {
 /* Pointers */
 
 #pointer-down {
+	width:64px;
+	height:64px;
 	display: none;
+}
+
+/* Public find offers grid */
+
+.card-title-date {
+  font-size: 14px;
 }

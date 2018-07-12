@@ -168,8 +168,8 @@
 			</div>
 		</div>
 	</div>
-	<div class="row center">
-		<div class="col s12 m12 l12 xl12">
+	<div class="row">
+		<div class="col s12 m12 l12 xl12 center">
 			<img id="pointer-down" src="../img/pointer_down.gif" alt="pointer down">
 		</div>
 	</div>
@@ -225,8 +225,7 @@
 			var cursorString = null;
 		    var offerLimit = 4;
 		    var offerCounter = 0;
-		    var cursor = null;
-		    var offerTablePopulating = false;
+		    var offerGridPopulating = false;
 		    
 		    //Функция сброса бесконечной прокрутки предложений
 		    //в начальное состояние
@@ -234,8 +233,8 @@
 				
 				offerLimit = 10;
 			    offerCounter = 0;
-			    offerTablePopulating = false;
-			    cursor = null;
+			    offerGridPopulating = false;
+			    cursorString = null;
 			    
 			    $('#offer-grid-container > div').html('');
 			}
@@ -387,40 +386,7 @@
 					 //$('input#city-input').keyup();
 				 }
 			});
-			
-			/* Filter: submit */
-			
-			var doFilter = function(orderByParam){
-
-				populateOffersGrid(orderByParam);
-		    	/*$.ajax({
-		            url: "/events-ajax",
-		            type: "POST",
-		            data: {
-		                //'type': this.id
-		                'action': 'fetch-filtered-events'
-		                , 'type': $('form#event-types-filter input[type=radio]:checked').attr('id')
-		                , 'date': $('.datepicker').val()
-		            },
-		            cache : false
-		        }).done(function(data) {
-		            
-		            //помещаем на веб-страницу
-		            $('#events-container').html(data);
-		        });*/
-			}
-			
-			//обработчик выбора одного из чекбоксов фильтра по	
-			$('form#order-rules input[type=radio]').change(function() {
-
-			    if(this.checked) {
-					
-			    	doFilter({
-		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});
-			    }
-			});
-			
+						
 			/* Offers grid */
 			
 			var populateOffersGrid = function(orderByParam){
@@ -429,8 +395,8 @@
 				//пока будет ожидаться ответ сервера
 		        preloaderOn("nocover");
 				//Собираем отформатированные даты из элементов Календарь
-		        var dateFrom = $('div#offers-date-filter input#calendarFrom').val();
-		        var dateTo = $('div#offers-date-filter input#calendarTo').val();
+		        var dateFrom = $('#find-container #calendarFrom').val();
+		        var dateTo = $('#find-container #calendarTo').val();
 		        //Составляем строку запроса на сервер
 		        //для получения отфильтрованных данных о заданиях
 		        var urlString =
@@ -438,7 +404,7 @@
 		        			+"&limit=" + offerLimit
 		        			+"&created-date-from=" + dateFrom
 		        			+"&created-date-to=" + dateTo
-		        			+ ((cursor != null) ? ("&cursor=" + cursor) : "");
+		        			+ ((cursorString != null) ? ("&cursor=" + cursorString) : "");
 		      	//+"&order-by=sort-created-desc"
 				
 		    	$.ajax({
@@ -454,6 +420,7 @@
 		        	fetchedCount = data.result[0].items.length;
 		        	if(data.result[0].cursor_str != "end"){
 		        		
+		        		cursorString = data.result[0].cursor_str;
 		        		offerCounter += fetchedCount;
 		        		var offerCounterTail = offerCounter % 4;
 		        		if(offerCounterTail != 0 && offerLimit == 4){
@@ -470,14 +437,24 @@
 				            //TODO
 						  	var template = Hogan.compile(
 					  			'{{#items}}'
-								+ 	'<tr>'
-								+   	'<th scope="row">{{id}}</th>'
-								+             '<td>{{title}}</td>'
-				                +             '<td>{{offer_type}}</td>'
-				                +             '<td>image_icon</td>'
-				                +             '<td>{{state}}</td>'
-				                +             '<td>{{created_at}}</td>'
-				                +          '</tr>'
+				                +'<div class="col s12 m3 l3 xl3">'
+					                +'<div class="card {{offer_type}}">'
+					                    +'<div class="card-image">'
+					                      +'<img src="{{image}}">'
+					                      +'<div class="card-title">'
+					                      	+'<div>{{title}}</div>'
+					                      	+'<div>({{offer_type}})</div>'
+					                      	+'<div class="card-title-date">{{created_at}}</div>'
+					                      +'</div>'
+					                    +'</div>'
+					                    +'<div class="card-content">'
+					                      +'<p>{{content_preview}}</p>'
+					                    +'</div>'
+					                    +'<div class="card-action">'
+					                      +'<a href="{{id}}">Details...</a>'
+					                    +'</div>'
+					                  +'</div>'
+					            +'</div>'
 					      		+ '{{/items}}'
 					  		);
 						  	//Заполняем шаблон данными и помещаем на веб-страницу
@@ -523,14 +500,52 @@
 		        		offerCounter = "full";
 		        	}
 		        	preloaderOff();
-		        	offerTablePopulating = false;
+		        	offerGridPopulating = false;
 		        });
 			}
 
-			/*var preloaderHide = function() {
+			/* Filter */
+			
+			var doFilter = function(orderByParam){
 
-				$(".preloader-wrapper").css("display", "none");
-			}*/
+				populateOffersGrid(orderByParam);
+			}
+			
+			//Apply the filter
+			doFilter({
+                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+			});
+			
+			//обработчик выбора одного из чекбоксов фильтра по	
+			$('form#order-rules input[type=radio]').change(function() {
+
+			    if(this.checked) {
+					
+			    	doFilter({
+		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+					});
+			    }
+			});
+			
+			/* Grid infinity scroll */
+			
+			//$(window).unbind("scroll");
+			$(window).scroll(function() {
+				
+				if(offerCounter != "full" && !offerGridPopulating){
+					
+					var footerHeight = 283;
+					if ($(window).scrollTop() >=
+							($(document).height()
+								- footerHeight
+								- $(window).height())) {
+						offerGridPopulating = true;  
+						doFilter({
+			                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+						});
+				    }
+				}
+			});
 
 			setTimeout(preloaderOff, 500);
 		};
