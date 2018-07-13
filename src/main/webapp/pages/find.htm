@@ -89,7 +89,7 @@
 							<div class="collapsible-body">
 								<form  id="order-rules" action="#">
 									<p>
-										<label> <input id="sort-created-desc" name="sort-group" type="radio" checked />
+										<label> <input id="sort-created-desc" name="sort-group" type="radio" checked="checked" />
 											<span>сначала новые по дате создания</span>
 										</label>
 									</p>
@@ -175,7 +175,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-
+	//ТУДУ 1. зеленый цвет для надписей на картинках
+	//ТУДУ 2. вычисление числа ячеек для рядов по ширине экрана
 	//активируем боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
@@ -226,6 +227,8 @@
 		    var offerLimit = 3;
 		    var offerCounter = 0;
 		    var offerGridPopulating = false;
+		    
+		    $('#offer-grid-container > div').html('');
 		    
 		    //Функция сброса бесконечной прокрутки предложений
 		    //в начальное состояние
@@ -418,7 +421,7 @@
 		            //$('#events-container').html(data);
 		            
 		        	fetchedCount = data.result[0].items.length;
-		        	if(data.result[0].cursor_str != "end"){
+		        	if(data.result[0].cursor_str != "end" && fetchedCount > 0){
 		        		
 		        		cursorString = data.result[0].cursor_str;
 		        		offerCounter += fetchedCount;
@@ -432,7 +435,7 @@
 			        		offerLimit = 3;
 			        	}
 
-		        		if(fetchedCount > 0){
+		        		//if(fetchedCount > 0){
 				            //Готовим шаблон offer grid item при помощи библиотеки Hogan
 				            //TODO
 						  	var template = Hogan.compile(
@@ -461,7 +464,7 @@
 							$('#offer-grid-container > div').append(template.render(data.result[0]));
 						  	//
 							$('#find-container #pointer-down').css('display', 'block');
-						}
+						//}
 
 				  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
 			            $("table td:contains('забронирован')").parent().addClass("BlueRow");
@@ -517,6 +520,7 @@
 			});
 			
 			//обработчик выбора одного из чекбоксов фильтра по	
+			$('form#order-rules input[type=radio]').unbind("change");
 			$('form#order-rules input[type=radio]').change(function() {
 
 			    if(this.checked) {
@@ -528,11 +532,32 @@
 			    }
 			});
 			
+			/* Date range */
+			
+			var onDateRangeChanged = function(){
+
+				if(!offerGridPopulating){
+					
+	    			resetInfinityScrollInfo();
+	    			doFilter({
+		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+					});
+    			} else {
+    				
+    				setTimeout(onDateRangeChanged, 100);
+    			}
+			}
+			
+			$(document).unbind("change");
+			$(document).on(
+		    		'change'
+		    		, '#find-container #calendarFrom, #find-container #calendarTo'
+		    		, onDateRangeChanged);
+			
 			/* Grid infinity scroll */
 			
-			//$(window).unbind("scroll");
-			$(window).scroll(function() {
-				
+			var onScroll = function(){
+
 				if(offerCounter != "full" && !offerGridPopulating){
 					
 					var footerHeight = 283;
@@ -546,7 +571,27 @@
 						});
 				    }
 				}
-			});
+			}
+			
+			var onClickNext = function(){
+
+				if(offerCounter != "full" && !offerGridPopulating){
+
+					offerGridPopulating = true;  
+					doFilter({
+		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+					});
+				} else if(offerCounter == "full"){
+					
+					$('#find-container #pointer-down').css('display', 'none');
+				}
+			}
+			
+			$(window).unbind("scroll");
+			$(window).scroll(onScroll);
+			
+			$('#find-container #pointer-down').unbind("click");
+			$('#find-container #pointer-down').click(onClickNext);
 
 			setTimeout(preloaderOff, 500);
 		};

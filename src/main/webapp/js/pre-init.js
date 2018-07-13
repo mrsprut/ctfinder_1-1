@@ -19,6 +19,10 @@ function formatDate(date){
     return reversed;
 }
 
+/*function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}*/
+
 function preloaderOn(nocover) {
 	
 	if(nocover == undefined){

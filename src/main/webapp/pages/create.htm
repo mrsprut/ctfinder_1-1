@@ -184,6 +184,7 @@
 			
 			function resetInfinityScrollInfo(){
 				
+				cursorString = null;
 				offerLimit = 10;
 			    offerCounter = 0;
 			    offerTablePopulating = false;
@@ -538,9 +539,7 @@
 		    	console.log(offerTableHeight);
 		    	console.log(offerRowHeight);
 		    	console.log(offerLimit);*/
-		    	
-		    	
-		    	
+		    			    	
 				//Добавляем на место таблицы полосу бесконечного прогресса - пока будет ожидаться ответ сервера
 		        preloaderOn("nocover");
 		    	//Отправляем асинхронный запрос на сервер (в файл api/orders.php)

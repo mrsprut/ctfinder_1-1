@@ -132,8 +132,8 @@ public class OfferServlet extends HttpServlet {
 						String actionString = req.getParameter(HttpReqParams.action);
 						
 						//Готовим формат для парсинга дат из строк
-						DateFormat reversedFormat =
-							new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+						/*DateFormat reversedFormat =
+							new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);*/
 						
 						switch(actionString) {
 						
@@ -301,6 +301,9 @@ public class OfferServlet extends HttpServlet {
 									
 									//14
 									String completedAt = null;
+									
+									DateFormat reversedFormat =
+											new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 									
 									//15
 									String createdAt = reversedFormat.format(new Date());
