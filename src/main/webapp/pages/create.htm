@@ -682,12 +682,20 @@
 				
 				  //console.log($('form#create-offer-form input#image-input'));
 				  var file = ev.target.files[0];
-				  var reader = new FileReader();
-				  reader.onloadend = function() {
-
-                        imageBase64 = reader.result;
-				  }
-				  reader.readAsDataURL(file);
+				  
+				  ImageTools.resize(file, {
+				        width: 300, // maximum width
+				        height: 300 // maximum height
+				    }, function(blob, didItResize) {
+						 // didItResize will be true if it managed to resize it, otherwise false (and will return the original file as 'blob')
+						 //document.getElementById('preview').src = window.URL.createObjectURL(blob);
+						 var reader = new FileReader();
+						 reader.onloadend = function() {
+						
+			                   imageBase64 = reader.result;
+						 }
+						 reader.readAsDataURL(blob);
+				    });
 			});
 			
 			$('form#create-offer-form #submit-new-order').unbind("click");

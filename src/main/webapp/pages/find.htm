@@ -231,14 +231,14 @@
 		    //в начальное состояние
 			function resetInfinityScrollInfo(){
 				
-				offerLimit = 10;
+				offerLimit = 3;
 			    offerCounter = 0;
 			    offerGridPopulating = false;
 			    cursorString = null;
 			    
 			    $('#offer-grid-container > div').html('');
 			}
-			
+			//resetInfinityScrollInfo();
 			//Настройка календарей - верхней и нижней границ временного диапазона
 			
 			
@@ -438,7 +438,7 @@
 						  	var template = Hogan.compile(
 					  			'{{#items}}'
 				                +'<div class="col s12 m4 l4 xl4">'
-					                +'<div class="card {{offer_type}}">'
+					                +'<div class="card hoverable {{offer_type}}">'
 					                    +'<div class="card-image">'
 					                      +'<img src="{{image}}">'
 					                      +'<div class="card-title">'
@@ -521,6 +521,7 @@
 
 			    if(this.checked) {
 					
+			    	resetInfinityScrollInfo();
 			    	doFilter({
 		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
 					});
