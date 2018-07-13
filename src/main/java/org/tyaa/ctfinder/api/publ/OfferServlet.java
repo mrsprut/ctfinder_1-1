@@ -764,13 +764,21 @@ public class OfferServlet extends HttpServlet {
 														}
 														
 													}
+													
+													int imageBytesCount = o.getImage().getBytes().length;
+													String noimageUriString = "/img/no-image.png";
+													String imageBase64 =
+															(imageBytesCount > 0)
+															? new String(o.getImage().getBytes())
+															: noimageUriString;
+													
 													try {
 														return new OfferGridItem(
 																o.getId()
 																, offerTypeDescriptionString
 																, titleString
 																, offerStateString
-																, new String(o.getImage().getBytes())
+																, imageBase64
 																, descriptionString.length() > 25
 																		? descriptionString.substring(0, 25) + " ..."
 																		: descriptionString

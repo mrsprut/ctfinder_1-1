@@ -202,6 +202,10 @@ label {
 
 /* Public find offers grid */
 
+.card-title {
+	color: #CCCCCC !important;
+}
+
 .card-title-date {
   font-size: 14px;
 }
