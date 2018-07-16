@@ -60,6 +60,7 @@ import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.filter.OfferFilter;
 import org.tyaa.ctfinder.model.ContinuData;
 import org.tyaa.ctfinder.model.OfferGridItem;
+import org.tyaa.ctfinder.model.OfferGridItemDetails;
 import org.tyaa.ctfinder.model.OfferTableRow;
 import org.tyaa.ctfinder.model.RespData;
 import org.tyaa.ctfinder.projection.OfferProjections;
@@ -393,159 +394,202 @@ public class OfferServlet extends HttpServlet {
 											, out
 											, gson);
 									
-										//
-										Offer o = new Offer();
-										//
-										String offerId =
-												req.getParameter(HttpReqParams.id);
+									//
+									Offer o = new Offer();
+									//
+									String offerId =
+											req.getParameter(HttpReqParams.id);
+									
+									//Задание проекции
 										
-										//Задание проекции
+									String projectionString  =
+											req.getParameter(HttpReqParams.projection);
+									
+									objectifyRun2(
+											offerId
+											, o
+											, OfferDAO::getOffer
+											, out
+											, gson
+										);
+									
+									switch(projectionString) {
+									
+										case HttpReqParams.gridItemDetailsProjection:{
+													
+											//Находим объект названия типа предлажения
+											//и его реализацию на текущем языке
+											String offerTypeDescriptionString = "-";
+											if(o.getOffer_type_id() != null) {
+												Offer_type offerType = new Offer_type();
+												objectifyRun2(
+														o.getOffer_type_id()
+														, offerType
+														, Offer_typeDAO::getOffer_type
+														, out
+														, gson
+													);
+												//offerTypeDescriptionString = "+";
+												Static_description offerTypeDescription =
+														new Static_description();
+												objectifyRun3(
+													offerType.getDescription_key()
+													, englishLanguage.getId()
+													, offerTypeDescription
+													, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
+													, out
+													, gson
+												);
+												if(offerTypeDescription.getContent() != null) {
+													offerTypeDescriptionString =
+															offerTypeDescription.getContent();
+												}
+											}
+											//Находим заголовок на текущем языке
+											String titleString = "-";
+											if(o.getTitle_key() != null
+													&& !o.getTitle_key().equals("")) {
+												Title title = new Title();
+												objectifyRun3(
+													o.getTitle_key()
+													, englishLanguage.getId()
+													, title
+													, TitleDAO::getTitleByKeyAndLang
+													, out
+													, gson
+												);
+												titleString = title.getContent();
+											}
+											//Находим описание на текущем языке
+											String descriptionString = "-";
+											if(o.getDescription_key() != null
+													&& !o.getDescription_key().equals("")) {
+												Description description = new Description();
+												objectifyRun3(
+													o.getDescription_key()
+													, englishLanguage.getId()
+													, description
+													, DescriptionDAO::getDescriptionByKeyAndLang
+													, out
+													, gson
+												);
+												descriptionString = description.getContent();
+												/*descriptionString = 
+													descriptionString.length() > 25
+													? descriptionString.substring(0, 25) + " ..."
+													: descriptionString;*/
+											}
+											//Находим объект типа состояния
+											//и его реализацию на текущем языке
+											String offerStateString = "-";
+											if(o.getState_id() != null) {
+												State state = new State();
+												objectifyRun2(
+														o.getState_id()
+														, state
+														, StateDAO::getState
+														, out
+														, gson
+													);
+												/*if(state.getId() != null) {}
+												offerStateString =
+														state.getId().toString() + " " + state.getTitle_key();*/
+												Static_title stateTitle = new Static_title();
+												objectifyRun3(
+													state.getTitle_key()
+													, englishLanguage.getId()
+													, stateTitle
+													, Static_titleDAO::getStaticTitleByKeyAndLang
+													, out
+													, gson
+												);
+												if(stateTitle.getContent() != null) {
+													offerStateString = stateTitle.getContent();
+												}
+											}
 											
-										String projectionString  =
-												req.getParameter(HttpReqParams.projection);
-										
-										objectifyRun2(
-												offerId
-												, o
-												, OfferDAO::getOffer
-												, out
-												, gson
-											);
-										
-										switch(projectionString) {
-										
-											case HttpReqParams.gridItemDetailsProjection:{
-														
-												//Находим объект названия типа предлажения
-												//и его реализацию на текущем языке
-												String offerTypeDescriptionString = "-";
-												if(o.getOffer_type_id() != null) {
-													Offer_type offerType = new Offer_type();
-													objectifyRun2(
-															o.getOffer_type_id()
-															, offerType
-															, Offer_typeDAO::getOffer_type
-															, out
-															, gson
-														);
-													//offerTypeDescriptionString = "+";
-													Static_description offerTypeDescription =
-															new Static_description();
-													objectifyRun3(
-														offerType.getDescription_key()
-														, englishLanguage.getId()
-														, offerTypeDescription
-														, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
+											//Image
+											int imageBytesCount = o.getImage().getBytes().length;
+											String noimageUriString = "/img/no-image.png";
+											String imageBase64 =
+													(imageBytesCount > 0)
+													? new String(o.getImage().getBytes())
+													: noimageUriString;
+													
+											//Create at - direct format
+											String createdAtString =
+													DateTransform.ReversedToDirect(o.getCreated_at());
+											
+											//Country
+											String countryString = "-";
+											if(o.getCountry_id() != null) {
+												Country offerCountry = new Country();
+												objectifyRun2(
+														o.getCountry_id()
+														, offerCountry
+														, CountryDAO::getCountry
 														, out
 														, gson
 													);
-													if(offerTypeDescription.getContent() != null) {
-														offerTypeDescriptionString =
-																offerTypeDescription.getContent();
-													}
-												}
-												//Находим заголовок на текущем языке
-												String titleString = "-";
-												if(o.getTitle_key() != null
-														&& !o.getTitle_key().equals("")) {
-													Title title = new Title();
-													objectifyRun3(
-														o.getTitle_key()
+												Static_title offerCountrySt = new Static_title();		
+												objectifyRun3(
+														offerCountry.getTitle_key()
 														, englishLanguage.getId()
-														, title
-														, TitleDAO::getTitleByKeyAndLang
-														, out
-														, gson
-													);
-													titleString = title.getContent();
-												}
-												//Находим описание на текущем языке
-												String descriptionString = "-";
-												if(o.getDescription_key() != null
-														&& !o.getDescription_key().equals("")) {
-													Description description = new Description();
-													objectifyRun3(
-														o.getDescription_key()
-														, englishLanguage.getId()
-														, description
-														, DescriptionDAO::getDescriptionByKeyAndLang
-														, out
-														, gson
-													);
-													descriptionString = description.getContent();
-												}
-												//Находим объект типа состояния
-												//и его реализацию на текущем языке
-												String offerStateString = "-";
-												if(o.getState_id() != null) {
-													State state = new State();
-													objectifyRun2(
-															o.getState_id()
-															, state
-															, StateDAO::getState
-															, out
-															, gson
-														);
-													/*if(state.getId() != null) {}
-													offerStateString =
-															state.getId().toString() + " " + state.getTitle_key();*/
-													Static_title stateTitle = new Static_title();
-													objectifyRun3(
-														state.getTitle_key()
-														, englishLanguage.getId()
-														, stateTitle
+														, offerCountrySt
 														, Static_titleDAO::getStaticTitleByKeyAndLang
 														, out
 														, gson
 													);
-													if(stateTitle.getContent() != null) {
-														offerStateString = stateTitle.getContent();
-													}
-													
-												}
-												
-												int imageBytesCount = o.getImage().getBytes().length;
-												String noimageUriString = "/img/no-image.png";
-												String imageBase64 =
-														(imageBytesCount > 0)
-														? new String(o.getImage().getBytes())
-														: noimageUriString;
-												
-												try {
-													return new OfferGridItem(
-															o.getId()
-															, offerTypeDescriptionString
-															, titleString
-															, offerStateString
-															, imageBase64
-															, descriptionString.length() > 25
-																	? descriptionString.substring(0, 25) + " ..."
-																	: descriptionString
-															, DateTransform.ReversedToDirect(o.getCreated_at())
-														);
-												} catch (ParseException ex) {
-													
-													ObjectifyQueryLauncher.printException(ex, out, gson);
-													return new OfferGridItem();
-												}
-														
-												
-												//
-												List al = new ArrayList<>();
-												//al.add(offers);
-												String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
-												al.add(new ContinuData(gridItems, nextCursorString));
-												RespData rd = new RespData(al);
-												String successJson = gson.toJson(rd);
-												out.print(successJson);
+												countryString = offerCountrySt.getContent();
 											}
+											
+											//City
+											String cityString = "-";
+											if(o.getCity_id() != null) {
+												City offerCity = new City();
+												objectifyRun2(
+														o.getCity_id()
+														, offerCity
+														, CityDAO::getCity
+														, out
+														, gson
+													);
+												Static_title offerCitySt = new Static_title();		
+												objectifyRun3(
+														offerCity.getTitle_key()
+														, englishLanguage.getId()
+														, offerCitySt
+														, Static_titleDAO::getStaticTitleByKeyAndLang
+														, out
+														, gson
+													);
+												cityString = offerCitySt.getContent();
+											}
+											
+											//Populate the response object
+											OfferGridItemDetails offerDetails =
+												new OfferGridItemDetails (
+													o.getId()
+													, offerTypeDescriptionString
+													, titleString
+													, offerStateString
+													, imageBase64
+													, descriptionString
+													, createdAtString
+													
+													, countryString
+													, cityString);
+											
+											//
+											List al = new ArrayList<>();
+											al.add(offerDetails);
+											//String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
+											//al.add(new ContinuData(gridItems, nextCursorString));
+											RespData rd = new RespData(al);
+											String successJson = gson.toJson(rd);
+											out.print(successJson);
 										}
-
-										
-										
-										
-										
-										
+									}
 								} catch (Exception ex) {
 									
 									ObjectifyQueryLauncher.printException(ex, out, gson);

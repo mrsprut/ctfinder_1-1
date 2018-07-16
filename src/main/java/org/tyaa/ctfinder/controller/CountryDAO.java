@@ -20,6 +20,18 @@ public class CountryDAO {
 		}
 	}
 	
+	public static void getCountry(Long _id, Country _сountry) {
+		
+		Country сountry =
+				ofy().load().type(Country.class).id(_id).now();
+		
+		if(сountry != null) {
+			
+			_сountry.setId(сountry.getId());
+			_сountry.setTitle_key(сountry.getTitle_key());
+		}
+	}
+	
 	//Получение всех Countries в виде списка
 	public static void getAllCountries(List<Country> _CountryList) {
 			

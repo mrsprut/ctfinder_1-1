@@ -186,6 +186,10 @@
 </div>
 <script type="text/javascript">
 	
+	//TODO 1. complete settings: categories, filters, order by (excluding created_at pare)
+	//TODO 2. complete details: author_name, collaborators_count, desired_start_date, desired_finish_date
+	//TODO 3. next step: send email to the offer creator when finder click join
+	
 	//активируем боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
@@ -251,13 +255,17 @@
 			} else if(windowWidth <= 1200){
 				offerLimitDefault = 3;
 			}*/
-			console.log(windowWidth);
-			console.log(offerLimitDefault);
+			//console.log(windowWidth);
+			//console.log(offerLimitDefault);
 			//Начальные настройки бесконечной прокрутки предложений
 			var cursorString = null;
 		    var offerLimit = offerLimitDefault;
 		    var offerCounter = 0;
 		    var offerGridPopulating = false;
+		    var offerDetailsOrientation = "horizontal";
+		    if(windowWidth <= 600){
+		    	offerDetailsOrientation = "";
+			}
 		    
 		    $('#offer-grid-container > div').html(noItemsImage);
 		    
@@ -269,6 +277,9 @@
 			    offerCounter = 0;
 			    offerGridPopulating = false;
 			    cursorString = null;
+			    if(windowWidth <= 600){
+			    	offerDetailsOrientation = "";
+				}
 			    
 			    $('#offer-grid-container > div').html(noItemsImage);
 			}
@@ -471,7 +482,6 @@
 
 		        		//if(fetchedCount > 0){
 				            //Готовим шаблон offer grid item при помощи библиотеки Hogan
-				            //TODO
 						  	var template = Hogan.compile(
 					  			'{{#items}}'
 				                +'<div class="col s12 m12 l6 xl4">'
@@ -635,8 +645,46 @@
 		    		, '#offer-grid-container .card-action > a'
 		    		, function(){
 		    			var id = $(this).data('offerid');
-		    			console.log(id);
-		    			$('#offer-details .modal-content').html(id);
+		    			//console.log(id);
+		    			//$('#offer-details .modal-content').html(id);
+		    			var urlString =
+				        	"/offer?action=get"
+				        			+"&id=" + id
+				        			+"&projection=grid-item-details";
+		    			$.ajax({
+				            url: urlString,
+				            type: "POST",
+				            cache : false
+				        }).done(function(data) {
+				        	
+				        	var template = Hogan.compile(
+						  			
+					      		'<h2 class="header">{{title}}</h2>'
+					      		+ '<h3>({{offer_type}})</h3>'
+					      	    + '<div class="card ' + offerDetailsOrientation + '">'
+					      	      +'<div class="card-image details-image">'
+					      	        +'<img src="{{image}}">'
+					      	      +'</div>'
+					      	      +'<div class="card-stacked">'
+					      	        +'<div class="card-content">'
+					      	      		+ '<h4>Details</h4>'
+					      	      		+'<p><strong>State </strong>{{state}}</p>'
+					      	      		+'<p><strong>Created at </strong>{{created_at}}</p>'
+					      	      		+'<p><strong>Country: </strong>{{country}}</p>'
+					      	      		+'<p><strong>City: </strong>{{city}}</p>'
+					      	      		+ '<h4>Description</h4>'
+					      	          	+'<p>{{content}}</p>'
+					      	        +'</div>'
+					      	        +'<div class="card-action">'
+					      	          +'<a href="{{id}}"><h4>Join</h4></a>'
+					      	        +'</div>'
+					      	      +'</div>'
+					      	    +'</div>'
+					  		);
+				        	
+				        	$('#offer-details .modal-content')
+				        		.html(template.render(data.result[0]));
+				        });
 		    		});
 
 			setTimeout(preloaderOff, 500);

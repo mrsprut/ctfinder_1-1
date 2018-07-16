@@ -44,6 +44,9 @@ public class OfferGridItemDetails {
 			, String image
 			, String content
 			, String created_at
+			
+			, String country
+			, String city
 		) {
 		super();
 		this.id = id;
@@ -53,5 +56,8 @@ public class OfferGridItemDetails {
 		this.image = image;
 		this.content = content;
 		this.created_at = created_at;
+		
+		this.country = country;
+		this.city = city;
 	}
 }

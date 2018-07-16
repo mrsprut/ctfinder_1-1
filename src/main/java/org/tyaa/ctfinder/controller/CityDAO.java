@@ -20,6 +20,18 @@ public class CityDAO {
 		}
 	}
 	
+	public static void getCity(Long _id, City _city) {
+		
+		City city =
+				ofy().load().type(City.class).id(_id).now();
+		
+		if(city != null) {
+			
+			_city.setId(city.getId());
+			_city.setTitle_key(city.getTitle_key());
+		}
+	}
+	
 	//Получение всех Countries в виде списка
 	public static void getAllCities(List<City> _сityList) {
 			
