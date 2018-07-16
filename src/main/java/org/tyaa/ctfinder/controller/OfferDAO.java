@@ -38,6 +38,7 @@ public class OfferDAO {
 		
 		if(offer != null) {
 			
+			//TODO improve using reflection
 			_offer.setId(offer.getId());
 			_offer.setOffer_type_id(offer.getOffer_type_id());
 			_offer.setState_id(offer.getState_id());
@@ -47,8 +48,10 @@ public class OfferDAO {
 			_offer.setCountry_id(offer.getCountry_id());
 			_offer.setCity_id(offer.getCity_id());
 			_offer.setCollaborators_count(offer.getCollaborators_count());
+			_offer.setImage(offer.getImage());
 			_offer.setStart_date(offer.getStart_date());
 			_offer.setFinish_date(offer.getFinish_date());
+			_offer.setUrgency_in_days(offer.getUrgency_in_days());
 			_offer.setStarted_at(offer.getStarted_at());
 			_offer.setCompleted_at(offer.getCompleted_at());
 			_offer.setCreated_at(offer.getCreated_at());

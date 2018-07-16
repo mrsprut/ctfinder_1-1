@@ -173,13 +173,28 @@
 			<img id="pointer-down" src="../img/pointer_down.gif" alt="pointer down">
 		</div>
 	</div>
+	<div>
+		<div id="offer-details" class="modal">
+			<div class="modal-content">
+			    
+			</div>
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+			</div>
+		</div>	
+	</div>
 </div>
 <script type="text/javascript">
-	//ТУДУ 1. зеленый цвет для надписей на картинках
-	//ТУДУ 2. вычисление числа ячеек для рядов по ширине экрана
+	
 	//активируем боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
+	$('#find-container .modal').modal();
+	/*$('#find-container .modal').modal(
+		onOpenStart: function() { 
+			
+		}
+	);*/
 	//Определяем текущую дату
 	var nowDate = new Date();
 	//Устанавливаем в элементы ввода Дата (Календарь) текущую дату,
@@ -473,7 +488,7 @@
 					                      +'<p>{{content_preview}}</p>'
 					                    +'</div>'
 					                    +'<div class="card-action">'
-					                      +'<a href="{{id}}">Details...</a>'
+					                      +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">Details...</a>'
 					                    +'</div>'
 					                  +'</div>'
 					            +'</div>'
@@ -611,6 +626,18 @@
 			
 			$('#find-container #pointer-down').unbind("click");
 			$('#find-container #pointer-down').click(onClickNext);
+			
+			/* Offer details modal */
+			
+			$(document).unbind("click");
+			$(document).on(
+		    		'click'
+		    		, '#offer-grid-container .card-action > a'
+		    		, function(){
+		    			var id = $(this).data('offerid');
+		    			console.log(id);
+		    			$('#offer-details .modal-content').html(id);
+		    		});
 
 			setTimeout(preloaderOff, 500);
 		};
