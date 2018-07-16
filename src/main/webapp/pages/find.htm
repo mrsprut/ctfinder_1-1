@@ -169,7 +169,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col s12 m12 l12 xl12 center-align">
+		<div class="col s12 m12 l12 xl12">
 			<img id="pointer-down" src="../img/pointer_down.gif" alt="pointer down">
 		</div>
 	</div>
@@ -222,24 +222,40 @@
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
 			
+			var windowWidth = $(window).width();
+			var offerLimitDefault = 2;
+			if(windowWidth > 1200){
+				offerLimitDefault = 3;
+			} else {
+				offerLimitDefault = 2;
+			}
+			/*if(windowWidth <= 600){
+				offerLimitDefault = 2;
+			} else if(windowWidth <= 992){
+				offerLimitDefault = 2;
+			} else if(windowWidth <= 1200){
+				offerLimitDefault = 3;
+			}*/
+			console.log(windowWidth);
+			console.log(offerLimitDefault);
 			//Начальные настройки бесконечной прокрутки предложений
 			var cursorString = null;
-		    var offerLimit = 3;
+		    var offerLimit = offerLimitDefault;
 		    var offerCounter = 0;
 		    var offerGridPopulating = false;
 		    
-		    $('#offer-grid-container > div').html('');
+		    $('#offer-grid-container > div').html(noItemsImage);
 		    
 		    //Функция сброса бесконечной прокрутки предложений
 		    //в начальное состояние
 			function resetInfinityScrollInfo(){
 				
-				offerLimit = 3;
+				offerLimit = offerLimitDefault;
 			    offerCounter = 0;
 			    offerGridPopulating = false;
 			    cursorString = null;
 			    
-			    $('#offer-grid-container > div').html('');
+			    $('#offer-grid-container > div').html(noItemsImage);
 			}
 			//resetInfinityScrollInfo();
 			//Настройка календарей - верхней и нижней границ временного диапазона
@@ -254,7 +270,7 @@
 				cache: false
 			}).done(function(responseText, textStatus, jqXHR) {
 				  
-				console.log(responseText);
+				//console.log(responseText);
 				//Готовим шаблон списка при помощи библиотеки Hogan
 	            var template = Hogan.compile(
 	                '{{#result}}'
@@ -424,15 +440,18 @@
 		        	if(data.result[0].cursor_str != "end" && fetchedCount > 0){
 		        		
 		        		cursorString = data.result[0].cursor_str;
+		        		if(offerCounter == 0 && fetchedCount > 0){
+		        			$('#offer-grid-container > div').html('');
+		        		}
 		        		offerCounter += fetchedCount;
-		        		var offerCounterTail = offerCounter % 3;
-		        		if(offerCounterTail != 0 && offerLimit == 3){
+		        		var offerCounterTail = offerCounter % offerLimitDefault;
+		        		if(offerCounterTail != 0 && offerLimit == offerLimitDefault){
 			        		
-			        		offerLimit += 3 - offerCounterTail;
+			        		offerLimit += offerLimitDefault - offerCounterTail;
 			        		
-			        	} else if(offerLimit != 3) {
+			        	} else if(offerLimit != offerLimitDefault) {
 			        		
-			        		offerLimit = 3;
+			        		offerLimit = offerLimitDefault;
 			        	}
 
 		        		//if(fetchedCount > 0){
@@ -440,7 +459,7 @@
 				            //TODO
 						  	var template = Hogan.compile(
 					  			'{{#items}}'
-				                +'<div class="col s12 m4 l4 xl4">'
+				                +'<div class="col s12 m12 l6 xl4">'
 					                +'<div class="card hoverable {{offer_type}}">'
 					                    +'<div class="card-image">'
 					                      +'<img src="{{image}}">'

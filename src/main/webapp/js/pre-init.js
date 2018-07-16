@@ -1,5 +1,10 @@
 var GoogleAuth; // Google Auth object
 
+var noItemsImage =
+	//'<div class="col s12 m12 l12 xl12">'
+      	'<img class="responsive-img" src="../img/flat-search-find.png">';
+	//+'</div>';
+
 //Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
 Date.prototype.toDateInputValue = (function() {
     var local = new Date(this);
