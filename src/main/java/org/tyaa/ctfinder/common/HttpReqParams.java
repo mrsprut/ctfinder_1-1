@@ -36,6 +36,7 @@ public class HttpReqParams {
 	public final static String projection = "projection";
 	public final static String tableRowProjection = "table-row";
 	public final static String gridItemDetailsProjection = "grid-item-details";
+	public final static String tableRowEditProjection = "table-row-edit";
 	
 	/* Sort */
 	

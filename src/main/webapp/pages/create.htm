@@ -97,12 +97,12 @@
 						<div class="card-stacked">
 							<div class="card-content">
 								<form>
-									<button id="doneOrder" class="waves-effect waves-light btn"
-										type="button">Выполнен</button>
-									<button id="cancelOrder" class="waves-effect waves-light btn"
-										type="button">Отмена</button>
+									<button id="editOffer" class="waves-effect waves-light btn"
+										type="button">Изменить</button>
 									<button id="deleteOrder" class="waves-effect waves-light btn"
 										type="button">Удаление</button>
+									<button id="changeOfferState" class="waves-effect waves-light btn"
+										type="button">Выполнен</button>
 								</form>
 							</div>
 						</div>
@@ -212,57 +212,6 @@
 					}
 				);
 			
-			/*if($('form#create-offer-form #offer-type-select select option:selected').val() == ""){
-				
-				$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
-				$('form#create-offer-form button').prop('disabled', 'disabled');
-				console.log('setCustomValidity -');
-			} else {
-				
-				$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
-				$('form#create-offer-form button').prop('disabled', false);
-				console.log('setCustomValidity +');
-			}*/
-			
-			/*$('form#create-offer-form #offer-type-select select').change(function(){
-				
-				//$('form#create-offer-form #offer-type-select select').valid();
-				$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
-				$('form#create-offer-form button').prop('disabled', false);
-				console.log('changed');
-			});*/
-			
-			/*$.validator.addMethod("dateGreaterThan", function(value, element) {
-				
-				console.log('value = ' + value);
-				console.log('$(params).val() = ' + $(params).val());
-				
-				if (value != '' && $(params).val() != '') {
-			        return value >= $(params).val();
-			    } else {
-			    	return true;
-			    }
-			}, "End Date should be greater than Start Date.");
-				
-			$('form#create-offer-form').validate({
-		        rules: {
-		        	title: {
-		                required: true
-		            },
-		            content: {
-		            	required: true
-		            },
-		            'finish-date-input': {
-		            	dateGreaterThan: "#start-date-input"
-		            }
-		        },
-		        messages: {
-		        	title: "Заголовок не заполнен",
-		        	content: "Описание не заполнено",
-		        	'finish-date-input': "Дата окончания меньше даты начала"
-		        }
-		    });*/
-			
 			$('form#create-offer-form').validate({
 		        rules: {
 		        	title: {
@@ -312,16 +261,11 @@
 				
 				if(startDateInputVal != '' && finishDateInputVal != ''){
 
-					//console.log('startDateInputVal = ' + startDateInputVal);
-					//console.log('finishDateInputVal = ' + finishDateInputVal);
-					//console.log('finishDateInputVal.localeCompare(startDateInputVal) = ' + finishDateInputVal.localeCompare(startDateInputVal));
 					if(finishDateInputVal.localeCompare(startDateInputVal) >= 0){
 						
 						isDateRangeValid = true;
-						//$('form#create-offer-form button').prop('disabled', 'disabled');
 					} else {
 						
-						//$('form#create-offer-form button').prop('disabled', false);
 					}
 				} else {
 					
@@ -370,7 +314,6 @@
 					cache: false
 				}).done(function(responseText, textStatus, jqXHR) {
 					  
-					//console.log(responseText);
 					//Готовим шаблон списка при помощи библиотеки Hogan
 		            var template = Hogan.compile(
 	            		'<select>'
@@ -441,12 +384,10 @@
 					  			}, {});
 					    	countryAutocomplete.updateData(newAutocompleteItemsObj);
 					    	//
-					    	//console.log(countryAutocomplete);
 					    	countryAutocomplete.open();
 					});
 				 }
 				 else {
-				   // code-triggered event
 				 }
 			});
 			
@@ -481,9 +422,7 @@
 					  		  		acc[cur] = null;
 					  		  		return acc;
 					  			}, {});
-					    	cityAutocomplete.updateData(newAutocompleteItemsObj);
-					    	//console.log(cityAutocomplete);
-							
+					    	cityAutocomplete.updateData(newAutocompleteItemsObj);							
 					    	cityAutocomplete.open();
 					});
 				 }
@@ -596,47 +535,40 @@
 				      		+ '{{/result}}'
 				  		);
 					  	//Заполняем шаблон данными и помещаем на веб-страницу
-					  	//$('#offer-table-container tbody').html(template.render(data.result[0]));
-						//if(offerCounter >= 1){
-			            	
-							//$('#offer-table-container tbody').html(template.render(data));
-			            //} else {
-			            	
-			            	$('#offer-table-container tbody').append(template.render(data));
-			            //}
-				  		
+		            	$('#offer-table-container tbody').append(template.render(data));
 
-				  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
-			            $("table td:contains('забронирован')").parent().addClass("BlueRow");
-			            $("table td:contains('выполнен')").parent().addClass("GreenRow");
-			            //$("table td:contains('отменен')").parent().addClass("RedRow");
+				  		//Расцветка для разных состояний offer, классы цветов определены в файле стилей
+			            $("#offer-table-container td:contains('in_progress')").parent().addClass("BlueRow");
+			            $("#offer-table-container td:contains('fulfilled')").parent().addClass("GreenRow");
+			            $("#offer-table-container td:contains('suspended')").parent().addClass("RedRow");
 			            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
-			            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
+			            $("#changeOfferState, #editOffer, #deleteOffer").attr('disabled', '');
 			            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
-			            $("table tr:not(:first)").unbind("click");
-			            $("table tr:not(:first)").click(function(){
+			            $("#offer-table-container tr:not(:first)").unbind("click");
+			            $("#offer-table-container tr:not(:first)").click(function(){
 
 			                //Разблокируем кнопки, когда выбрана строка таблицы
-			                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
+			                $("#changeOfferState, #editOffer, #deleteOffer").removeAttr('disabled');
 			                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
 			                //(оно могло быть ранее установлено на одну из строк)
 			                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
 			            });
 			            //Очищаем списки в форме
-			            $('#manicurists-select select')
+			            /*$('#manicurists-select select')
 			                .find('option')
 			                .remove();
 
 			            $('#time-select select')
 			                .find('option')
-			                .remove();
+			                .remove();*/
 			            //Отключаем элементы ввода в форме
-			            $('#time-select select').attr('disabled', '');
-			            $('form#create-order button').attr('disabled', '');
+			            /*$('#time-select select').attr('disabled', '');
+			            $('form#create-order button').attr('disabled', '');*/
 			            //Заполняем список выбора мастеров
-			            populateManicuristsList();
+			            //populateManicuristsList();
 			            //Активируем список выбора времени
-			            $('#time-select select').formSelect();*/
+			            //$('#time-select select').formSelect();
+			            /*edit end*/
 		        	} else {
 		        		
 		        		offerCounter = "full";
@@ -768,6 +700,41 @@
 				
 				//console.log($('form#create-offer-form textarea#content'));
 				//console.log($('form#create-offer-form textarea#content').html());
+			});
+			
+			/* Offer management buttons */
+			//Функция обновления статуса строки в расписании
+		    function editOffer(){
+		
+		        if ($('.selectedTableRow').find('th').length === 0) {
+		
+		            alert('Сначала выберите одну строку в таблице');
+		        } else {
+		        	
+		        	var id = $('.selectedTableRow').find('th').text();
+	    			
+	    			var urlString =
+			        	"/offer?action=get"
+			        			+"&id=" + id
+			        			+"&projection=table-row-edit";
+	    			
+	    			$.ajax({
+			            url: urlString,
+			            type: "POST",
+			            cache : false
+			        }).done(function(data) {
+			        	
+			        });
+		        }
+			}
+			
+		  	//Обработчик кнопки Выполнен
+		  	$('#editOffer').unbind("click");
+		    $('#editOffer').click(function(ev){
+
+		        ev.preventDefault();
+
+		        editOffer();
 			});
 
 			setTimeout(preloaderOff, 500);
