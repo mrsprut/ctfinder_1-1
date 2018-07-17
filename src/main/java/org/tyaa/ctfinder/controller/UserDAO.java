@@ -10,10 +10,15 @@ public class UserDAO {
 	
 	public static void getUser(String _id, User _user) {
 		
+		getUser(Long.valueOf(_id), _user);
+	}
+	
+	public static void getUser(Long _id, User _user) {
+		
 		//Пытаемся получить из БД объект Пользователь
 		//по его ИД
 		User user =
-				ofy().load().type(User.class).id(Long.valueOf(_id)).now();
+				ofy().load().type(User.class).id(_id).now();
 		
 		//Если найден
 		if(user != null) {

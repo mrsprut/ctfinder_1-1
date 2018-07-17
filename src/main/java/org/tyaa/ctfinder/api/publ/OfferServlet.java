@@ -34,6 +34,7 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.KeyGen;
+import org.tyaa.ctfinder.common.Mailer;
 import org.tyaa.ctfinder.common.ObjectifyQueryLauncher;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.CityDAO;
@@ -46,6 +47,7 @@ import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
 import org.tyaa.ctfinder.controller.TitleDAO;
+import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.entity.City;
 import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Description;
@@ -1020,6 +1022,105 @@ public class OfferServlet extends HttpServlet {
 										String successJson = gson.toJson(rd);
 										out.print(successJson);
 									}
+								} catch (Exception ex) {
+									
+									ObjectifyQueryLauncher.printException(ex, out, gson);
+								}	
+								break;
+							}
+							case HttpReqParams.join : {
+								
+								try {
+									//Получаем из БД объект английского языка
+									Language englishLanguage = new Language();
+									objectifyRun2(
+											"en"
+											, englishLanguage
+											, LanguageDAO::getLangByCode
+											, out
+											, gson);
+									
+									//
+									Offer o = new Offer();
+									String offerId =
+											req.getParameter(HttpReqParams.id);
+									objectifyRun2(
+											offerId
+											, o
+											, OfferDAO::getOffer
+											, out
+											, gson
+										);
+									//Находим заголовок на текущем языке
+									String titleString = "-";
+									if(o.getTitle_key() != null
+											&& !o.getTitle_key().equals("")) {
+										Title title = new Title();
+										objectifyRun3(
+											o.getTitle_key()
+											, englishLanguage.getId()
+											, title
+											, TitleDAO::getTitleByKeyAndLang
+											, out
+											, gson
+										);
+										titleString = title.getContent();
+									}
+									
+									User authorUser = new User();
+									objectifyRun2(
+											o.getUser_id()
+											, authorUser
+											, UserDAO::getUser
+											, out
+											, gson
+										);
+									
+									Long candidateUserId =
+										(Long)session.getAttribute(
+												SessionAttributes.userId
+											);
+									User candidateUser = new User();
+									objectifyRun2(
+											candidateUserId
+											, candidateUser
+											, UserDAO::getUser
+											, out
+											, gson
+										);
+									
+									//Помощник по отправке сообщений на электронную почту
+									Mailer mailer = new Mailer();
+									String messageString =
+											"User "
+											+ candidateUser.getName()
+											+ " wants to join your project "
+											+ titleString
+											+ "(ID: "
+											+ o.getId()
+											+ ")"
+											+ ". Get in touch with him by email: "
+											+ candidateUser.getEmail();
+									String subjectString = "Request for join";
+									String fromAddressString = "tyaamariupol@gmail.com";
+									String fromNameString = "CTFinder";
+									String toAddressString = authorUser.getEmail();
+									String toNameString = authorUser.getName();
+									
+									// Отправляем сообщение
+									mailer.sendPlainMsg(
+											messageString
+											, subjectString
+											, fromAddressString
+											, fromNameString
+											, toAddressString
+											, toNameString);
+									
+									List al = new ArrayList<>();
+									al.add(HttpRespWords.sent);
+									RespData rd = new RespData(al);
+									String successJson = gson.toJson(rd);
+									out.print(successJson);
 								} catch (Exception ex) {
 									
 									ObjectifyQueryLauncher.printException(ex, out, gson);

@@ -188,7 +188,8 @@
 	
 	//TODO 1. complete settings: categories, filters, order by (excluding created_at pare)
 	//TODO 2. complete details: author_name, collaborators_count, desired_start_date, desired_finish_date
-	//TODO 3. next step: send email to the offer creator when finder click join
+	//TODO 3. search by title substring with autocomplete
+	//TODO 4. next step: edit project parameters and status
 	
 	//активируем боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
@@ -684,6 +685,30 @@
 				        	
 				        	$('#offer-details .modal-content')
 				        		.html(template.render(data.result[0]));
+				        	
+				        	$('#offer-details .modal-content .card-action > a').unbind("click");
+							$('#offer-details .modal-content .card-action > a').click(function(ev){
+								ev.preventDefault();
+								var urlString =
+						        	"/offer?action=join"
+						        			+"&id=" + data.result[0].id;
+								$.ajax({
+						            url: urlString,
+						            type: "POST",
+						            cache : false
+						        }).done(function(data) {
+						        	
+						        	if(data.result[0] == "sent"){
+						        		$('#offer-details .modal-content .card-action')
+						        			.html('<p>Запрос отправлен автору задачи на электронную почту. Если через некоторое время он не пришлет Вам ответное письмо - можете повторить отправку или связаться с ним напрямую по адресу, указанному в описании задачи</p>');
+						        	} else {
+						        		alert('Ошибка отправки запроса');
+						        	}
+						        }).fail(function(jqXHR, textStatus, errorThrown) {
+									  
+									alert("Ошибка отправки запроса: " + jqXHR);
+								});
+							});
 				        });
 		    		});
 

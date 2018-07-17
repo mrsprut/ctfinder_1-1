@@ -8,6 +8,7 @@ public class HttpReqParams {
 	public final static String getAll = "get-all";
 	public final static String getRange = "get-range";
 	public final static String get = "get";
+	public final static String join = "join";
 	public final static String delete = "delete";
 	
 	public final static String navigate = "navigate";
