@@ -99,10 +99,10 @@
 								<form>
 									<button id="editOffer" class="waves-effect waves-light btn"
 										type="button">Изменить</button>
-									<button id="deleteOrder" class="waves-effect waves-light btn"
+									<button id="deleteOffer" class="waves-effect waves-light btn"
 										type="button">Удаление</button>
 									<button id="changeOfferState" class="waves-effect waves-light btn"
-										type="button">Выполнен</button>
+										type="button">Состояние</button>
 								</form>
 							</div>
 						</div>
@@ -173,6 +173,8 @@
 		//console.log('container ' + $container);
 
 		return function(params) {
+			
+			var selectedOfferId = 0;
 			
 			var cursorString = null;
 		    var offerLimit = 10;
@@ -629,6 +631,20 @@
 				    });
 			});
 			
+			var resetNewOrderForm = function(){
+				
+				$('form#create-offer-form input#title').val('');
+				$('form#create-offer-form textarea#content').val('');
+				
+				$('form#create-offer-form input#country-input').val('');
+				$('form#create-offer-form input#city-input').val('');
+				$('form#create-offer-form input#c-count-input').val('');
+				$('form#create-offer-form input#start-date-input').val('');
+				$('form#create-offer-form input#finish-date-input').val('');
+				$('form#create-offer-form input#image-input').val('');
+				$('form#create-offer-form input.file-path').val('');
+			}
+			
 			$('form#create-offer-form #submit-new-order').unbind("click");
 			$('form#create-offer-form #submit-new-order').click(function(ev){
 				
@@ -660,7 +676,12 @@
 				data.push({name: 'start-date', value: $('form#create-offer-form input#start-date-input').val()});
 				data.push({name: 'finish-date', value: $('form#create-offer-form input#finish-date-input').val()});
 				data.push({name: 'image', value: imageBase64});
-				//console.log(data);
+				//
+				if(selectedOfferId != 0){
+					var id = selectedOfferId;
+					data.push({name: 'id', value: id});
+					selectedOfferId = 0;
+				}
 				
 				$.ajax({
 			        url: "/offer",
@@ -678,22 +699,20 @@
 			    		alert("Предложение успешно создано");
 			    		resetInfinityScrollInfo();
 			    		populateOfferTable();
+			    	} else if (resp.result[0] == "updated"){
+			    		
+			    		alert("Предложение успешно обновлено");
+			    		resetInfinityScrollInfo();
+			    		populateOfferTable();
 			    	}
 			    	
 			    	preloaderOff();
 				});
 				
 				//Reset the form
-				$('form#create-offer-form input#title').val('');
-				$('form#create-offer-form textarea#content').val('');
 				populateOfferTypesSelect();
-				$('form#create-offer-form input#country-input').val('');
-				$('form#create-offer-form input#city-input').val('');
-				$('form#create-offer-form input#c-count-input').val('');
-				$('form#create-offer-form input#start-date-input').val('');
-				$('form#create-offer-form input#finish-date-input').val('');
-				$('form#create-offer-form input#image-input').val('');
-				$('form#create-offer-form input.file-path').val('');
+				
+				resetNewOrderForm();
 				
 				isFormValid();
 				$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
@@ -724,6 +743,39 @@
 			            cache : false
 			        }).done(function(data) {
 			        	
+			        	populateOfferTypesSelect();
+			        	resetNewOrderForm();
+			        	isFormValid();
+			        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+			        	
+			        	selectedOfferId = id;
+			        	
+			        	$('form#create-offer-form input#title')
+			        		.val(data.result[0].title);
+						$('form#create-offer-form textarea#content')
+							.val(data.result[0].content);
+						
+						var country =
+							data.result[0].country != "-"
+								? data.result[0].country
+								: "";
+						var city =
+							data.result[0].city != "-"
+								? data.result[0].city
+								: "";
+						var collaboratorsCount =
+							data.result[0].collaborators_count != "-1"
+								? data.result[0].collaborators_count
+								: "";
+						var startDate =
+							new Date(formatDate(data.result[0].desired_start_date));
+						var finishDate =
+							new Date(formatDate(data.result[0].desired_finish_date));
+						$('form#create-offer-form input#country-input').val(country);
+						$('form#create-offer-form input#city-input').val(city);
+						$('form#create-offer-form input#c-count-input').val(collaboratorsCount);
+						$('form#create-offer-form input#start-date-input').val(startDate);
+						$('form#create-offer-form input#finish-date-input').val(finishDate);
 			        });
 		        }
 			}

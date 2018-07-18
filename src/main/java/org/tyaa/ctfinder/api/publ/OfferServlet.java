@@ -157,22 +157,11 @@ public class OfferServlet extends HttpServlet {
 									//1. Идентификатор типа задания
 									Long offerTypeId = Long.parseLong(req.getParameter("offer_type_id"));
 									
-									//2. Получаем из БД объект сотояния "создано"
-									State createdState = new State();
-									objectifyRun2(
-											"created_state_static_title"
-											, createdState
-											, StateDAO::getStateByTitleKey
-											, out
-											, gson
-										);
-									Long createdStateId = createdState.getId();
-									
 									//3. 
 									//Получаем из параметра запроса содержимое заголовка предложения
 									String title =
 											req.getParameter("title");
-									//Создаем и заполняем сущность заголовка предложения
+									/*//Создаем и заполняем сущность заголовка предложения
 									Title newOfferTitle =
 										new Title(
 												KeyGen.text2KeyText(title) + "_offer_title"
@@ -184,13 +173,13 @@ public class OfferServlet extends HttpServlet {
 											, out
 											, gson
 										);
-									String offerTitleKey = newOfferTitle.getKey();
-									
+									String offerTitleKey = newOfferTitle.getKey();*/
+
 									//4. 
 									//Выполняем то же самое для основного содержания предложения
 									String description =
 											req.getParameter("content");
-									Description newOfferDescription =
+									/*Description newOfferDescription =
 										new Description(
 												KeyGen.text2KeyText(description) + "_offer_description"
 												, englishLanguage.getId()
@@ -201,13 +190,7 @@ public class OfferServlet extends HttpServlet {
 											, out
 											, gson
 										);
-									String offerDescriptionKey = newOfferDescription.getKey();
-									
-									//5
-									Long userId =
-											(Long)session.getAttribute(
-													SessionAttributes.userId
-												);
+									String offerDescriptionKey = newOfferDescription.getKey();*/
 									
 									//6
 									Long countryId = null;
@@ -300,84 +283,254 @@ public class OfferServlet extends HttpServlet {
 											DateTransform.DirectToReversed(req.getParameter("finish-date"));
 									} catch(Exception ex){}
 									
-									//13
-									String startedAt = null;
-									
-									//14
-									String completedAt = null;
-									
+									//Форматтер даты с обратной записью
 									DateFormat reversedFormat =
 											new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-									
-									//15
-									String createdAt = reversedFormat.format(new Date());
 									
 									//16
 									String updatedAt = reversedFormat.format(new Date());
 									
-									//12
-									String urgencyInDays = null;
-									if(startDate != null && finishDate != null) {
+									//Создание или обновление
+									if (req.getParameterMap().keySet().contains(HttpReqParams.id)) {
+										//Поиск и обновление записи о предложении в БД
 										
-										urgencyInDays =
-												DateTransform.ReversedToDiff(startDate, finishDate);
-									} else if(finishDate != null) {
+										//
+										Offer o = new Offer();
+										//
+										String offerId =
+												req.getParameter(HttpReqParams.id);
 										
-										urgencyInDays =
-												DateTransform.ReversedToDiff(createdAt, finishDate);
-									} else {
-										//unbounded
-										urgencyInDays = "36500";
-									}
-									
-									Offer offer =
-										new Offer(
-												//offer type id
-												offerTypeId
-												//created-state's id from db
-												, createdStateId
-												//offer title
-												, offerTitleKey
-												//offer description
-												, offerDescriptionKey
-												//current user id
-												, userId
-												//country_id
-												, countryId
-												//city_id
-												, cityId
-												//count of collaborators
-												, collaboratorsCount
-												// image base64 string to blob
-												, image
-												//desired start date
-												, startDate
-												//desired finish date
-												, finishDate
-												//urgency in days
-												, urgencyInDays
-												//started_at = null
-												, startedAt
-												//completed_at = null
-												, completedAt
-												//created_at = now date
-												, createdAt
-												//updated_at = now date
-												, updatedAt
+										//Получение объекта из БД
+										objectifyRun2(
+												offerId
+												, o
+												, OfferDAO::getOffer
+												, out
+												, gson
 											);
-									
-									objectifyRun(
-											offer
-											, OfferDAO::createOffer
+										
+										o.setOffer_type_id(offerTypeId);
+										o.setCountry_id(countryId);
+										o.setCity_id(cityId);
+										o.setCollaborators_count(collaboratorsCount);
+										
+										//Получаем из БД старый объект заголовка
+										Title titleEntity = new Title();
+										objectifyRun3(
+											o.getTitle_key()
+											, englishLanguage.getId()
+											, titleEntity
+											, TitleDAO::getTitleByKeyAndLang
 											, out
 											, gson
 										);
-									
-									ArrayList<String> al = new ArrayList<>();
-									al.add(HttpRespWords.created);
-									RespData rd = new RespData(al);
-									String successJson = gson.toJson(rd);
-									out.print(successJson);
+										//Из старого объекта заголовка узнаем старый заголовок предложения
+										String oldTitleString = titleEntity.getContent();
+										//Если новый заголовок предложения отличается от старого
+										if(!oldTitleString.equals(title)) {
+											//Записываем в объект заголовка новое содержание
+											titleEntity.setContent(title);
+											//Обновляем объект заголовка в БД
+											objectifyRun(
+													titleEntity
+													, TitleDAO::createTitle
+													, out
+													, gson
+												);
+										}
+										
+										//Получаем из БД старый объект
+										Description descriptionEntity = new Description();
+										objectifyRun3(
+											o.getDescription_key()
+											, englishLanguage.getId()
+											, descriptionEntity
+											, DescriptionDAO::getDescriptionByKeyAndLang
+											, out
+											, gson
+										);
+										String oldDescriptionString = descriptionEntity.getContent();
+										if(!oldDescriptionString.equals(description)) {
+											//Записываем в объект новое содержание
+											descriptionEntity.setContent(description);
+											//Обновляем объект в БД
+											objectifyRun(
+													descriptionEntity
+													, DescriptionDAO::createDescriprion
+													, out
+													, gson
+												);
+										}
+										
+										//Если нового значения желаемого старта нет -
+										//извлекаем старое
+										if(startDate == null) {
+											startDate = o.getStart_date();
+										}
+										//Если нового значения желаемой даты окончания нет -
+										//извлекаем старое значение
+										if(finishDate == null) {
+											finishDate = o.getFinish_date();
+										}
+										
+										//12
+										String urgencyInDays = null;
+										if(startDate != null && finishDate != null) {
+											
+											urgencyInDays =
+													DateTransform.ReversedToDiff(startDate, finishDate);
+										} else if(finishDate != null) {
+											
+											urgencyInDays =
+													DateTransform.ReversedToDiff(o.getCreated_at(), finishDate);
+										} else {
+											//unbounded
+											urgencyInDays = "36500";
+										}
+										
+										o.setStart_date(startDate);
+										o.setFinish_date(finishDate);
+										o.setUrgency_in_days(urgencyInDays);
+										
+										if(image.getBytes().length > 0) {
+											o.setImage(image);
+										}
+										
+										o.setUpdated_at(updatedAt);
+										
+										objectifyRun(
+												o
+												, OfferDAO::createOffer
+												, out
+												, gson
+											);
+										
+										ArrayList<String> al = new ArrayList<>();
+										al.add(HttpRespWords.updated);
+										RespData rd = new RespData(al);
+										String successJson = gson.toJson(rd);
+										out.print(successJson);
+									} else {
+										//Создание записи о предложении в БД с нуля
+										
+										//2. Получаем из БД объект сотояния "создано"
+										State createdState = new State();
+										objectifyRun2(
+												"created_state_static_title"
+												, createdState
+												, StateDAO::getStateByTitleKey
+												, out
+												, gson
+											);
+										Long createdStateId = createdState.getId();
+										
+										//Создаем и заполняем сущность заголовка предложения
+										Title newOfferTitle =
+											new Title(
+													KeyGen.text2KeyText(title) + "_offer_title"
+													, englishLanguage.getId()
+													, title);
+										objectifyRun(
+												newOfferTitle
+												, TitleDAO::createTitle
+												, out
+												, gson
+											);
+										String offerTitleKey = newOfferTitle.getKey();
+										
+										//
+										Description newOfferDescription =
+												new Description(
+														KeyGen.text2KeyText(description) + "_offer_description"
+														, englishLanguage.getId()
+														, description);
+										objectifyRun(
+												newOfferDescription
+												, DescriptionDAO::createDescriprion
+												, out
+												, gson
+											);
+										String offerDescriptionKey = newOfferDescription.getKey();
+										
+										//5
+										Long userId =
+												(Long)session.getAttribute(
+														SessionAttributes.userId
+													);
+										
+										//13
+										String startedAt = null;
+										
+										//14
+										String completedAt = null;
+										
+										//15
+										String createdAt = reversedFormat.format(new Date());
+										
+										//12
+										String urgencyInDays = null;
+										if(startDate != null && finishDate != null) {
+											
+											urgencyInDays =
+													DateTransform.ReversedToDiff(startDate, finishDate);
+										} else if(finishDate != null) {
+											
+											urgencyInDays =
+													DateTransform.ReversedToDiff(createdAt, finishDate);
+										} else {
+											//unbounded
+											urgencyInDays = "36500";
+										}
+										
+										Offer offer =
+												new Offer(
+														//offer type id
+														offerTypeId
+														//created-state's id from db
+														, createdStateId
+														//offer title
+														, offerTitleKey
+														//offer description
+														, offerDescriptionKey
+														//current user id
+														, userId
+														//country_id
+														, countryId
+														//city_id
+														, cityId
+														//count of collaborators
+														, collaboratorsCount
+														// image base64 string to blob
+														, image
+														//desired start date
+														, startDate
+														//desired finish date
+														, finishDate
+														//urgency in days
+														, urgencyInDays
+														//started_at = null
+														, startedAt
+														//completed_at = null
+														, completedAt
+														//created_at = now date
+														, createdAt
+														//updated_at = now date
+														, updatedAt
+													);
+											
+											objectifyRun(
+													offer
+													, OfferDAO::createOffer
+													, out
+													, gson
+												);
+											
+											ArrayList<String> al = new ArrayList<>();
+											al.add(HttpRespWords.created);
+											RespData rd = new RespData(al);
+											String successJson = gson.toJson(rd);
+											out.print(successJson);
+									}
 								} catch (Exception ex) {
 									
 									ObjectifyQueryLauncher.printException(ex, out, gson);
@@ -404,10 +557,10 @@ public class OfferServlet extends HttpServlet {
 											req.getParameter(HttpReqParams.id);
 									
 									//Задание проекции
-										
 									String projectionString  =
 											req.getParameter(HttpReqParams.projection);
 									
+									//Получение объекта из БД
 									objectifyRun2(
 											offerId
 											, o
