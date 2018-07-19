@@ -1,4 +1,4 @@
-<div class="container">
+<div id="create-container" class="container">
 	<div class="row">
 		<div class="col s12 m3 l3 xl3">
 			<h5>Создать</h5>
@@ -63,6 +63,7 @@
 	                    <button id="submit-new-order" class="btn waves-effect waves-light" type="submit" name="action">Submit
 	                        <i class="material-icons right">send</i>
 	                    </button>
+	                    <button id="cancell-new-order" class="btn waves-effect waves-light" type="submit" name="cancell">Cancell</button>
 					</form>
 				</div>
 			</div>
@@ -101,7 +102,7 @@
 										type="button">Изменить</button>
 									<button id="deleteOffer" class="waves-effect waves-light btn"
 										type="button">Удаление</button>
-									<button id="changeOfferState" class="waves-effect waves-light btn"
+									<button id="changeOfferState" data-target="offer-create-modal" class="modal-trigger waves-effect waves-light btn"
 										type="button">Состояние</button>
 								</form>
 							</div>
@@ -111,9 +112,27 @@
 			</div>
 		</div>
 	</div>
+	<div id="offer-create-modal" class="modal">
+		<div class="modal-content">
+		    
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+		</div>
+	</div>
+	<!-- <div id="offer-state" class="modal">
+		<div class="modal-content">
+		    
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+		</div>
+	</div> -->
 </div>
 <script type="text/javascript">
 		
+	//активируем модальное окно, боковую панель и схлопывающиеся области
+	$('#create-container .modal').modal();
 	//Устанавливаем в элемент ввода Дата (Календарь) текущую дату,
     //вызывая на ней предварительно нашу корректирующую функцию
 	$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
@@ -185,6 +204,8 @@
 			var cityAutocompleteItems = {};
 			
 			function resetInfinityScrollInfo(){
+				
+				selectedOfferId = 0;
 				
 				cursorString = null;
 				offerLimit = 10;
@@ -530,7 +551,12 @@
 							+   	'<th scope="row">{{id}}</th>'
 							+             '<td>{{title}}</td>'
 			                +             '<td>{{offer_type}}</td>'
-			                +             '<td>image_icon</td>'
+			                +             '<td>'
+			                +				'<form>'
+							+					'<button id="showOrderImage" data-target="offer-create-modal" class="modal-trigger waves-effect waves-light btn"'
+							+						'type="button"><i class="material-icons right">image</i></button>'
+							+				'</form>'
+			                +			  '</td>'
 			                +             '<td>{{state}}</td>'
 			                +             '<td>{{created_at}}</td>'
 			                +          '</tr>'
@@ -555,6 +581,7 @@
 			                //(оно могло быть ранее установлено на одну из строк)
 			                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
 			            });
+			            
 			            //Очищаем списки в форме
 			            /*$('#manicurists-select select')
 			                .find('option')
@@ -643,9 +670,17 @@
 				$('form#create-offer-form input#finish-date-input').val('');
 				$('form#create-offer-form input#image-input').val('');
 				$('form#create-offer-form input.file-path').val('');
+				
+				$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input').datepicker({
+			    	'format':'dd-mm-yyyy'
+			    	, 'minDate':minDate
+			    	, 'setDefaultDate':true
+			    	, 'autoClose':true
+				});
 			}
 			
 			$('form#create-offer-form #submit-new-order').unbind("click");
+			//Кнопка запроса на создание или обновление предложения
 			$('form#create-offer-form #submit-new-order').click(function(ev){
 				
 				ev.preventDefault();
@@ -705,9 +740,13 @@
 			    		resetInfinityScrollInfo();
 			    		populateOfferTable();
 			    	}
-			    	
-			    	preloaderOff();
-				});
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					  
+					alert("Ошибка: " + jqXHR);
+				}).always(function() {
+				    
+					preloaderOff();
+			  	});
 				
 				//Reset the form
 				populateOfferTypesSelect();
@@ -721,8 +760,25 @@
 				//console.log($('form#create-offer-form textarea#content').html());
 			});
 			
+			$('form#create-offer-form #cancell-new-order').unbind("click");
+			//Кнопка запроса на создание или обновление предложения
+			$('form#create-offer-form #cancell-new-order').click(function(ev){
+				
+				ev.preventDefault();
+				
+				populateOfferTypesSelect();
+				
+				resetNewOrderForm();
+				
+				selectedOfferId = 0;
+				
+				isFormValid();
+				$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+			});
+			
 			/* Offer management buttons */
-			//Функция обновления статуса строки в расписании
+			
+			//Функция переключения формы создания предложения в состояние обновления
 		    function editOffer(){
 		
 		        if ($('.selectedTableRow').find('th').length === 0) {
@@ -743,38 +799,228 @@
 			            cache : false
 			        }).done(function(data) {
 			        	
-			        	populateOfferTypesSelect();
-			        	resetNewOrderForm();
-			        	isFormValid();
-			        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+			        	if(data.result != null && data.result.length > 0){
+				        	populateOfferTypesSelect();
+				        	resetNewOrderForm();
+				        	isFormValid();
+				        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+				        	
+				        	selectedOfferId = id;
+				        	
+				        	$('form#create-offer-form input#title')
+				        		.val(data.result[0].title);
+							$('form#create-offer-form textarea#content')
+								.val(data.result[0].content);
+							
+							var country =
+								data.result[0].country != "-"
+									? data.result[0].country
+									: "";
+							var city =
+								data.result[0].city != "-"
+									? data.result[0].city
+									: "";
+							var collaboratorsCount =
+								data.result[0].collaborators_count != "-1"
+									? data.result[0].collaborators_count
+									: "";
+							var startDate = data.result[0].desired_start_date;
+							var finishDate = data.result[0].desired_finish_date;
+							$('form#create-offer-form input#country-input').val(country);
+							$('form#create-offer-form input#city-input').val(city);
+							$('form#create-offer-form input#c-count-input').val(collaboratorsCount);
+							$('form#create-offer-form input#start-date-input').val(startDate);
+							$('form#create-offer-form input#finish-date-input').val(finishDate);
+			        	} else {
+			        		alert("Ошибка");
+			        	}
+			        }).fail(function(jqXHR, textStatus, errorThrown) {
+						  
+						alert("Ошибка: " + jqXHR);
+					}).always(function() {
+					    
+						preloaderOff();
+				  	});;
+		        }
+			}
+			
+		  	//Функция обновления состояния предложения
+		    function editOfferState(){
+		
+		        if ($('.selectedTableRow').find('th').length === 0) {
+		
+		            alert('Сначала выберите одну строку в таблице');
+		        } else {
+		        	
+		        	preloaderOn("nocover");
+			        $('#create-container .modal-content').html('');
+			        //$('#create-container .modal-footer').html('');
+			        
+			        var urlString = "/state?action=get-all";
+	    			
+	    			$.ajax({
+			            url: urlString,
+			            type: "POST",
+			            cache : false
+			        }).done(function(data) {
 			        	
-			        	selectedOfferId = id;
+			        	if(data.result != null){
+			        		
+			        		var template = Hogan.compile(
+			        				'<form id="change-state-form" action="#">'
+				    	                +'{{#result}}'
+				    	                +'<p>'
+				    						+'<label>'
+				    							+'<input id="{{id}}" type="radio" name="change-state-group" />'
+				    							+'<span>{{title}}</span>'
+				    						+'</label>'
+				    					+'</p>'
+				    					+'{{/result}}'
+			    					+'</form>'
+			    	            );
+		    	            //Заполняем шаблон данными и помещаем на веб-страницу
+		    				$('#create-container .modal-content').html(template.render(data));
+		    	            
+		    				preloaderOn("nocover");
+		    				var oldOfferId = $('.selectedTableRow').find('th').text();
+		    				var oldStateUrlString =
+					        	"/offer?action=get"
+					        			+"&id=" + oldOfferId
+					        			+"&projection=state";
+		    				$.ajax({
+					            url: oldStateUrlString,
+					            type: "POST",
+					            cache : false
+					        }).done(function(data) {
+					        	
+					        	if(data.result != null && data.result.length > 0){
+					        		
+					        		var oldStateId = data.result[0];
+					        		$('form#change-state-form input[id=' + oldStateId + ']')
+					        			.attr('checked', 'checked');
+					        		
+					        		var changeOfferState = function(newStateId){
+										
+					        			preloaderOn("nocover");
+					        			console.log(newStateId);
+					        			var newStateUrlString =
+								        	"/offer?action=update"
+								        			+"&id=" + oldOfferId
+								        			+"&new_state=" + newStateId;
+					        			$.ajax({
+								            url: newStateUrlString,
+								            type: "POST",
+								            cache : false
+								        }).done(function(data) {
+								        	
+								        	if(data.result != null && data.result[0] == "updated"){
+								        		
+								        		$('#create-container .modal-content')
+								        			.html("Состояние предложения обновлено");
+								        	} else {
+								        		
+								        		$('#create-container .modal-content')
+							        				.html("Ошибка");
+								        	}
+								        }).fail(function(jqXHR, textStatus, errorThrown) {
+											  
+											$('#create-container .modal-content')
+					        					.html("Ошибка: " + jqXHR);
+										}).always(function() {
+										    
+											preloaderOff();
+									  	});
+				    				}
+				    				
+				    				//обработчик выбора одного из чекбоксов фильтра по	
+				    				$('form#change-state-form input[type=radio]').unbind("change");
+				    				$('form#change-state-form input[type=radio]').change(function() {
+
+				    				    if(this.checked) {
+				    						
+				    				    	changeOfferState(
+			    				    			$('form#change-state-form input[type=radio]:checked').attr('id')
+				    						);
+				    				    }
+				    				});
+				    				
+					        	} else {
+					        		alert('Ошибка');
+					        	}
+					        }).fail(function(jqXHR, textStatus, errorThrown) {
+								  
+								alert("Ошибка: " + jqXHR);
+							}).always(function() {
+							    
+								preloaderOff();
+						  	});
+		    	            
+		    				
+			        	} else {
+			        		alert('Ошибка');
+			        	}
+			        }).fail(function(jqXHR, textStatus, errorThrown) {
+						  
+						alert("Ошибка: " + jqXHR);
+					}).always(function() {
+					    
+						preloaderOff();
+				  	});
+		        	/*var id = $('.selectedTableRow').find('th').text();
+	    			
+	    			var urlString =
+			        	"/offer?action=get"
+			        			+"&id=" + id
+			        			+"&projection=table-row-edit";
+	    			
+	    			$.ajax({
+			            url: urlString,
+			            type: "POST",
+			            cache : false
+			        }).done(function(data) {
 			        	
-			        	$('form#create-offer-form input#title')
-			        		.val(data.result[0].title);
-						$('form#create-offer-form textarea#content')
-							.val(data.result[0].content);
-						
-						var country =
-							data.result[0].country != "-"
-								? data.result[0].country
-								: "";
-						var city =
-							data.result[0].city != "-"
-								? data.result[0].city
-								: "";
-						var collaboratorsCount =
-							data.result[0].collaborators_count != "-1"
-								? data.result[0].collaborators_count
-								: "";
-						var startDate = data.result[0].desired_start_date;
-						var finishDate = data.result[0].desired_finish_date;
-						$('form#create-offer-form input#country-input').val(country);
-						$('form#create-offer-form input#city-input').val(city);
-						$('form#create-offer-form input#c-count-input').val(collaboratorsCount);
-						$('form#create-offer-form input#start-date-input').val(startDate);
-						$('form#create-offer-form input#finish-date-input').val(finishDate);
-			        });
+			        	if(data.result != null && data.result.length > 0){
+				        	populateOfferTypesSelect();
+				        	resetNewOrderForm();
+				        	isFormValid();
+				        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+				        	
+				        	selectedOfferId = id;
+				        	
+				        	$('form#create-offer-form input#title')
+				        		.val(data.result[0].title);
+							$('form#create-offer-form textarea#content')
+								.val(data.result[0].content);
+							
+							var country =
+								data.result[0].country != "-"
+									? data.result[0].country
+									: "";
+							var city =
+								data.result[0].city != "-"
+									? data.result[0].city
+									: "";
+							var collaboratorsCount =
+								data.result[0].collaborators_count != "-1"
+									? data.result[0].collaborators_count
+									: "";
+							var startDate = data.result[0].desired_start_date;
+							var finishDate = data.result[0].desired_finish_date;
+							$('form#create-offer-form input#country-input').val(country);
+							$('form#create-offer-form input#city-input').val(city);
+							$('form#create-offer-form input#c-count-input').val(collaboratorsCount);
+							$('form#create-offer-form input#start-date-input').val(startDate);
+							$('form#create-offer-form input#finish-date-input').val(finishDate);
+			        	} else {
+			        		alert("Ошибка");
+			        	}
+			        }).fail(function(jqXHR, textStatus, errorThrown) {
+						  
+						alert("Ошибка: " + jqXHR);
+					}).always(function() {
+					    
+						preloaderOff();
+				  	});*/
 		        }
 			}
 			
@@ -786,6 +1032,54 @@
 
 		        editOffer();
 			});
+		    
+		  	//Обработчик кнопки Состояние
+		  	$('#changeOfferState').unbind("click");
+		    $('#changeOfferState').click(function(ev){
+
+		        ev.preventDefault();
+
+		        editOfferState();
+			});
+		    
+		    //Обработчик кнопки показа изображения одного из предложений из таблицы
+		    $(document).unbind("click");
+			$(document).on(
+	    		'click'
+	    		, '#showOrderImage'
+	    		, function(ev){
+	    			
+	    			ev.preventDefault();
+	    			
+			        preloaderOn("nocover");
+			        $('#create-container .modal-content').html('');
+			        var id = $(this).closest('tr').find('th').text();
+			        var urlString =
+			        	"/offer?action=get"
+			        			+"&id=" + id
+			        			+"&projection=image";
+	    			
+	    			$.ajax({
+			            url: urlString,
+			            type: "POST",
+			            cache : false
+			        }).done(function(data) {
+			        	
+			        	if(data.result[0] != ""){
+			        		
+			        		$('#create-container .modal-content')
+			        			.html('<img src="' + data.result[0] + '">');
+			        	} else {
+			        		alert('Ошибка');
+			        	}
+			        }).fail(function(jqXHR, textStatus, errorThrown) {
+						  
+						alert("Ошибка: " + jqXHR);
+					}).always(function() {
+					    
+						preloaderOff();
+				  	});
+	    		});
 
 			setTimeout(preloaderOff, 500);
 		};

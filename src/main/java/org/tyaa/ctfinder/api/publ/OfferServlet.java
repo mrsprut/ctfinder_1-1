@@ -569,69 +569,16 @@ public class OfferServlet extends HttpServlet {
 											, gson
 										);
 									
-									//Находим объект названия типа предлажения
-									//и его реализацию на текущем языке
-									String offerTypeDescriptionString = "-";
-									if(o.getOffer_type_id() != null) {
-										Offer_type offerType = new Offer_type();
-										objectifyRun2(
-												o.getOffer_type_id()
-												, offerType
-												, Offer_typeDAO::getOffer_type
-												, out
-												, gson
-											);
-										//offerTypeDescriptionString = "+";
-										Static_description offerTypeDescription =
-												new Static_description();
-										objectifyRun3(
-											offerType.getDescription_key()
-											, englishLanguage.getId()
-											, offerTypeDescription
-											, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
-											, out
-											, gson
-										);
-										if(offerTypeDescription.getContent() != null) {
-											offerTypeDescriptionString =
-													offerTypeDescription.getContent();
-										}
+									if(projectionString.equals(HttpReqParams.stateProjection)) {
+										
+										List al = new ArrayList<>();
+										al.add(o.getState_id());
+										RespData rd = new RespData(al);
+										String successJson = gson.toJson(rd);
+										out.print(successJson);
+										break;
 									}
-									//Находим заголовок на текущем языке
-									String titleString = "-";
-									if(o.getTitle_key() != null
-											&& !o.getTitle_key().equals("")) {
-										Title title = new Title();
-										objectifyRun3(
-											o.getTitle_key()
-											, englishLanguage.getId()
-											, title
-											, TitleDAO::getTitleByKeyAndLang
-											, out
-											, gson
-										);
-										titleString = title.getContent();
-									}
-									//Находим описание на текущем языке
-									String descriptionString = "-";
-									if(o.getDescription_key() != null
-											&& !o.getDescription_key().equals("")) {
-										Description description = new Description();
-										objectifyRun3(
-											o.getDescription_key()
-											, englishLanguage.getId()
-											, description
-											, DescriptionDAO::getDescriptionByKeyAndLang
-											, out
-											, gson
-										);
-										descriptionString = description.getContent();
-										/*descriptionString = 
-											descriptionString.length() > 25
-											? descriptionString.substring(0, 25) + " ..."
-											: descriptionString;*/
-									}
-									
+																		
 									//Image
 									int imageBytesCount = o.getImage().getBytes().length;
 									String noimageUriString = "/img/no-image.png";
@@ -639,181 +586,256 @@ public class OfferServlet extends HttpServlet {
 											(imageBytesCount > 0)
 											? new String(o.getImage().getBytes())
 											: noimageUriString;
-											
-									//Country
-									String countryString = "-";
-									if(o.getCountry_id() != null) {
-										Country offerCountry = new Country();
-										objectifyRun2(
-												o.getCountry_id()
-												, offerCountry
-												, CountryDAO::getCountry
-												, out
-												, gson
-											);
-										Static_title offerCountrySt = new Static_title();		
-										objectifyRun3(
-												offerCountry.getTitle_key()
-												, englishLanguage.getId()
-												, offerCountrySt
-												, Static_titleDAO::getStaticTitleByKeyAndLang
-												, out
-												, gson
-											);
-										countryString = offerCountrySt.getContent();
-									}
 									
-									//City
-									String cityString = "-";
-									if(o.getCity_id() != null) {
-										City offerCity = new City();
-										objectifyRun2(
-												o.getCity_id()
-												, offerCity
-												, CityDAO::getCity
-												, out
-												, gson
-											);
-										Static_title offerCitySt = new Static_title();		
-										objectifyRun3(
-												offerCity.getTitle_key()
-												, englishLanguage.getId()
-												, offerCitySt
-												, Static_titleDAO::getStaticTitleByKeyAndLang
-												, out
-												, gson
-											);
-										cityString = offerCitySt.getContent();
-									}
+									if(projectionString.equals(HttpReqParams.imageProjection)) {
+										
+										List al = new ArrayList<>();
+										al.add(imageBase64);
+										RespData rd = new RespData(al);
+										String successJson = gson.toJson(rd);
+										out.print(successJson);
+									} else {
 									
-									switch(projectionString) {
-									
-										case HttpReqParams.gridItemDetailsProjection:{
-													
-											
-											//Находим объект типа состояния
-											//и его реализацию на текущем языке
-											String offerStateString = "-";
-											if(o.getState_id() != null) {
-												State state = new State();
-												objectifyRun2(
-														o.getState_id()
-														, state
-														, StateDAO::getState
-														, out
-														, gson
-													);
-												/*if(state.getId() != null) {}
-												offerStateString =
-														state.getId().toString() + " " + state.getTitle_key();*/
-												Static_title stateTitle = new Static_title();
-												objectifyRun3(
-													state.getTitle_key()
-													, englishLanguage.getId()
-													, stateTitle
-													, Static_titleDAO::getStaticTitleByKeyAndLang
+										//Находим объект названия типа предлажения
+										//и его реализацию на текущем языке
+										String offerTypeDescriptionString = "-";
+										if(o.getOffer_type_id() != null) {
+											Offer_type offerType = new Offer_type();
+											objectifyRun2(
+													o.getOffer_type_id()
+													, offerType
+													, Offer_typeDAO::getOffer_type
 													, out
 													, gson
 												);
-												if(stateTitle.getContent() != null) {
-													offerStateString = stateTitle.getContent();
-												}
+											//offerTypeDescriptionString = "+";
+											Static_description offerTypeDescription =
+													new Static_description();
+											objectifyRun3(
+												offerType.getDescription_key()
+												, englishLanguage.getId()
+												, offerTypeDescription
+												, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
+												, out
+												, gson
+											);
+											if(offerTypeDescription.getContent() != null) {
+												offerTypeDescriptionString =
+														offerTypeDescription.getContent();
 											}
-											
-											//Created at - direct format
-											String createdAtString =
-													DateTransform.ReversedToDirect(o.getCreated_at());
-											
-											//Populate the response object
-											OfferGridItemDetails offerDetails =
-												new OfferGridItemDetails (
-													o.getId()
-													, offerTypeDescriptionString
-													, titleString
-													, offerStateString
-													, imageBase64
-													, descriptionString
-													, createdAtString
-													
-													, countryString
-													, cityString);
-											
-											//
-											List al = new ArrayList<>();
-											al.add(offerDetails);
-											//String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
-											//al.add(new ContinuData(gridItems, nextCursorString));
-											RespData rd = new RespData(al);
-											String successJson = gson.toJson(rd);
-											out.print(successJson);
 										}
-										case HttpReqParams.tableRowEditProjection:{
+										//Находим заголовок на текущем языке
+										String titleString = "-";
+										if(o.getTitle_key() != null
+												&& !o.getTitle_key().equals("")) {
+											Title title = new Title();
+											objectifyRun3(
+												o.getTitle_key()
+												, englishLanguage.getId()
+												, title
+												, TitleDAO::getTitleByKeyAndLang
+												, out
+												, gson
+											);
+											titleString = title.getContent();
+										}
+										//Находим описание на текущем языке
+										String descriptionString = "-";
+										if(o.getDescription_key() != null
+												&& !o.getDescription_key().equals("")) {
+											Description description = new Description();
+											objectifyRun3(
+												o.getDescription_key()
+												, englishLanguage.getId()
+												, description
+												, DescriptionDAO::getDescriptionByKeyAndLang
+												, out
+												, gson
+											);
+											descriptionString = description.getContent();
+											/*descriptionString = 
+												descriptionString.length() > 25
+												? descriptionString.substring(0, 25) + " ..."
+												: descriptionString;*/
+										}
 												
-											//
-											String collaboratorsCount =
-													o.getCollaborators_count().toString();
-											
-											String desiredStartDateString =
-													DateTransform.ReversedToDirect(o.getStart_date());
-											
-											String desiredFinishDateString =
-													DateTransform.ReversedToDirect(o.getFinish_date());
-											
-											//Находим объект типа состояния
-											//и его реализацию на текущем языке
-											String offerStateString = "-";
-											if(o.getState_id() != null) {
-												State state = new State();
-												objectifyRun2(
-														o.getState_id()
-														, state
-														, StateDAO::getState
-														, out
-														, gson
-													);
-												/*if(state.getId() != null) {}
-												offerStateString =
-														state.getId().toString() + " " + state.getTitle_key();*/
-												Static_title stateTitle = new Static_title();
-												objectifyRun3(
-													state.getTitle_key()
+										//Country
+										String countryString = "-";
+										if(o.getCountry_id() != null) {
+											Country offerCountry = new Country();
+											objectifyRun2(
+													o.getCountry_id()
+													, offerCountry
+													, CountryDAO::getCountry
+													, out
+													, gson
+												);
+											Static_title offerCountrySt = new Static_title();		
+											objectifyRun3(
+													offerCountry.getTitle_key()
 													, englishLanguage.getId()
-													, stateTitle
+													, offerCountrySt
 													, Static_titleDAO::getStaticTitleByKeyAndLang
 													, out
 													, gson
 												);
-												if(stateTitle.getContent() != null) {
-													offerStateString = stateTitle.getContent();
+											countryString = offerCountrySt.getContent();
+										}
+										
+										//City
+										String cityString = "-";
+										if(o.getCity_id() != null) {
+											City offerCity = new City();
+											objectifyRun2(
+													o.getCity_id()
+													, offerCity
+													, CityDAO::getCity
+													, out
+													, gson
+												);
+											Static_title offerCitySt = new Static_title();		
+											objectifyRun3(
+													offerCity.getTitle_key()
+													, englishLanguage.getId()
+													, offerCitySt
+													, Static_titleDAO::getStaticTitleByKeyAndLang
+													, out
+													, gson
+												);
+											cityString = offerCitySt.getContent();
+										}
+										
+										switch(projectionString) {
+										
+											case HttpReqParams.gridItemDetailsProjection:{
+														
+												
+												//Находим объект типа состояния
+												//и его реализацию на текущем языке
+												String offerStateString = "-";
+												if(o.getState_id() != null) {
+													State state = new State();
+													objectifyRun2(
+															o.getState_id()
+															, state
+															, StateDAO::getState
+															, out
+															, gson
+														);
+													/*if(state.getId() != null) {}
+													offerStateString =
+															state.getId().toString() + " " + state.getTitle_key();*/
+													Static_title stateTitle = new Static_title();
+													objectifyRun3(
+														state.getTitle_key()
+														, englishLanguage.getId()
+														, stateTitle
+														, Static_titleDAO::getStaticTitleByKeyAndLang
+														, out
+														, gson
+													);
+													if(stateTitle.getContent() != null) {
+														offerStateString = stateTitle.getContent();
+													}
 												}
+												
+												//Created at - direct format
+												String createdAtString =
+														DateTransform.ReversedToDirect(o.getCreated_at());
+												
+												//Populate the response object
+												OfferGridItemDetails offerDetails =
+													new OfferGridItemDetails (
+														o.getId()
+														, offerTypeDescriptionString
+														, titleString
+														, offerStateString
+														, imageBase64
+														, descriptionString
+														, createdAtString
+														
+														, countryString
+														, cityString);
+												
+												//
+												List al = new ArrayList<>();
+												al.add(offerDetails);
+												//String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
+												//al.add(new ContinuData(gridItems, nextCursorString));
+												RespData rd = new RespData(al);
+												String successJson = gson.toJson(rd);
+												out.print(successJson);
+												break;
 											}
-											
-											//Created at - direct format
-											String createdAtString =
-													DateTransform.ReversedToDirect(o.getCreated_at());
-											
-											//Populate the response object
-											OfferTableRowEdit offerTableRowEdit =
-												new OfferTableRowEdit (
-													o.getId()
-													, offerTypeDescriptionString
-													, titleString
-													, descriptionString
+											case HttpReqParams.tableRowEditProjection:{
 													
-													, collaboratorsCount
-													, countryString
-													, cityString
-													, desiredStartDateString
-													, desiredFinishDateString);
-											
-											//
-											List al = new ArrayList<>();
-											al.add(offerTableRowEdit);
-											//String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
-											//al.add(new ContinuData(gridItems, nextCursorString));
-											RespData rd = new RespData(al);
-											String successJson = gson.toJson(rd);
-											out.print(successJson);
+												//
+												String collaboratorsCount =
+														o.getCollaborators_count().toString();
+												
+												String desiredStartDateString =
+														DateTransform.ReversedToDirect(o.getStart_date());
+												
+												String desiredFinishDateString =
+														DateTransform.ReversedToDirect(o.getFinish_date());
+												
+												//Находим объект типа состояния
+												//и его реализацию на текущем языке
+												String offerStateString = "-";
+												if(o.getState_id() != null) {
+													State state = new State();
+													objectifyRun2(
+															o.getState_id()
+															, state
+															, StateDAO::getState
+															, out
+															, gson
+														);
+													/*if(state.getId() != null) {}
+													offerStateString =
+															state.getId().toString() + " " + state.getTitle_key();*/
+													Static_title stateTitle = new Static_title();
+													objectifyRun3(
+														state.getTitle_key()
+														, englishLanguage.getId()
+														, stateTitle
+														, Static_titleDAO::getStaticTitleByKeyAndLang
+														, out
+														, gson
+													);
+													if(stateTitle.getContent() != null) {
+														offerStateString = stateTitle.getContent();
+													}
+												}
+												
+												//Created at - direct format
+												String createdAtString =
+														DateTransform.ReversedToDirect(o.getCreated_at());
+												
+												//Populate the response object
+												OfferTableRowEdit offerTableRowEdit =
+													new OfferTableRowEdit (
+														o.getId()
+														, offerTypeDescriptionString
+														, titleString
+														, descriptionString
+														
+														, collaboratorsCount
+														, countryString
+														, cityString
+														, desiredStartDateString
+														, desiredFinishDateString);
+												
+												//
+												List al = new ArrayList<>();
+												al.add(offerTableRowEdit);
+												//String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
+												//al.add(new ContinuData(gridItems, nextCursorString));
+												RespData rd = new RespData(al);
+												String successJson = gson.toJson(rd);
+												out.print(successJson);
+												break;
+											}
 										}
 									}
 								} catch (Exception ex) {
@@ -1341,6 +1363,62 @@ public class OfferServlet extends HttpServlet {
 									
 									ObjectifyQueryLauncher.printException(ex, out, gson);
 								}	
+								break;
+							}
+							case HttpReqParams.update : {
+								//Действие только для обновления состояния предложения.
+								//Другие параметры обновляются веткой создания предложения.
+								try {
+									//Получаем из БД объект английского языка
+									Language englishLanguage = new Language();
+									objectifyRun2(
+											"en"
+											, englishLanguage
+											, LanguageDAO::getLangByCode
+											, out
+											, gson);
+									
+									//
+									Offer o = new Offer();
+									//
+									String offerId =
+											req.getParameter(HttpReqParams.id);
+									
+									//
+									String newState  =
+											req.getParameter(HttpReqParams.newState);
+									
+									//Получение объекта из БД
+									objectifyRun2(
+											offerId
+											, o
+											, OfferDAO::getOffer
+											, out
+											, gson
+										);
+									
+									o.setState_id(Long.parseLong(newState));
+									DateFormat reversedFormat =
+											new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+									String updatedAt = reversedFormat.format(new Date());
+									o.setUpdated_at(updatedAt);
+									
+									objectifyRun(
+											o
+											, OfferDAO::createOffer
+											, out
+											, gson
+										);
+									
+									ArrayList<String> al = new ArrayList<>();
+									al.add(HttpRespWords.updated);
+									RespData rd = new RespData(al);
+									String successJson = gson.toJson(rd);
+									out.print(successJson);
+								} catch (Exception ex) {
+									
+									ObjectifyQueryLauncher.printException(ex, out, gson);
+								}
 								break;
 							}
 							case HttpReqParams.delete : {

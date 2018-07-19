@@ -189,9 +189,9 @@
 	//TODO 1. complete settings: categories, filters, order by (excluding created_at pare)
 	//TODO 2. complete details: author_name, collaborators_count, desired_start_date, desired_finish_date
 	//TODO 3. search by title substring with autocomplete
-	//TODO 4. next step: edit project parameters and status
+	//TODO 4. next step: edit project status
 	
-	//активируем боковую панель и схлопывающиеся области
+	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
 	$('#find-container .modal').modal();
@@ -313,8 +313,11 @@
 				
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
-				console.log(textStatus);
-			});
+				alert("Ошибка: " + jqXHR);
+			}).always(function() {
+			    
+				preloaderOff();
+		  	});
 			
 			/* Filter: country n city autocomplete */
 			
@@ -547,9 +550,15 @@
 		        		$('#find-container #pointer-down').css('display', 'none');
 		        		offerCounter = "full";
 		        	}
-		        	preloaderOff();
+		        	//preloaderOff();
 		        	offerGridPopulating = false;
-		        });
+		        }).fail(function(jqXHR, textStatus, errorThrown) {
+					  
+					alert("Ошибка: " + jqXHR);
+				}).always(function() {
+				    
+					preloaderOff();
+			  	});;
 			}
 
 			/* Filter */
@@ -645,9 +654,10 @@
 		    		'click'
 		    		, '#offer-grid-container .card-action > a'
 		    		, function(){
+		    			
+		    			preloaderOn("nocover");
 		    			var id = $(this).data('offerid');
-		    			//console.log(id);
-		    			//$('#offer-details .modal-content').html(id);
+		    			
 		    			var urlString =
 				        	"/offer?action=get"
 				        			+"&id=" + id
@@ -688,7 +698,9 @@
 				        	
 				        	$('#offer-details .modal-content .card-action > a').unbind("click");
 							$('#offer-details .modal-content .card-action > a').click(function(ev){
+								
 								ev.preventDefault();
+								preloaderOn("nocover");
 								var urlString =
 						        	"/offer?action=join"
 						        			+"&id=" + data.result[0].id;
@@ -707,9 +719,18 @@
 						        }).fail(function(jqXHR, textStatus, errorThrown) {
 									  
 									alert("Ошибка отправки запроса: " + jqXHR);
-								});
+								}).always(function() {
+								    
+									preloaderOff();
+							  	});
 							});
-				        });
+				        }).fail(function(jqXHR, textStatus, errorThrown) {
+							  
+							alert("Ошибка: " + jqXHR);
+						}).always(function() {
+						    
+							preloaderOff();
+					  	});;
 		    		});
 
 			setTimeout(preloaderOff, 500);

@@ -97,9 +97,11 @@
     if(hash.indexOf("info") === -1){
     	var re = /#([-0-9A-Za-z]+)(\:(.+))?/;
         var match = re.exec(hash);
-        hash = match[1];
-        var param = match[3];
-        app(hash,param); // navigate to the page
+        if(match != null){
+        	hash = match[1];
+            var param = match[3];
+            app(hash,param); // navigate to the page
+        }
     }
   }
   

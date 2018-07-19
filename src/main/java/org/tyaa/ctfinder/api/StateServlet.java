@@ -2,6 +2,7 @@ package org.tyaa.ctfinder.api;
 
 import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
 import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun3;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,8 +21,10 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.State;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.model.RespData;
@@ -103,6 +106,15 @@ public class StateServlet extends HttpServlet {
 							}
 							case HttpReqParams.getAll : {
 								
+								//Получаем из БД объект английского языка
+								Language englishLanguage = new Language();
+								objectifyRun2(
+										"en"
+										, englishLanguage
+										, LanguageDAO::getLangByCode
+										, out
+										, gson);
+								
 								List<State> stateList = new ArrayList<>();
 								objectifyRun(
 										stateList
@@ -110,16 +122,17 @@ public class StateServlet extends HttpServlet {
 										, out
 										, gson
 									);
-								//TODO get description by key n lang
+								//
 								List<StateItem> stateItemList =
 									stateList.stream()
 										.map(
 											s -> {
 												Static_title st = new Static_title();
-												objectifyRun2(
+												objectifyRun3(
 														((State)s).getTitle_key()
+														, englishLanguage.getId()
 														, st
-														, Static_titleDAO::getStaticTitleByKey
+														, Static_titleDAO::getStaticTitleByKeyAndLang
 														, out
 														, gson);
 												return new StateItem(

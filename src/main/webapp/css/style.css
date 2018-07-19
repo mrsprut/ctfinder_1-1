@@ -229,3 +229,7 @@ tr.RedRow {background-color:#FFCCCC;}
 .selectedTableRow{
     color: #26a69a;
 }
+
+.modal label {
+	pointer-events: auto !important;
+}

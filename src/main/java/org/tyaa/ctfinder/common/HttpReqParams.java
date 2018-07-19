@@ -5,11 +5,14 @@ public class HttpReqParams {
 	public final static String action = "action";
 	
 	public final static String create = "create";
+	public final static String update = "update";
 	public final static String getAll = "get-all";
 	public final static String getRange = "get-range";
 	public final static String get = "get";
 	public final static String join = "join";
 	public final static String delete = "delete";
+	
+	public final static String newState = "new_state";
 	
 	public final static String navigate = "navigate";
 	public final static String page = "page";
@@ -37,6 +40,8 @@ public class HttpReqParams {
 	public final static String tableRowProjection = "table-row";
 	public final static String gridItemDetailsProjection = "grid-item-details";
 	public final static String tableRowEditProjection = "table-row-edit";
+	public final static String imageProjection = "image";
+	public final static String stateProjection = "state";
 	
 	/* Sort */
 	
