@@ -1085,18 +1085,10 @@ public class OfferServlet extends HttpServlet {
 													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));*/
 										}
 										
-										//TODO фильтрация по пользователю
-										//(чтобы можно было искать предложения определенного автора)
-										/*Long userId =
-												(Long)session.getAttribute(
-														SessionAttributes.userId
-													);*/
-										
 										Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
 										paramsMap.put(OfferDAO.Params.OfferList, offers);
 										paramsMap.put(OfferDAO.Params.Limit, limit);
 										paramsMap.put(OfferDAO.Params.CursorStringArray, cursorStr);
-										//paramsMap.put(OfferDAO.Params.UserId, userId);
 										paramsMap.put(OfferDAO.Params.Filter, offerFilter);
 										objectifyRun(
 												paramsMap

@@ -767,10 +767,8 @@
 							data.result[0].collaborators_count != "-1"
 								? data.result[0].collaborators_count
 								: "";
-						var startDate =
-							new Date(formatDate(data.result[0].desired_start_date));
-						var finishDate =
-							new Date(formatDate(data.result[0].desired_finish_date));
+						var startDate = data.result[0].desired_start_date;
+						var finishDate = data.result[0].desired_finish_date;
 						$('form#create-offer-form input#country-input').val(country);
 						$('form#create-offer-form input#city-input').val(city);
 						$('form#create-offer-form input#c-count-input').val(collaboratorsCount);
