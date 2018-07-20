@@ -6,6 +6,7 @@ import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun3;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,10 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -46,6 +49,7 @@ import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.controller.SubscriptionDAO;
 import org.tyaa.ctfinder.controller.TitleDAO;
 import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.entity.City;
@@ -57,6 +61,7 @@ import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.State;
 import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.Static_title;
+import org.tyaa.ctfinder.entity.Subscription;
 import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.filter.OfferFilter;
@@ -81,6 +86,7 @@ public class OfferServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Integer unbounded = -1;
+	private static final Logger log = Logger.getLogger(OfferServlet.class.getName());
 	
 	static {
 		
@@ -95,6 +101,7 @@ public class OfferServlet extends HttpServlet {
 		ObjectifyService.register(Static_title.class);
 		ObjectifyService.register(Static_description.class);
 		ObjectifyService.register(Offer_type.class);
+		ObjectifyService.register(Subscription.class);
 	}	
        
     /**
@@ -525,6 +532,77 @@ public class OfferServlet extends HttpServlet {
 													, gson
 												);
 											
+											//Send created message to all subscribers
+											Long authorId = userId;
+											log.info("authorId " + authorId);
+											
+											List<Subscription> subscriptions = new ArrayList<>();
+											
+											objectifyRun2(
+													authorId
+													, subscriptions
+													, (_object1, _object2) -> {
+														try {
+															SubscriptionDAO.findListByAuthor(_object1, _object2);
+														} catch (IllegalArgumentException | IllegalAccessException ex) {
+															ObjectifyQueryLauncher.printException(ex, out, gson);
+														} 
+													}
+													, out
+													, gson
+												);
+											
+											Mailer mailer = new Mailer();
+											String messageString =
+													"User "
+													+ authorId
+													+ " published new offer "
+													+ title
+													+ "(ID: "
+													+ offer.getId()
+													+ ")";
+											String subjectString = "New offer";
+											String fromAddressString = "tyaamariupol@gmail.com";
+											String fromNameString = "CTFinder";
+											
+											log.info("messageString " + messageString);
+											log.info("subscriptions " + subscriptions.size());
+											
+											subscriptions.forEach((s) -> {
+												
+												Long subscriberId = s.getSubscriber_id();
+												log.info("subscriberId " + subscriberId);
+												
+												User subscriberUser = new User();
+												objectifyRun2(
+														subscriberId
+														, subscriberUser
+														, UserDAO::getUser
+														, out
+														, gson
+													);
+												
+												String toNameString = subscriberUser.getName();
+												String toAddressString = subscriberUser.getEmail();
+												
+												log.info("toNameString " + toNameString);
+												log.info("toAddressString " + toAddressString);
+												
+												// Отправляем сообщение
+												try {
+													mailer.sendPlainMsg(
+															messageString
+															, subjectString
+															, fromAddressString
+															, fromNameString
+															, toAddressString
+															, toNameString);
+												} catch (UnsupportedEncodingException | MessagingException ex) {
+													
+													ObjectifyQueryLauncher.printException(ex, out, gson);
+												}
+											});
+											
 											ArrayList<String> al = new ArrayList<>();
 											al.add(HttpRespWords.created);
 											RespData rd = new RespData(al);
@@ -743,6 +821,44 @@ public class OfferServlet extends HttpServlet {
 												String createdAtString =
 														DateTransform.ReversedToDirect(o.getCreated_at());
 												
+												//Author-user info
+												Long userAuthorId = o.getUser_id();
+												User userAuthor = new User();
+												objectifyRun2(
+														userAuthorId
+														, userAuthor
+														, UserDAO::getUser
+														, out
+														, gson
+													);
+												String userAuthorName = userAuthor.getName();
+												
+												Long subscriberId =
+													(Long)session.getAttribute(
+														SessionAttributes.userId
+													);
+												
+												//
+												Subscription subscription = new Subscription();
+												objectifyRun3(
+														userAuthorId
+														, subscriberId
+														, subscription
+														, (_object1, _object2, _object3) -> {
+															try {
+																SubscriptionDAO.findByAuthorAndSubscriber(_object1, _object2, _object3);
+															} catch (IllegalArgumentException | IllegalAccessException ex) {
+																ObjectifyQueryLauncher.printException(ex, out, gson);
+															} 
+														}
+														, out
+														, gson
+													);
+												Boolean subscribed =
+														(subscription.getId() != null)
+														? true
+														: false;
+												
 												//Populate the response object
 												OfferGridItemDetails offerDetails =
 													new OfferGridItemDetails (
@@ -755,7 +871,12 @@ public class OfferServlet extends HttpServlet {
 														, createdAtString
 														
 														, countryString
-														, cityString);
+														, cityString
+														
+														, userAuthorName
+														, userAuthorId
+														, subscribed
+													);
 												
 												//
 												List al = new ArrayList<>();
@@ -841,7 +962,8 @@ public class OfferServlet extends HttpServlet {
 								} catch (Exception ex) {
 									
 									ObjectifyQueryLauncher.printException(ex, out, gson);
-								}	
+								}
+								
 								break;
 							}
 							case HttpReqParams.getRange : {

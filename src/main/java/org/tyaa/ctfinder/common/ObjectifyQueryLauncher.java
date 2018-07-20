@@ -1,10 +1,12 @@
 package org.tyaa.ctfinder.common;
 
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import org.tyaa.ctfinder.api.interfaces.IObjectifyFun;
 import org.tyaa.ctfinder.api.interfaces.IObjectifyFun2;
 import org.tyaa.ctfinder.api.interfaces.IObjectifyFun3;
+import org.tyaa.ctfinder.api.publ.OfferServlet;
 import org.tyaa.ctfinder.model.RespData;
 
 import com.google.gson.Gson;
@@ -12,6 +14,8 @@ import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.VoidWork;
 
 public class ObjectifyQueryLauncher {
+	
+	private static final Logger log = Logger.getLogger(ObjectifyQueryLauncher.class.getName());
 	
 	public static <T> void objectifyRun(T _object, IObjectifyFun<T> _function, PrintWriter _out, Gson _gson) {
 		try {
@@ -97,6 +101,7 @@ public class ObjectifyQueryLauncher {
 			//rd = new RespData("unknown_exception");
 		}
 		String errorJson = _gson.toJson(rd);
+		log.info("errorJson " + errorJson);
 		_out.print(errorJson);
 	}
 }

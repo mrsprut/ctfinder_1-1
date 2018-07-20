@@ -230,6 +230,10 @@ tr.RedRow {background-color:#FFCCCC;}
     color: #26a69a;
 }
 
+/* Modal */
+
 .modal label {
 	pointer-events: auto !important;
 }
+
+#offer-details h3, #offer-details h4 { color: #4db6ac !important; }

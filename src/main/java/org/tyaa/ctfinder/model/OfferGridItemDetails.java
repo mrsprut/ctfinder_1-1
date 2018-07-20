@@ -22,6 +22,11 @@ public class OfferGridItemDetails {
 	@Expose
 	public String author_name;
 	@Expose
+	public Long author_id;
+	@Expose
+	public Boolean subscription;
+	
+	@Expose
 	public String collaborators_count;
 	@Expose
 	public String country;
@@ -47,6 +52,10 @@ public class OfferGridItemDetails {
 			
 			, String country
 			, String city
+			
+			, String author_name
+			, Long author_id
+			, Boolean subscription
 		) {
 		super();
 		this.id = id;
@@ -59,5 +68,9 @@ public class OfferGridItemDetails {
 		
 		this.country = country;
 		this.city = city;
+		
+		this.author_name = author_name;
+		this.author_id = author_id;
+		this.subscription = subscription;
 	}
 }

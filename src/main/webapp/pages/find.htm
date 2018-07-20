@@ -187,9 +187,10 @@
 <script type="text/javascript">
 	
 	//TODO 1. complete settings: categories, filters, order by (excluding created_at pare)
-	//TODO 2. complete details: author_name, collaborators_count, desired_start_date, desired_finish_date
+	//TODO 2. complete details: collaborators_count, desired_start_date, desired_finish_date
 	//TODO 3. search by title substring with autocomplete
-	//TODO 4. next step: edit project status
+	//TODO 4. fix destroying of date fields in new offer form, fix dates comparing, fix card titles color
+	//TODO 5. next step: multylang v1
 	
 	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
@@ -670,20 +671,33 @@
 				        	
 				        	var template = Hogan.compile(
 						  			
-					      		'<h2 class="header">{{title}}</h2>'
-					      		+ '<h3>({{offer_type}})</h3>'
+					      		'<h3 class="header">{{title}}</h3>'
+					      		+ '<h4>({{offer_type}})</h4>'
 					      	    + '<div class="card ' + offerDetailsOrientation + '">'
 					      	      +'<div class="card-image details-image">'
 					      	        +'<img src="{{image}}">'
 					      	      +'</div>'
 					      	      +'<div class="card-stacked">'
 					      	        +'<div class="card-content">'
-					      	      		+ '<h4>Details</h4>'
-					      	      		+'<p><strong>State </strong>{{state}}</p>'
-					      	      		+'<p><strong>Created at </strong>{{created_at}}</p>'
-					      	      		+'<p><strong>Country: </strong>{{country}}</p>'
-					      	      		+'<p><strong>City: </strong>{{city}}</p>'
-					      	      		+ '<h4>Description</h4>'
+					      	      		+ '<h4>Подробности</h4>'
+					      	      		+'<p>'
+					      	      			+'<strong>Автор: </strong>{{author_name}} '
+					      	      			+'{{#subscription}}'
+						      	      			+'<button id="unsubscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
+						      	      				+'Отписаться'
+					      	      				+'</button>'
+					      	      			+'{{/subscription}}'
+						      	      		+'{{^subscription}}'
+						      	      			+'<button id="subscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
+						      	      				+'Подписаться'
+					      	      				+'</button>'
+					      	      			+'{{/subscription}}'
+				      	      			+'</p>'
+					      	      		+'<p><strong>Состояние </strong>{{state}}</p>'
+					      	      		+'<p><strong>Создано: </strong>{{created_at}}</p>'
+					      	      		+'<p><strong>Страна: </strong>{{country}}</p>'
+					      	      		+'<p><strong>Город: </strong>{{city}}</p>'
+					      	      		+ '<h4>Описание</h4>'
 					      	          	+'<p>{{content}}</p>'
 					      	        +'</div>'
 					      	        +'<div class="card-action">'
@@ -696,6 +710,91 @@
 				        	$('#offer-details .modal-content')
 				        		.html(template.render(data.result[0]));
 				        	
+				        	var $currentSubscribeButton = null;
+				        	
+				        	//Обработчик клика по кнопке "Подписаться"
+				        	var subscribeHandler = function(ev){
+			        			
+			        			ev.preventDefault();
+			        			preloaderOn("nocover");
+								var createSubscriptionUrlString =
+						        	"/subscription?action=create"
+						        			+"&author-id=" + $(this).data("authorId");
+								$.ajax({
+						            url: createSubscriptionUrlString,
+						            type: "POST",
+						            cache : false
+						        }).done(function(data) {
+						        	
+						        	if(data.result != null && data.result[0] == "created"){
+						        		
+						        		$currentSubscribeButton.attr('id', 'unsubscribe');
+						        		$currentSubscribeButton.text('Отписаться');
+						        		$currentSubscribeButton.unbind("click");
+						        		$currentSubscribeButton.click(unsubscribeHandler);
+						        	} else {
+						        		alert('Ошибка отправки запроса');
+						        	}
+						        }).fail(function(jqXHR, textStatus, errorThrown) {
+									  
+									alert("Ошибка отправки запроса: " + jqXHR);
+								}).always(function() {
+								    
+									preloaderOff();
+							  	});
+			        		}
+				        	
+				        	//Обработчик клика по кнопке "Подписаться"
+				        	var unsubscribeHandler = function(ev){
+			        			
+			        			ev.preventDefault();
+			        			preloaderOn("nocover");
+								var deleteSubscriptionUrlString =
+						        	"/subscription?action=delete"
+						        			+"&author-id=" + $(this).data("authorId");
+								$.ajax({
+						            url: deleteSubscriptionUrlString,
+						            type: "POST",
+						            cache : false
+						        }).done(function(data) {
+						        	
+						        	if(data.result != null && data.result[0] == "deleted"){
+						        		
+						        		$currentSubscribeButton.attr('id', 'subscribe');
+						        		$currentSubscribeButton.text('Подписаться');
+						        		$currentSubscribeButton.unbind("click");
+						        		$currentSubscribeButton.click(subscribeHandler);
+						        	} else {
+						        		alert('Ошибка отправки запроса');
+						        	}
+						        }).fail(function(jqXHR, textStatus, errorThrown) {
+									  
+									alert("Ошибка отправки запроса: " + jqXHR);
+								}).always(function() {
+								    
+									preloaderOff();
+							  	});
+			        		}
+				        	
+				        	var $subscribeButton =
+				        		$('#offer-details .modal-content .card-content button#subscribe');
+				        	if($subscribeButton.length > 0){
+				        		
+				        		$currentSubscribeButton = $subscribeButton;
+				        		$subscribeButton.unbind("click");
+				        		$subscribeButton.click(subscribeHandler);
+				        	}
+				        	
+				        	var $unsubscribeButton =
+				        		$('#offer-details .modal-content .card-content button#unsubscribe');
+				        	if($unsubscribeButton.length > 0){
+				        		
+				        		$currentSubscribeButton = $unsubscribeButton;
+				        		$unsubscribeButton.unbind("click");
+				        		$unsubscribeButton.click(unsubscribeHandler);
+				        	}
+				        	
+				        	//Обработчик клика по ссылке "Присоединиться"
 				        	$('#offer-details .modal-content .card-action > a').unbind("click");
 							$('#offer-details .modal-content .card-action > a').click(function(ev){
 								
