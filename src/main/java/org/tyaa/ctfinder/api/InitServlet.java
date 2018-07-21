@@ -536,6 +536,72 @@ public class InitServlet extends HttpServlet {
 					, gson
 				);*/
 			
+			
+			/* Миграция 6 */
+			
+			//Создаем в БД запись для Russian языка
+			
+			Language russianLanguage = new Language();
+			russianLanguage.setCode("ru");
+			
+			objectifyRun(
+					russianLanguage
+					, LanguageDAO::createLang
+					, out
+					, gson
+				);
+			
+			if(russianLanguage.getId() != null) {
+				
+				//Создаем в БД запись для русского заголовка для русского языка
+				Static_title russianTitle = new Static_title();
+				russianTitle.setLang_id(russianLanguage.getId());
+				russianTitle.setKey("russian_lang_title");
+				russianTitle.setContent("русский");
+				objectifyRun(
+						russianTitle
+						, Static_titleDAO::createStatic_title
+						, out
+						, gson
+					);
+				
+				//Создаем в БД запись для заголовка для Russian языка
+				Static_title englishTitle = new Static_title();
+				englishTitle.setLang_id(englishLanguage.getId());
+				englishTitle.setKey("russian_lang_title");
+				englishTitle.setContent("russian");
+				objectifyRun(
+						englishTitle
+						, Static_titleDAO::createStatic_title
+						, out
+						, gson
+					);
+				
+				if(englishTitle.getId() != null) {
+					
+					//update russianLanguage
+					russianLanguage.setTitle_key(englishTitle.getKey());
+					objectifyRun(
+							russianLanguage
+							, LanguageDAO::updateLang
+							, out
+							, gson
+						);
+				}
+				
+				//Создаем в БД запись для русского заголовка для английского языка
+				Static_title englishRussianTitle = new Static_title();
+				englishRussianTitle.setLang_id(russianLanguage.getId());
+				englishRussianTitle.setKey("english_lang_title");
+				englishRussianTitle.setContent("английский");
+				objectifyRun(
+						englishRussianTitle
+						, Static_titleDAO::createStatic_title
+						, out
+						, gson
+					);
+			}
+			
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();

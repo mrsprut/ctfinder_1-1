@@ -47,6 +47,14 @@ function fixedEncodeURI (str) {
     return encodeURI(str).replace(/%5B/g, '[').replace(/%5D/g, ']');
 }
 
+function dictionaryResponseToArray(dict){
+	
+	return dict.reduce(function(acc, cur, i) {
+		  		acc[cur.key] = cur.word;
+		  		return acc;
+			}, {});
+}
+
 function init() {
 	
 	preloaderOn();

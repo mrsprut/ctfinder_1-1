@@ -7,4 +7,5 @@ public class HttpRespWords {
 	public final static String deleted = "deleted";
 	
 	public final static String sent = "sent";
+	public final static String set = "set";
 }

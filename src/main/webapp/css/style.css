@@ -161,7 +161,32 @@ div#g-signin2 {
     display: block;
 }*/
 
+/* Select language FAB */
+
+#lang-selector > ul > li > a.btn-floating {
+	background-color: #FFFFFF !important;
+	color: #000000 !important;
+}
+
+#lang-selector > ul > li > a.btn-floating.active {
+	background-color: #26a69a !important;
+	color: #FFFFFF !important;
+}
+
+/*.dropdown-lang-tyaa {
+    position: absolute !important;
+	top : 100px !important;
+	right: 100px !important;
+}
+
+#select-language img {
+	
+	height: 36px !important;
+	width: 36px !important;
+}*/
+
 /*Flex columns height*/
+
 .flex {
   display: flex;
   flex-wrap: wrap;

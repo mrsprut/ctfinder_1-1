@@ -37,6 +37,7 @@ import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
 import org.tyaa.ctfinder.common.KeyGen;
+import org.tyaa.ctfinder.common.LocalizeHelper;
 import org.tyaa.ctfinder.common.Mailer;
 import org.tyaa.ctfinder.common.ObjectifyQueryLauncher;
 import org.tyaa.ctfinder.common.SessionAttributes;
@@ -128,13 +129,21 @@ public class OfferServlet extends HttpServlet {
 	    HttpSession session = null;
 	    try {
 	    	
+	    	//Если сессия существует - получаем ее,
+	    	//если нет - получаем новую пустую сессию
 	    	session = req.getSession(true);
 		    
 		    //Открываем выходной поток - с сервера к клиенту (браузеру/мобильному приложению)
 		    try (PrintWriter out = resp.getWriter()) {
 		    	
-		    	//Если сессия существует
-		    	//и содержит атрибут с UserId,
+		    	//Получаем из сессии значение текущего языка
+		    	//(по умолчанию выдает английский язык)
+		    	Long currentLanguageId =
+						(Long)session.getAttribute(
+							SessionAttributes.languageId
+						);
+		    	
+		    	//Если сессия содержит атрибут с UserId,
 		    	//то проверяем параметры запроса от клиента
 		    	if(SessionAttributes.isSessionAttrSet(session, SessionAttributes.userId)) {
 		    		
@@ -534,7 +543,7 @@ public class OfferServlet extends HttpServlet {
 											
 											//Send created message to all subscribers
 											Long authorId = userId;
-											log.info("authorId " + authorId);
+											//log.info("authorId " + authorId);
 											
 											List<Subscription> subscriptions = new ArrayList<>();
 											
@@ -565,13 +574,13 @@ public class OfferServlet extends HttpServlet {
 											String fromAddressString = "tyaamariupol@gmail.com";
 											String fromNameString = "CTFinder";
 											
-											log.info("messageString " + messageString);
-											log.info("subscriptions " + subscriptions.size());
+											//log.info("messageString " + messageString);
+											//log.info("subscriptions " + subscriptions.size());
 											
 											subscriptions.forEach((s) -> {
 												
 												Long subscriberId = s.getSubscriber_id();
-												log.info("subscriberId " + subscriberId);
+												//log.info("subscriberId " + subscriberId);
 												
 												User subscriberUser = new User();
 												objectifyRun2(
@@ -585,8 +594,8 @@ public class OfferServlet extends HttpServlet {
 												String toNameString = subscriberUser.getName();
 												String toAddressString = subscriberUser.getEmail();
 												
-												log.info("toNameString " + toNameString);
-												log.info("toAddressString " + toAddressString);
+												//log.info("toNameString " + toNameString);
+												//log.info("toAddressString " + toAddressString);
 												
 												// Отправляем сообщение
 												try {
@@ -748,7 +757,7 @@ public class OfferServlet extends HttpServlet {
 													, out
 													, gson
 												);
-											Static_title offerCountrySt = new Static_title();		
+											/*Static_title offerCountrySt = new Static_title();		
 											objectifyRun3(
 													offerCountry.getTitle_key()
 													, englishLanguage.getId()
@@ -757,7 +766,13 @@ public class OfferServlet extends HttpServlet {
 													, out
 													, gson
 												);
-											countryString = offerCountrySt.getContent();
+											countryString = offerCountrySt.getContent();*/
+											countryString =
+													LocalizeHelper.getLoclizedSTitle(
+															offerCountry.getTitle_key()
+															, currentLanguageId
+															, out
+															, gson);
 										}
 										
 										//City

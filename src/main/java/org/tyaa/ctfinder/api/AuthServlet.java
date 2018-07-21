@@ -1,5 +1,7 @@
 package org.tyaa.ctfinder.api;
 
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_title;
@@ -192,6 +195,7 @@ public class AuthServlet extends HttpServlet {
 					case HttpReqParams.navigate:{
 						
 						String pageString = req.getParameter(HttpReqParams.page);
+						
 						if(SessionAttributes.isSessionAttrSet(session, SessionAttributes.userId)
 								|| pageString.equals("home")
 								|| pageString.equals("about")) {

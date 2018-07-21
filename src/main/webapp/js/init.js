@@ -1,13 +1,127 @@
 (function($){
   $(function(){
 
-    //$('.button-collapse').sideNav();
-    //$('.parallax').parallax();
+    //$('.sidenav').sidenav();
     
-    $('.dropdown-tyaa').click(function(){
-    	
-        $(this).find('.dropdown-content-tyaa').stop().slideToggle(400);
-    });
+		$('.dropdown-tyaa').click(function(){
+			
+		    $(this).find('.dropdown-content-tyaa').stop().slideToggle(400);
+		});
+		
+		var localizeIndex = function (){
+			
+			preloaderOn("nocover");
+			$.ajax({
+				type: 'POST',
+				url: '/language?action=dictionary',
+				dataType: 'json',
+				cache: false
+			}).done(function(responseText, textStatus, jqXHR) {
+				
+				//console.log(responseText.result);
+				var dict = dictionaryResponseToArray(responseText.result);
+				console.log(dict);
+				//Готовим шаблон при помощи библиотеки Hogan
+			    var desktopNavTemplate = Hogan.compile(
+		    		'<div class="nav-wrapper container">'
+						+'<a id="logo-container" href="#" class="brand-logo">CTFinder</a>'
+						+'<a href="#" data-target="nav-mobile" class="sidenav-trigger button-collapse"><i class="material-icons">menu</i></a>'
+						+'<ul class="right hide-on-med-and-down">'
+							+'<li><a href="#home" class="active">{{index_nav_home}}</a></li>'
+							+'<li><a href="#find">{{index_nav_find}}</a></li>'
+							+'<li><a href="#create" class="">{{index_nav_offer}}</a></li>'
+							+'<li><a href="#about">{{index_nav_about}}</a></li>'
+						+'</ul>'
+					+'</div>'
+			    );
+			    //console.log(template);
+			    //Заполняем шаблон данными и помещаем на веб-страницу
+				$('nav').html(desktopNavTemplate.render(dict));
+				
+				var mobileNavTemplate = Hogan.compile(
+					'<li><a href="#home" class="active">{{index_nav_home}}</a></li>'
+					+'<li><a href="#find">{{index_nav_find}}</a></li>'
+					+'<li><a href="#create" class="">{{index_nav_offer}}</a></li>'
+					+'<li><a href="#about">{{index_nav_about}}</a></li>'
+			    );
+			    //console.log(template);
+			    //Заполняем шаблон данными и помещаем на веб-страницу
+				$('#nav-mobile').html(mobileNavTemplate.render(dict));
+				
+				$('.sidenav').sidenav();
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				  
+				alert("Ошибка: " + jqXHR);
+			}).always(function() {
+			    
+				preloaderOff();
+			});
+		}
+		
+		var getLanguages = function (){
+			
+			$.ajax({
+				type: 'POST',
+				url: '/language?action=get-all',
+				dataType: 'json',
+				cache: false
+			}).done(function(responseText, textStatus, jqXHR) {
+				  
+				//console.log(responseText);
+				//Готовим шаблон списка при помощи библиотеки Hogan
+			    var template = Hogan.compile(
+			        '{{#result}}'
+			        +'<li>'
+						+'<a data-lang="{{code}}" class="btn-floating {{#active}}active{{/active}}">{{code}}</a>'
+					+'</li>'
+					+'{{/result}}'
+			    );
+			    //Заполняем шаблон данными и помещаем на веб-страницу
+				$('#lang-selector > ul').html(template.render(responseText));
+				$('.fixed-action-btn').floatingActionButton();
+				
+				$('#lang-selector > ul > li > a.btn-floating').unbind("click");
+				$('#lang-selector > ul > li > a.btn-floating').click(function(ev){
+					
+					ev.preventDefault();
+					preloaderOn("nocover");
+	    			var langCode = $(this).data('lang');
+	    			var setLangUrlString =
+			        	"/language?action=set"
+			        			+"&language=" + langCode;
+	    			$.ajax({
+			            url: setLangUrlString,
+			            type: "POST",
+			            cache : false
+			        }).done(function(data) {
+			        	
+			        	if(data.result[0] == "set"){
+			        		
+			        		getLanguages();
+			        	} else {
+			        		alert('Ошибка выбора языка');
+			        	}
+			        }).fail(function(jqXHR, textStatus, errorThrown) {
+						  
+						alert("Ошибка: " + jqXHR);
+					}).always(function() {
+					    
+						preloaderOff();
+					});
+				});
+				
+				localizeIndex();
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				  
+				alert("Ошибка: " + jqXHR);
+			}).always(function() {
+			    
+				//preloaderOff();
+			});
+		}
+		
+		getLanguages();
+		localizeIndex();
   }); // end of document ready
 })(jQuery); // end of jQuery name space
 

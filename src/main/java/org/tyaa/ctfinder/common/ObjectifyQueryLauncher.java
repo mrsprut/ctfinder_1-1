@@ -102,6 +102,8 @@ public class ObjectifyQueryLauncher {
 		}
 		String errorJson = _gson.toJson(rd);
 		log.info("errorJson " + errorJson);
-		_out.print(errorJson);
+		if(_out != null) {
+			_out.print(errorJson);
+		}
 	}
 }
