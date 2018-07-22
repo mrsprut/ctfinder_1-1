@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
+import org.tyaa.ctfinder.common.LocalizeHelper;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.CityDAO;
 import org.tyaa.ctfinder.controller.CountryDAO;
@@ -96,6 +97,11 @@ public class CityServlet extends HttpServlet {
 	
 						String actionString = req.getParameter(HttpReqParams.action);
 						
+						Long currentLanguageId =
+								(Long)session.getAttribute(
+									SessionAttributes.languageId
+								);
+						
 						switch(actionString) {
 						
 							case HttpReqParams.create : {
@@ -111,22 +117,28 @@ public class CityServlet extends HttpServlet {
 								
 								//Get English lang
 								//TODO get current lang
-								Language englishLanguage = new Language();
+								/*Language englishLanguage = new Language();
 								objectifyRun2(
 										"en"
 										, englishLanguage
 										, LanguageDAO::getLangByCode
 										, out
 										, gson
-									);
+									);*/
 								
 								//Get static title by content and lang for selected Country
-								Static_title selectedCountrySt = new Static_title();
+								/*Static_title selectedCountrySt = new Static_title();
 								objectifyRun3(
 										req.getParameter(HttpReqParams.country)
 										, englishLanguage.getId()
 										, selectedCountrySt
 										, Static_titleDAO::getStaticTitleByContentAndLang
+										, out
+										, gson
+									);*/
+								Static_title selectedCountrySt = LocalizeHelper.getLocSTitleObjByContent(
+										req.getParameter(HttpReqParams.country)
+										, currentLanguageId
 										, out
 										, gson
 									);
@@ -149,12 +161,12 @@ public class CityServlet extends HttpServlet {
 										, out
 										, gson
 									);
-								//TODO get city titles by key n lang
+								//get city titles by key n lang
 								List<String> countryCitiesNameList =
 										countryCitiesList.stream()
 										.map(
 											c -> {
-												Static_title st = new Static_title();
+												/*Static_title st = new Static_title();
 												objectifyRun2(
 													((City)c).getTitle_key()
 													, st
@@ -162,7 +174,13 @@ public class CityServlet extends HttpServlet {
 													, out
 													, gson
 												);
-												return st.getContent();
+												return st.getContent();*/
+												return LocalizeHelper.getLoclizedSTitle(
+														((City)c).getTitle_key()
+														, currentLanguageId
+														, out
+														, gson
+													);
 											})
 										.filter(
 											cName ->

@@ -1,10 +1,4 @@
-/* Custom Stylesheet */
-/**
- * Use this file to override Materialize files so you can update
- * the core Materialize files in the future
- *
- * Made By MaterializeCSS.com
- */
+/* Green theme */
 
 nav ul a,
 nav .brand-logo {
@@ -88,6 +82,11 @@ section { display:none; }
 .preloader-wrapper { display:none; position:absolute; left:50%; top:50%; z-index:9999;}
 
 /* Navbar */
+
+nav a.active, ul.sidenav a.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+}
 
 /* .inset {
   width: 48px;

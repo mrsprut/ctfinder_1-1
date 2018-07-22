@@ -1,3 +1,19 @@
+//Получение ключа текущего раздела сайта
+var getCurrentPageName = function(){
+	
+	var hash = location.hash || "#home";
+    //if(hash.indexOf("info") === -1){
+	var re = /#([-0-9A-Za-z]+)(\:(.+))?/;
+    var match = re.exec(hash);
+    if(match != null){
+    	hash = match[1];
+    } else {
+    	hash = "home";
+    }
+    //}
+    return hash;
+};
+
 (function($){
   $(function(){
 
@@ -20,16 +36,16 @@
 				
 				//console.log(responseText.result);
 				var dict = dictionaryResponseToArray(responseText.result);
-				console.log(dict);
+				//console.log(dict);
 				//Готовим шаблон при помощи библиотеки Hogan
 			    var desktopNavTemplate = Hogan.compile(
 		    		'<div class="nav-wrapper container">'
 						+'<a id="logo-container" href="#" class="brand-logo">CTFinder</a>'
 						+'<a href="#" data-target="nav-mobile" class="sidenav-trigger button-collapse"><i class="material-icons">menu</i></a>'
 						+'<ul class="right hide-on-med-and-down">'
-							+'<li><a href="#home" class="active">{{index_nav_home}}</a></li>'
+							+'<li><a href="#home">{{index_nav_home}}</a></li>'
 							+'<li><a href="#find">{{index_nav_find}}</a></li>'
-							+'<li><a href="#create" class="">{{index_nav_offer}}</a></li>'
+							+'<li><a href="#create">{{index_nav_offer}}</a></li>'
 							+'<li><a href="#about">{{index_nav_about}}</a></li>'
 						+'</ul>'
 					+'</div>'
@@ -39,15 +55,21 @@
 				$('nav').html(desktopNavTemplate.render(dict));
 				
 				var mobileNavTemplate = Hogan.compile(
-					'<li><a href="#home" class="active">{{index_nav_home}}</a></li>'
+					'<li><a href="#home">{{index_nav_home}}</a></li>'
 					+'<li><a href="#find">{{index_nav_find}}</a></li>'
-					+'<li><a href="#create" class="">{{index_nav_offer}}</a></li>'
+					+'<li><a href="#create">{{index_nav_offer}}</a></li>'
 					+'<li><a href="#about">{{index_nav_about}}</a></li>'
 			    );
 			    //console.log(template);
 			    //Заполняем шаблон данными и помещаем на веб-страницу
 				$('#nav-mobile').html(mobileNavTemplate.render(dict));
 				
+				//Восстанавливаем класс active для пункта главного меню текущего раздела сайта
+				var currentPageName = getCurrentPageName();
+				//console.log('nav ul > li > a[href=\\#' + currentPageName + '], ul.sidenav a[href=\\#' + currentPageName + ']');
+				$('nav ul > li > a[href=\\#' + currentPageName + '], ul.sidenav a[href=\\#' + currentPageName + ']').addClass("active");
+				//console.log($('nav ul > li > a[href=\\#' + currentPageName + '], ul.sidenav a[href=\\#' + currentPageName + ']'));
+				//
 				$('.sidenav').sidenav();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
@@ -121,7 +143,7 @@
 		}
 		
 		getLanguages();
-		localizeIndex();
+		//localizeIndex();
   }); // end of document ready
 })(jQuery); // end of jQuery name space
 

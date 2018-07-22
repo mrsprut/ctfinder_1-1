@@ -790,7 +790,7 @@ public class OfferServlet extends HttpServlet {
 													, out
 													, gson
 												);
-											Static_title offerCitySt = new Static_title();		
+											/*Static_title offerCitySt = new Static_title();		
 											objectifyRun3(
 													offerCity.getTitle_key()
 													, englishLanguage.getId()
@@ -799,7 +799,13 @@ public class OfferServlet extends HttpServlet {
 													, out
 													, gson
 												);
-											cityString = offerCitySt.getContent();
+											cityString = offerCitySt.getContent();*/
+											cityString =
+													LocalizeHelper.getLoclizedSTitle(
+															offerCity.getTitle_key()
+															, currentLanguageId
+															, out
+															, gson);
 										}
 										
 										switch(projectionString) {

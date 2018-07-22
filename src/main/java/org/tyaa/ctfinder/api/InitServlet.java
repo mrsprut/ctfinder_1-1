@@ -267,7 +267,7 @@ public class InitServlet extends HttpServlet {
 			/* Migration 3 */
 			
 			//Ukraine country en
-			//TODO key generator
+			//
 			/*Static_title ukraineCountrySt =
 					new Static_title(
 							"ukraine_country"
@@ -541,7 +541,7 @@ public class InitServlet extends HttpServlet {
 			
 			//Создаем в БД запись для Russian языка
 			
-			Language russianLanguage = new Language();
+			/*Language russianLanguage = new Language();
 			russianLanguage.setCode("ru");
 			
 			objectifyRun(
@@ -600,7 +600,100 @@ public class InitServlet extends HttpServlet {
 						, out
 						, gson
 					);
-			}
+			}*/
+			
+			/* Миграция 7 */
+			
+			//Добавление в БД заголовков для ранее созданных двух стран
+			//и четырех городов на русском языке
+			
+			//Получаем из БД объект русского языка
+			/*Language russianLanguage = new Language();
+			objectifyRun2(
+					"ru"
+					, russianLanguage
+					, LanguageDAO::getLangByCode
+					, out
+					, gson
+				);
+			
+			//Русский заголовок для страны Украина
+			Static_title ukraineCountryRussianSt =
+					new Static_title(
+							"ukraine_country"
+							, russianLanguage.getId()
+							, "Украина");
+			objectifyRun(
+					ukraineCountryRussianSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			//Русский заголовок для страны Россия
+			Static_title russiaCountryRussianSt =
+					new Static_title(
+							"russia_country"
+							, russianLanguage.getId()
+							, "Россия");
+			objectifyRun(
+					russiaCountryRussianSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			//Русский заголовок для города Мариуполь
+			Static_title mariupolCityRussianSt =
+					new Static_title(
+							"mariupol_city"
+							, russianLanguage.getId()
+							, "Мариуполь");
+			objectifyRun(
+					mariupolCityRussianSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			//Русский заголовок для города Киев
+			Static_title kievCityRussianSt =
+					new Static_title(
+							"kiev_city"
+							, russianLanguage.getId()
+							, "Киев");
+			objectifyRun(
+					kievCityRussianSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			//Русский заголовок для города Москва
+			Static_title moscowCityRussianSt =
+					new Static_title(
+							"moscow_city"
+							, russianLanguage.getId()
+							, "Москва");
+			objectifyRun(
+					moscowCityRussianSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);
+			
+			//Русский заголовок для города Петербург
+			Static_title petersburgCityRussianSt =
+					new Static_title(
+							"petersburg_city"
+							, russianLanguage.getId()
+							, "Петербург");
+			objectifyRun(
+					petersburgCityRussianSt
+					, Static_titleDAO::createStatic_title
+					, out
+					, gson
+				);*/
 			
 		} catch(Exception ex) {
 			

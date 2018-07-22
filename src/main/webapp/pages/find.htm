@@ -186,11 +186,11 @@
 </div>
 <script type="text/javascript">
 	
-	//TODO 1. complete settings: categories, filters, order by (excluding created_at pare)
+	//TODO 1. complete settings: categories, filters
 	//TODO 2. complete details: collaborators_count, desired_start_date, desired_finish_date
 	//TODO 3. search by title substring with autocomplete
 	//TODO 4. fix destroying of date fields in new offer form, fix dates comparing, fix card titles color
-	//+ refreash offers table after status changed, highlight active li in the navbar, tooltips
+	//+ refreash offers table after status changed, tooltips
 	//+ preloader off on external sign out was finished
 	//TODO 5. next step: multylang v1
 	
@@ -342,12 +342,12 @@
 		            $('#events-container').html(data);
 		        });*/
 				console.log("country autocompleted");
-			}
+			};
 			
 			var onCityAutocompleteCallback = function(){
 
 				console.log("city autocompleted");
-			}
+			};
 			
 			//country autocomplete
 		    $('input#country-input').autocomplete({

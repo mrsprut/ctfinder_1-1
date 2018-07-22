@@ -19,10 +19,13 @@ import javax.servlet.http.HttpSession;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
+import org.tyaa.ctfinder.common.LocalizeHelper;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.CountryDAO;
+import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
 import org.tyaa.ctfinder.entity.Country;
+import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.model.RespData;
 
@@ -89,6 +92,11 @@ public class CoutryServlet extends HttpServlet {
 	
 						String actionString = req.getParameter(HttpReqParams.action);
 						
+						Long currentLanguageId =
+								(Long)session.getAttribute(
+									SessionAttributes.languageId
+								);
+						
 						switch(actionString) {
 						
 							case HttpReqParams.create : {
@@ -109,12 +117,12 @@ public class CoutryServlet extends HttpServlet {
 										, out
 										, gson
 									);
-								//TODO get description by key n lang
+								//get description by key n lang
 								List<String> countryNameList =
 									countryList.stream()
 										.map(
 											c -> {
-												Static_title st = new Static_title();
+												/*Static_title st = new Static_title();
 												objectifyRun2(
 													((Country)c).getTitle_key()
 													, st
@@ -123,7 +131,13 @@ public class CoutryServlet extends HttpServlet {
 													, out
 													, gson
 												);
-												return st.getContent();
+												return st.getContent();*/
+												return LocalizeHelper.getLoclizedSTitle(
+																((Country)c).getTitle_key()
+																, currentLanguageId
+																, out
+																, gson
+															);
 											})
 										.filter(
 											cName ->
