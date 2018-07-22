@@ -112,26 +112,30 @@ public class OfferDAO {
 			if(offerFilter.orderByUrgency == OfferFilter.Order.Asc) {
 				
 				query = query.order("-created_at");
-				query = query.order("urgency");
+				query = query.order("urgency_in_days");
 			} else if(offerFilter.orderByUrgency == OfferFilter.Order.Desc) {
 				
 				query = query.order("-created_at");
-				query = query.order("-urgency");
+				query = query.order("-urgency_in_days");
 			}
 			
 			if(offerFilter.orderByStart == OfferFilter.Order.Asc) {
 				
+				query = query.order("-created_at");
 				query = query.order("start_date");
 			} else if(offerFilter.orderByStart == OfferFilter.Order.Desc) {
 				
+				query = query.order("-created_at");
 				query = query.order("-start_date");
 			}
 			
 			if(offerFilter.orderByFinish == OfferFilter.Order.Asc) {
 				
+				query = query.order("-created_at");
 				query = query.order("finish_date");
 			} else if(offerFilter.orderByFinish == OfferFilter.Order.Desc) {
 				
+				query = query.order("-created_at");
 				query = query.order("-finish_date");
 			}
 			

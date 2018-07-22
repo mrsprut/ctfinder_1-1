@@ -624,6 +624,9 @@ public class OfferServlet extends HttpServlet {
 								}
 								break;
 							}
+							//Получить одну из моделей,
+							//заполненную на основании данных одного предложения,
+							//заданного параметром id
 							case HttpReqParams.get : {
 								
 								try {
@@ -656,6 +659,7 @@ public class OfferServlet extends HttpServlet {
 											, gson
 										);
 									
+									//Возврат только идентификатора состояния предложения
 									if(projectionString.equals(HttpReqParams.stateProjection)) {
 										
 										List al = new ArrayList<>();
