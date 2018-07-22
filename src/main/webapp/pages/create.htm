@@ -705,8 +705,10 @@
 				var data = $('form#create-offer-form').serializeArray();
 				data.push({name: 'action', value: 'create'});
 				data.push({name: 'offer_type_id', value: selectedOfferTypeId});
-				data.push({name: 'country_name', value: fixedEncodeURI($('form#create-offer-form input#country-input').val())});
-				data.push({name: 'city_name', value: fixedEncodeURI($('form#create-offer-form input#city-input').val())});
+				//data.push({name: 'country_name', value: fixedEncodeURI($('form#create-offer-form input#country-input').val())});
+				//data.push({name: 'city_name', value: fixedEncodeURI($('form#create-offer-form input#city-input').val())});
+				data.push({name: 'country_name', value: $('form#create-offer-form input#country-input').val()});
+				data.push({name: 'city_name', value: $('form#create-offer-form input#city-input').val()});
 				data.push({name: 'c-count', value: $('form#create-offer-form input#c-count-input').val()});
 				data.push({name: 'start-date', value: $('form#create-offer-form input#start-date-input').val()});
 				data.push({name: 'finish-date', value: $('form#create-offer-form input#finish-date-input').val()});

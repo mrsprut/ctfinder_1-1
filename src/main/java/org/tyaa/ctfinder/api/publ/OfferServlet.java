@@ -222,7 +222,7 @@ public class OfferServlet extends HttpServlet {
 											countryList.stream()
 												.filter(
 													c -> {
-														Static_title st = new Static_title();
+														/*Static_title st = new Static_title();
 														objectifyRun2(
 															((Country)c).getTitle_key()
 															, st
@@ -230,7 +230,13 @@ public class OfferServlet extends HttpServlet {
 															, Static_titleDAO::getStaticTitleByKey
 															, out
 															, gson
-														);
+														);*/
+														Static_title st = LocalizeHelper.getLoclizedSTitleObject(
+																((Country)c).getTitle_key()
+																, currentLanguageId
+																, out
+																, gson
+															);
 														return st.getContent().equals(req.getParameter("country_name"));
 													})
 												.collect(Collectors.toList());
@@ -254,14 +260,20 @@ public class OfferServlet extends HttpServlet {
 												countryCitiesList.stream()
 												.filter(
 													c -> {
-														Static_title st = new Static_title();
+														/*Static_title st = new Static_title();
 														objectifyRun2(
 															((City)c).getTitle_key()
 															, st
 															, Static_titleDAO::getStaticTitleByKey
 															, out
 															, gson
-														);
+														);*/
+														Static_title st = LocalizeHelper.getLoclizedSTitleObject(
+																((City)c).getTitle_key()
+																, currentLanguageId
+																, out
+																, gson
+															);
 														return st.getContent().equals(req.getParameter("city_name"));
 													})
 												.collect(Collectors.toList());
@@ -920,10 +932,14 @@ public class OfferServlet extends HttpServlet {
 														o.getCollaborators_count().toString();
 												
 												String desiredStartDateString =
-														DateTransform.ReversedToDirect(o.getStart_date());
+														(o.getStart_date() != null && !o.getStart_date().equals(""))
+														? DateTransform.ReversedToDirect(o.getStart_date())
+														: "";
 												
 												String desiredFinishDateString =
-														DateTransform.ReversedToDirect(o.getFinish_date());
+														(o.getFinish_date() != null && !o.getFinish_date().equals(""))
+														? DateTransform.ReversedToDirect(o.getFinish_date())
+														: "";
 												
 												//Находим объект типа состояния
 												//и его реализацию на текущем языке
