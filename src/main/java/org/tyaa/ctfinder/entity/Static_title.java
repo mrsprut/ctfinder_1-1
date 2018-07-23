@@ -1,5 +1,7 @@
 package org.tyaa.ctfinder.entity;
 
+import java.util.Date;
+
 import com.google.gson.annotations.Expose;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -20,6 +22,9 @@ public class Static_title {
 	@Index
 	@Expose
 	private String content;
+	@Index
+	@Expose
+	public Date created_at;
 
 	public Static_title() {
 	}

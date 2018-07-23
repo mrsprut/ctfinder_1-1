@@ -1602,6 +1602,15 @@ public class OfferServlet extends HttpServlet {
 								}
 								break;
 							}
+							case HttpReqParams.autocomplete : {
+								
+								ArrayList<String> al = new ArrayList<>();
+								al.add(HttpRespWords.deleted);
+								RespData rd = new RespData(al);
+								String successJson = gson.toJson(rd);
+								out.print(successJson);
+								break;
+							}
 							case HttpReqParams.delete : {
 								
 								ArrayList<String> al = new ArrayList<>();

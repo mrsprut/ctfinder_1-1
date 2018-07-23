@@ -194,7 +194,12 @@
 	//+ preloader off on external sign out was finished
 	//+ add validator "if city presents then country must present"
 	//+ prevent default form submit event (on keypress) 
+	//+ add more offer types
+	//+ delete button
 	//TODO 5. next step: multylang v1
+	
+	//TODO add. 1: create translations for own offers
+	//TODO add. 2: localized example images
 	
 	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
@@ -246,6 +251,8 @@
 			//выбора страны и города, которые будут приходить с сервера 
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
+			
+			var titleAutocompleteItems = {};
 			
 			var windowWidth = $(window).width();
 			var offerLimitDefault = 2;
@@ -351,6 +358,11 @@
 				console.log("city autocompleted");
 			};
 			
+			var onTitleAutocompleteCallback = function(){
+
+				console.log("title autocompleted");
+			}
+			
 			//country autocomplete
 		    $('input#country-input').autocomplete({
 		        data: countryAutocompleteItems
@@ -438,6 +450,49 @@
 				 else {
 				   // code-triggered event
 					 //$('input#city-input').keyup();
+				 }
+			});
+			
+			//search by title autocomplete
+		    $('#find-container input#search').autocomplete({
+		        data: titleAutocompleteItems
+		        , onAutocomplete: onTitleAutocompleteCallback
+			});
+			
+		  	//get created Autocomplete Instance from search-input
+		    var titleAutocomplete =
+		    	M.Autocomplete.getInstance($('#find-container input#search'));
+		  	
+		  	//handler for search-input keydown event
+		    $('#find-container input#search').keydown(function(e) { 
+				
+				// only user-triggered event
+				 if (e.originalEvent) {
+					 
+					 //clear city-input
+					 //$('form#create-offer-form input#city-input').val("");
+					 //request data for search input's Autocomplete
+					 $.ajax({
+					        url: "/offer",
+					        type: "POST",
+					        data: {
+					            'action': 'autocomplete'
+					            , 'startstring': $('#find-container input#search').val()
+					        },
+					        cache : false
+					    }).done(function(newAutocompleteItems) {
+					    	
+					    	var newAutocompleteItemsObj =
+					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
+					  		  		acc[cur] = null;
+					  		  		return acc;
+					  			}, {});
+					    	titleAutocomplete.updateData(newAutocompleteItemsObj);
+					    	//
+					    	titleAutocomplete.open();
+					});
+				 }
+				 else {
 				 }
 			});
 						

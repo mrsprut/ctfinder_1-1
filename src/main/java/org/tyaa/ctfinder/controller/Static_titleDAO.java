@@ -2,8 +2,8 @@ package org.tyaa.ctfinder.controller;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import org.tyaa.ctfinder.entity.Language;
-import org.tyaa.ctfinder.entity.Static_title;
+import java.util.Date;
+
 import org.tyaa.ctfinder.entity.Static_title;
 
 public class Static_titleDAO {
@@ -19,34 +19,38 @@ public class Static_titleDAO {
 			_static_title.setLang_id(static_title.getLang_id());
 			_static_title.setKey(static_title.getKey());
 			_static_title.setContent(static_title.getContent());
+			
+			_static_title.created_at = static_title.created_at;
 		}
 	}
 	
-	public static void getStaticTitleByKey(String _key, Static_title _Static_title) {
+	public static void getStaticTitleByKey(String _key, Static_title _static_title) {
 		
-		Static_title Static_title =
+		Static_title static_title =
 				ofy().load()
 				.type(Static_title.class)
 				.filter("key", _key)
 				.first()
 				.now();
 		
-		if(Static_title != null) {
+		if(static_title != null) {
 			
-			_Static_title.setId(Static_title.getId());
-			_Static_title.setKey(Static_title.getKey());
-			_Static_title.setLang_id(Static_title.getLang_id());
-			_Static_title.setContent(Static_title.getContent());
+			_static_title.setId(static_title.getId());
+			_static_title.setKey(static_title.getKey());
+			_static_title.setLang_id(static_title.getLang_id());
+			_static_title.setContent(static_title.getContent());
+			
+			_static_title.created_at = static_title.created_at;
 		}
 	}
 	
 	public static void getStaticTitleByKeyAndLang(
 			String _key
 			, Long _langId
-			, Static_title _Static_title
+			, Static_title _static_title
 			) {
 		
-		Static_title Static_title =
+		Static_title static_title =
 				ofy().load()
 				.type(Static_title.class)
 				.filter("key", _key)
@@ -54,12 +58,14 @@ public class Static_titleDAO {
 				.first()
 				.now();
 		
-		if(Static_title != null) {
+		if(static_title != null) {
 			
-			_Static_title.setId(Static_title.getId());
-			_Static_title.setKey(Static_title.getKey());
-			_Static_title.setLang_id(Static_title.getLang_id());
-			_Static_title.setContent(Static_title.getContent());
+			_static_title.setId(static_title.getId());
+			_static_title.setKey(static_title.getKey());
+			_static_title.setLang_id(static_title.getLang_id());
+			_static_title.setContent(static_title.getContent());
+			
+			_static_title.created_at = static_title.created_at;
 		}
 	}
 	
@@ -69,7 +75,7 @@ public class Static_titleDAO {
 			, Static_title _static_title
 			) {
 		
-		Static_title Static_title =
+		Static_title static_title =
 				ofy().load()
 				.type(Static_title.class)
 				.filter("content", _content)
@@ -77,17 +83,22 @@ public class Static_titleDAO {
 				.first()
 				.now();
 		
-		if(Static_title != null) {
+		if(static_title != null) {
 			
-			_static_title.setId(Static_title.getId());
-			_static_title.setKey(Static_title.getKey());
-			_static_title.setLang_id(Static_title.getLang_id());
-			_static_title.setContent(Static_title.getContent());
+			_static_title.setId(static_title.getId());
+			_static_title.setKey(static_title.getKey());
+			_static_title.setLang_id(static_title.getLang_id());
+			_static_title.setContent(static_title.getContent());
+			
+			_static_title.created_at = static_title.created_at;
 		}
 	}
 
 	public static void createStatic_title(Static_title _static_title) {
 
+		if(_static_title.created_at == null) {
+			_static_title.created_at = new Date();
+		}
 		ofy().save().entity(_static_title).now();
 	}
 }
