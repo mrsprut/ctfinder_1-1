@@ -256,40 +256,48 @@ public class OfferServlet extends HttpServlet {
 									
 									//7
 									Long cityId = null;
+									String cityName = req.getParameter("city_name");
 									try {
-										List<City> countryCitiesList = new ArrayList<>();
-										objectifyRun2(
-												countryId
-												, countryCitiesList
-												, CityDAO::getCitiesByCountryId
-												, out
-												, gson
-											);
-										//
-										List<City> filteredCountryCitiesList =
-												countryCitiesList.stream()
-												.filter(
-													c -> {
-														/*Static_title st = new Static_title();
-														objectifyRun2(
-															((City)c).getTitle_key()
-															, st
-															, Static_titleDAO::getStaticTitleByKey
-															, out
-															, gson
-														);*/
-														Static_title st = LocalizeHelper.getLoclizedSTitleObject(
+										if(cityName != null && !cityName.equals("") && countryId != null) {
+											List<City> countryCitiesList = new ArrayList<>();
+											objectifyRun2(
+													countryId
+													, countryCitiesList
+													, CityDAO::getCitiesByCountryId
+													, out
+													, gson
+												);
+											//
+											List<City> filteredCountryCitiesList =
+													countryCitiesList.stream()
+													.filter(
+														c -> {
+															/*Static_title st = new Static_title();
+															objectifyRun2(
 																((City)c).getTitle_key()
-																, currentLanguageId
+																, st
+																, Static_titleDAO::getStaticTitleByKey
 																, out
 																, gson
-															);
-														return st.getContent().equals(req.getParameter("city_name"));
-													})
-												.collect(Collectors.toList());
-										//
-										cityId =
-												filteredCountryCitiesList.get(0).getId();
+															);*/
+															Static_title st = LocalizeHelper.getLoclizedSTitleObject(
+																	((City)c).getTitle_key()
+																	, currentLanguageId
+																	, out
+																	, gson
+																);
+															return st.getContent().equals(cityName);
+														})
+													.collect(Collectors.toList());
+											//
+											if(filteredCountryCitiesList.size() > 0) {
+												cityId =
+														filteredCountryCitiesList.get(0).getId();
+											} else {
+												cityId =
+														createCity(cityName, countryId, currentLanguageId, out, gson);
+											}
+										}
 									} catch(Exception ex) {}
 									
 									//8
@@ -1679,7 +1687,7 @@ public class OfferServlet extends HttpServlet {
 			);
 		
 		//Если текущий язык - не английский,
-		//то дополнительно создаем статический заголовок для текущего языка,
+		//то дополнительно создаем статический заголовок страны для текущего языка,
 		//заносим в него то же самое название новой страны
 		//и сохраняем его в БД
 		if(!_currentLanguageId.equals(englishLanguage.getId())) {
@@ -1706,5 +1714,66 @@ public class OfferServlet extends HttpServlet {
 				);
 		}
 		return newCountry.getId();
+	}
+	
+	//Функция создания объекта новой страны и объекта ее названия в БД
+	private Long createCity(
+			String _cityName
+			, Long _countryId
+			, Long _currentLanguageId
+			, PrintWriter _out
+			, Gson _gson
+			) {
+		//Получаем объект английского языка
+		Language englishLanguage = new Language();
+		objectifyRun2(
+				"en"
+				, englishLanguage
+				, LanguageDAO::getLangByCode
+				, _out
+				, _gson);
+		//Создаем объект английского статического заголовка для нового города
+		//и сохраняем его в БД
+		Static_title newCitySt =
+				new Static_title(
+						KeyGen.text2KeyText(_cityName) + "_city"
+						, englishLanguage.getId()
+						, _cityName);		
+		objectifyRun(
+				newCitySt
+				, Static_titleDAO::createStatic_title
+				, _out
+				, _gson
+			);
+		//Создаем объект нового города с указанием английского статического заголовка
+		//и сохраняем его в БД
+		City newCity =
+				new City(_countryId, newCitySt.getKey());
+		objectifyRun(
+				newCity
+				, CityDAO::createCity
+				, _out
+				, _gson
+			);
+		
+		//Если текущий язык - не английский,
+		//то дополнительно создаем статический заголовок города для текущего языка,
+		//заносим в него то же самое название нового города
+		//и сохраняем его в БД
+		if(!_currentLanguageId.equals(englishLanguage.getId())) {
+			
+			Static_title newCityStLocal =
+					new Static_title(
+							newCitySt.getKey()
+							, _currentLanguageId
+							, _cityName);		
+			objectifyRun(
+					newCityStLocal
+					, Static_titleDAO::createStatic_title
+					, _out
+					, _gson
+				);
+		}
+		return newCity.getId();
 	}
 }
