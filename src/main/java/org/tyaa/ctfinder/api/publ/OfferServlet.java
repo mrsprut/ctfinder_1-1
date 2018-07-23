@@ -78,6 +78,7 @@ import com.google.appengine.api.datastore.Blob;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.VoidWork;
 
 /**
  * Servlet implementation class TasksServlet
@@ -210,38 +211,47 @@ public class OfferServlet extends HttpServlet {
 									
 									//6
 									Long countryId = null;
+									String countryName = req.getParameter("country_name");
 									try {
-										List<Country> countryList = new ArrayList<>();
-										objectifyRun(
-												countryList
-												, CountryDAO::getAllCountries
-												, out
-												, gson
-											);
-										List<Country> filteredCountryList =
-											countryList.stream()
-												.filter(
-													c -> {
-														/*Static_title st = new Static_title();
-														objectifyRun2(
-															((Country)c).getTitle_key()
-															, st
-															//, req.getParameter(HttpReqParams.autocomplete)
-															, Static_titleDAO::getStaticTitleByKey
-															, out
-															, gson
-														);*/
-														Static_title st = LocalizeHelper.getLoclizedSTitleObject(
+										if(countryName != null && !countryName.equals("")) {
+											
+											List<Country> countryList = new ArrayList<>();
+											objectifyRun(
+													countryList
+													, CountryDAO::getAllCountries
+													, out
+													, gson
+												);
+											List<Country> filteredCountryList =
+												countryList.stream()
+													.filter(
+														c -> {
+															/*Static_title st = new Static_title();
+															objectifyRun2(
 																((Country)c).getTitle_key()
-																, currentLanguageId
+																, st
+																//, req.getParameter(HttpReqParams.autocomplete)
+																, Static_titleDAO::getStaticTitleByKey
 																, out
 																, gson
-															);
-														return st.getContent().equals(req.getParameter("country_name"));
-													})
-												.collect(Collectors.toList());
-										countryId =
-											filteredCountryList.get(0).getId();
+															);*/
+															Static_title st = LocalizeHelper.getLoclizedSTitleObject(
+																	((Country)c).getTitle_key()
+																	, currentLanguageId
+																	, out
+																	, gson
+																);
+															return st.getContent().equals(countryName);
+														})
+													.collect(Collectors.toList());
+											if(filteredCountryList.size() > 0) {
+												countryId =
+														filteredCountryList.get(0).getId();
+											} else {
+												countryId =
+														createCountry(countryName, currentLanguageId, out, gson);
+											}
+										}
 									} catch(Exception ex) {}
 									
 									//7
@@ -1628,4 +1638,73 @@ public class OfferServlet extends HttpServlet {
 		doGet(request, response);
 	}
 
+	//Функция создания объекта новой страны и объекта ее названия в БД
+	private Long createCountry(
+			String _countryName
+			, Long _currentLanguageId
+			, PrintWriter _out
+			, Gson _gson
+			) {
+		//Получаем объект английского языка
+		Language englishLanguage = new Language();
+		objectifyRun2(
+				"en"
+				, englishLanguage
+				, LanguageDAO::getLangByCode
+				, _out
+				, _gson);
+		//Создаем объект английского статического заголовка для новой страны
+		//и сохраняем его в БД
+		Static_title newCountrySt =
+				new Static_title(
+						KeyGen.text2KeyText(_countryName) + "_country"
+						, englishLanguage.getId()
+						, _countryName);		
+		objectifyRun(
+				newCountrySt
+				, Static_titleDAO::createStatic_title
+				, _out
+				, _gson
+			);
+		//Создаем объект новой страны с указанием английского статического заголовка
+		//и сохраняем его в БД
+		Country newCountry =
+				new Country(newCountrySt.getKey());
+		
+		objectifyRun(
+				newCountry
+				, CountryDAO::createCountry
+				, _out
+				, _gson
+			);
+		
+		//Если текущий язык - не английский,
+		//то дополнительно создаем статический заголовок для текущего языка,
+		//заносим в него то же самое название новой страны
+		//и сохраняем его в БД
+		if(!_currentLanguageId.equals(englishLanguage.getId())) {
+			
+			//Получаем объект current языка
+			/*Language currentLanguage = new Language();
+			objectifyRun2(
+					_currentLanguageId
+					, currentLanguage
+					, LanguageDAO::getLang
+					, _out
+					, _gson);*/
+			
+			Static_title newCountryStLocal =
+					new Static_title(
+							newCountrySt.getKey()
+							, _currentLanguageId
+							, _countryName);		
+			objectifyRun(
+					newCountryStLocal
+					, Static_titleDAO::createStatic_title
+					, _out
+					, _gson
+				);
+		}
+		return newCountry.getId();
+	}
 }
