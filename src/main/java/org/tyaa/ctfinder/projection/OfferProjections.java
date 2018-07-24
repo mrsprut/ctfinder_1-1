@@ -10,4 +10,9 @@ public class OfferProjections {
 					, "created_at"
 					//, "user_id"
 				};
+	
+	public static final String[] title =
+			new String[] {
+					"title_key"
+				};
 }

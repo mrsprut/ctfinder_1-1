@@ -11,8 +11,10 @@ import java.util.ResourceBundle;
 
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.controller.TitleDAO;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_title;
+import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.model.DictionaryItem;
 
 import com.google.gson.Gson;
@@ -116,4 +118,53 @@ public class LocalizeHelper {
 		}
 		return dictionaryItems;
 	}
+	
+	//Получение локализованного объекта статического заголовка
+		//по ключу
+		public static Title getLoclizedTitleObject(
+			String _titleKey
+			, Long _langId
+			, PrintWriter _out
+			, Gson _gson) {
+			
+			Title title = new Title();
+			objectifyRun3(
+					_titleKey
+					, _langId
+					, title
+					, TitleDAO::getTitleByKeyAndLang
+					, _out
+					, _gson
+				);
+			if(title.getId() == null) {
+			
+				Language englishLanguage = new Language();
+				objectifyRun2(
+						"en"
+						, englishLanguage
+						, LanguageDAO::getLangByCode
+						, _out
+						, _gson);
+				objectifyRun3(
+						_titleKey
+						, englishLanguage.getId()
+						, title
+						, TitleDAO::getTitleByKeyAndLang
+						, _out
+						, _gson
+					);
+			}
+			return title;
+		}
+		
+		//Получение текста локализованного статического заголовка
+		//по ключу
+		public static String getLoclizedTitle(
+				String _titleKey
+				, Long _langId
+				, PrintWriter _out
+				, Gson _gson) {
+				
+				return getLoclizedTitleObject(_titleKey, _langId, _out, _gson).getContent();
+			}
 }

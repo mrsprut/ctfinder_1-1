@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,6 +67,7 @@ import org.tyaa.ctfinder.entity.Subscription;
 import org.tyaa.ctfinder.entity.Title;
 import org.tyaa.ctfinder.entity.User;
 import org.tyaa.ctfinder.filter.OfferFilter;
+import org.tyaa.ctfinder.filter.TitleFilter;
 import org.tyaa.ctfinder.model.ContinuData;
 import org.tyaa.ctfinder.model.OfferGridItem;
 import org.tyaa.ctfinder.model.OfferGridItemDetails;
@@ -1213,6 +1215,7 @@ public class OfferServlet extends HttpServlet {
 										//Фильтрация, сортировка и проектция преимущественно
 										//средствами СУБД
 										List<Offer> offers = new ArrayList<>();
+										List<Offer> filteredOffers = new ArrayList<>();
 										//List<Offer> offersOut = new ArrayList<>();
 										Integer limit =
 												Integer.parseInt(req.getParameter(HttpReqParams.limit));
@@ -1223,7 +1226,10 @@ public class OfferServlet extends HttpServlet {
 										
 										OfferFilter offerFilter = new OfferFilter();
 										//OfferFilter.reset(offerFilter, OfferFilter.class);
-												
+										
+										//Filter by ...
+										
+										//by date range
 										if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
 											
 											offerFilter.createdDateFrom =
@@ -1235,6 +1241,22 @@ public class OfferServlet extends HttpServlet {
 											offerFilter.createdDateTo =
 													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
 										}
+										
+										//by title start
+										/*if(req.getParameterMap().keySet().contains(HttpReqParams.substring)) {
+											
+											Title title = new Title();
+											objectifyRun2(
+												offer.getTitle_key()
+												, titleFilter.startString
+												, title
+												, TitleDAO::getTitleByKey
+												, out
+												, gson
+											);
+											offerFilter.titleKey =
+													req.getParameter(HttpReqParams.startstring);
+										}*/
 										
 										//Order by ...
 										if(req.getParameterMap().keySet().contains(HttpReqParams.orderBy)) {
@@ -1293,12 +1315,87 @@ public class OfferServlet extends HttpServlet {
 										paramsMap.put(OfferDAO.Params.Limit, limit);
 										paramsMap.put(OfferDAO.Params.CursorStringArray, cursorStr);
 										paramsMap.put(OfferDAO.Params.Filter, offerFilter);
-										objectifyRun(
-												paramsMap
-												, OfferDAO::getOffersRange
-												, out
-												, gson
-											);
+										do {
+											objectifyRun(
+													paramsMap
+													, OfferDAO::getOffersRange
+													, out
+													, gson
+												);
+											
+											//Если в параметрах запроса от клиета присутствует подстрока заголовка,
+											//то после получения из БД диапазона частично отфильтрованных предложений
+											//отбираем только те, у которых заголовок содержит заданную подстроку
+											//или совпадает с ней
+											if(req.getParameterMap().keySet().contains(HttpReqParams.substring)) {
+												
+												/*offers.removeIf((o) -> {
+													
+													Title t = LocalizeHelper.getLoclizedTitleObject(
+															((Offer)o).getTitle_key()
+															, currentLanguageId
+															, out
+															, gson
+														);
+													if (t.getContent().contains(req.getParameter(HttpReqParams.substring))) {
+														return false;
+													} else {
+														return true;
+													}
+												});*/
+												
+												filteredOffers =
+													offers.stream().filter((o) -> {
+														
+														List<Title> offerTitles = new ArrayList<>();
+														objectifyRun2(
+																o.getTitle_key()
+																, offerTitles
+																, TitleDAO::getTitlesByKey
+																, out
+																, gson
+															);
+														boolean substringIsPresent = false;
+														for (Title title : offerTitles) {
+															if (title.getContent().toLowerCase()
+																	.contains(
+																			req.getParameter(HttpReqParams.substring)
+																				.toLowerCase()
+																			)
+																) {
+																substringIsPresent = true;
+																break;
+															}
+														}
+														return substringIsPresent;
+														/*Title t = LocalizeHelper.getLoclizedTitleObject(
+																((Offer)o).getTitle_key()
+																, currentLanguageId
+																, out
+																, gson
+															);*/
+														/*if (t.getContent().toLowerCase()
+																.contains(
+																		req.getParameter(HttpReqParams.substring)
+																			.toLowerCase()
+																		)
+															) {
+															return true;
+														} else {
+															return false;
+														}*/
+													}).collect(Collectors.toList());
+											} else {
+												filteredOffers.addAll(offers);
+											}
+											//Если после всех фильтров список оказался пуст,
+											//но курсор еще существует -
+											//делаем повторную попытку получить список,
+											//снова дополнительно отфильтровать его по содержанию
+											//заданной подстроки в заголовке и снова проверяем
+										} while ((cursorStr[0] != null)
+												&& filteredOffers.size() == 0);
+										
 										
 										//Задание проекции, чтобы получить из БД значения только для части
 										//полей объекта модели
@@ -1314,7 +1411,7 @@ public class OfferServlet extends HttpServlet {
 										}*/
 										
 										List<OfferGridItem> gridItems =
-												offers.stream()
+												filteredOffers.stream()
 												.map((o) -> {
 													
 													//Находим объект названия типа предлажения
@@ -1602,11 +1699,98 @@ public class OfferServlet extends HttpServlet {
 								}
 								break;
 							}
+							//Отправка вариантов автодополнения для строки поиска по заголовку предложения
 							case HttpReqParams.autocomplete : {
 								
-								ArrayList<String> al = new ArrayList<>();
-								al.add(HttpRespWords.deleted);
-								RespData rd = new RespData(al);
+								List<Offer> offers = new ArrayList<>();
+								List<String> titleStrings = new ArrayList<>();
+								OfferFilter offerFilter = new OfferFilter();
+								TitleFilter titleFilter = new TitleFilter();
+								
+								final Integer limit = 1000;
+								String[] cursorStr = new String[] {null};
+								//Integer resultsCount = 0;
+								final Integer resultsCountMax = 10;
+								
+								if(req.getParameterMap().keySet().contains(HttpReqParams.startstring)) {
+									
+									titleFilter.startString =
+											req.getParameter(HttpReqParams.startstring);
+								}
+										
+								if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateFrom)) {
+									
+									offerFilter.createdDateFrom =
+											DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateFrom));
+								}
+								
+								if(req.getParameterMap().keySet().contains(HttpReqParams.createdDateTo)) {
+									
+									offerFilter.createdDateTo =
+											DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
+								}
+								
+								//Задание проекции, чтобы получить из БД значения только для части
+								//полей объекта модели - title_key
+								if(req.getParameterMap().keySet().contains(HttpReqParams.projection)) {
+									
+									String projectionString  = req.getParameter(HttpReqParams.projection);
+									switch(projectionString) {
+										case HttpReqParams.titleProjection:{
+											offerFilter.projection = OfferProjections.title;
+											break;
+										}
+									}
+								}
+								
+								Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
+								//Постоянные параметры запроса
+								paramsMap.put(OfferDAO.Params.OfferList, offers);
+								paramsMap.put(OfferDAO.Params.Filter, offerFilter);
+								paramsMap.put(OfferDAO.Params.Limit, limit);
+								//Сменные параметры запроса
+								paramsMap.put(OfferDAO.Params.CursorStringArray, cursorStr);
+								//Пока не закончились отфильтрованные предложения
+								//или пока не получено максимальное число загловков 
+								SEARCH_LOOP : do {
+									
+									objectifyRun(
+											paramsMap
+											, OfferDAO::getOffersRange
+											, out
+											, gson
+										);
+									//Для каждого отфильтрованного предложения
+									for (Offer offer : offers) {
+										//Находим заголовки на любом языке
+										//по ключу
+										if(offer.getTitle_key() != null
+												&& !offer.getTitle_key().equals("")) {
+											List<Title> titles = new ArrayList<>();
+											objectifyRun3(
+												offer.getTitle_key()
+												, titleFilter.startString
+												, titles
+												, TitleDAO::getTitleByKeyAndStart
+												, out
+												, gson
+											);
+											for (Title title : titles) {
+												titleStrings.add(title.getContent());
+												if(titleStrings.size() == resultsCountMax) {
+													break SEARCH_LOOP;
+												}
+											}
+										}
+									}
+								} while ((cursorStr[0] != null)
+										&& offers.size() > 0
+										&& titleStrings.size() < resultsCountMax
+									);
+								
+								//ArrayList<String> al = new ArrayList<>();
+								//al.add(HttpRespWords.deleted);
+								RespData rd = new RespData(titleStrings);
 								String successJson = gson.toJson(rd);
 								out.print(successJson);
 								break;

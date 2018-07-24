@@ -63,13 +63,13 @@
 								<form id="filters" action="#">
 									<div class="row">
 										<div class="input-field col s12">
-											<input type="text" id="country-input" class="autocomplete">
+											<input type="text" id="country-input" class="autocomplete" autocomplete="off">
 											<label for="country-input">Страна</label>
 										</div>
 									</div>
 									<div class="row">
 										<div class="input-field col s12">
-											<input type="text" id="city-input" class="autocomplete">
+											<input type="text" id="city-input" class="autocomplete" autocomplete="off">
 											<label for="city-input">Город</label>
 										</div>
 									</div>
@@ -135,14 +135,13 @@
 		</div>
 		<div class="col s11">
 			<div class="row">
-				<div class="col s12">
-					<form>
-						<div class="input-field">
-							<input id="search" class="autocomplete" type="search" required> <label
-								class="label-icon" for="search"><i class="material-icons">search</i></label>
-						</div>
-					</form>
-				</div>
+				<form id="search-form" class="col s12">
+					<div class="input-field">
+						<i class="material-icons prefix">search</i>
+						<input id="search" class="autocomplete" autocomplete="off" type="text" placeholder="поиск по заголовкам" required>
+						<!-- <label class="label-icon" for="search">поиск по заголовкам</label> -->
+					</div>
+				</form>
 			</div>
 			<div class="row">
 				<div class="col s6">
@@ -200,6 +199,7 @@
 	
 	//TODO add. 1: create translations for own offers
 	//TODO add. 2: localized example images
+	//TODO add. 3: switch search autocomplete title/content
 	
 	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('.sidenav').sidenav();
@@ -360,7 +360,11 @@
 			
 			var onTitleAutocompleteCallback = function(){
 
-				console.log("title autocompleted");
+				console.log("title autocompleted: " + $('#find-container input#search').val());
+				resetInfinityScrollInfo();
+				doFilter({
+	                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+				});
 			}
 			
 			//country autocomplete
@@ -469,15 +473,30 @@
 				// only user-triggered event
 				 if (e.originalEvent) {
 					 
-					 //clear city-input
-					 //$('form#create-offer-form input#city-input').val("");
+					 //Если нажата клавиша "Ввод" - отправить запрос на получение
+					 //диапазона предложений для сетки,
+					 //иначе - на получение вариантов автодополнения
+					 if(e.keyCode == 13){
+						 
+						resetInfinityScrollInfo();
+						doFilter({
+				             'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+						});
+						return false;
+					 }
+					 //Собираем отформатированные даты из элементов Календарь
+		        	 var dateFrom = $('#find-container #calendarFrom').val();
+		        	 var dateTo = $('#find-container #calendarTo').val();
 					 //request data for search input's Autocomplete
 					 $.ajax({
 					        url: "/offer",
 					        type: "POST",
 					        data: {
 					            'action': 'autocomplete'
+					            , 'projection' : 'title'
 					            , 'startstring': $('#find-container input#search').val()
+					            , 'created-date-from' : dateFrom
+			        			, 'created-date-to' : dateTo
 					        },
 					        cache : false
 					    }).done(function(newAutocompleteItems) {
@@ -490,11 +509,20 @@
 					    	titleAutocomplete.updateData(newAutocompleteItemsObj);
 					    	//
 					    	titleAutocomplete.open();
-					});
+						});
 				 }
 				 else {
 				 }
 			});
+		  	
+		    $('#search-form i').unbind('click');
+		  	$('#search-form i').click(function(ev) {
+		  		
+		  		resetInfinityScrollInfo();
+				doFilter({
+		             'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
+				});
+		  	});
 						
 			/* Offers grid */
 			
@@ -506,13 +534,16 @@
 				//Собираем отформатированные даты из элементов Календарь
 		        var dateFrom = $('#find-container #calendarFrom').val();
 		        var dateTo = $('#find-container #calendarTo').val();
+		        //
+		        var searchByTitleStart = $('#find-container input#search').val();
 		        //Составляем строку запроса на сервер
 		        //для получения отфильтрованных данных о заданиях
 		        var urlString =
 		        	"/offer?action=get-range"
-		        			+"&limit=" + offerLimit
-		        			+"&created-date-from=" + dateFrom
-		        			+"&created-date-to=" + dateTo
+		        			+ "&limit=" + offerLimit
+		        			+ "&created-date-from=" + dateFrom
+		        			+ "&created-date-to=" + dateTo
+		        			+ ((searchByTitleStart != "") ? ("&substring=" + searchByTitleStart) : "")
 		        			+ ((cursorString != null) ? ("&cursor=" + cursorString) : "");
 		      	//+"&order-by=sort-created-desc"
 				
@@ -618,7 +649,7 @@
 				}).always(function() {
 				    
 					preloaderOff();
-			  	});;
+			  	});
 			}
 
 			/* Filter */

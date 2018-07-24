@@ -91,6 +91,120 @@ public class OfferDAO {
 			
 			//.order("-created_at");
 			
+			//Filter by ...
+			
+			if(offerFilter.createdDateFrom != null) {
+				
+				query = query.filter("created_at >=", offerFilter.createdDateFrom);
+			}
+			
+			if(offerFilter.createdDateTo != null) {
+				
+				query = query.filter("created_at <=", offerFilter.createdDateTo);
+			}
+			
+			if(offerFilter.titleKey != null) {
+				
+				query = query.filter("title_key", offerFilter.titleKey);
+			}
+			
+			//Order by ...
+			
+			if(offerFilter.orderByCreated == OfferFilter.Order.Asc) {
+				
+				query = query.order("created_at");
+			} else if(offerFilter.orderByCreated == OfferFilter.Order.Desc) {
+				
+				query = query.order("-created_at");
+			}
+			
+			if(offerFilter.orderByUrgency == OfferFilter.Order.Asc) {
+				
+				query = query.order("-created_at");
+				query = query.order("urgency_in_days");
+			} else if(offerFilter.orderByUrgency == OfferFilter.Order.Desc) {
+				
+				query = query.order("-created_at");
+				query = query.order("-urgency_in_days");
+			}
+			
+			if(offerFilter.orderByStart == OfferFilter.Order.Asc) {
+				
+				query = query.order("-created_at");
+				query = query.order("start_date");
+			} else if(offerFilter.orderByStart == OfferFilter.Order.Desc) {
+				
+				query = query.order("-created_at");
+				query = query.order("-start_date");
+			}
+			
+			if(offerFilter.orderByFinish == OfferFilter.Order.Asc) {
+				
+				query = query.order("-created_at");
+				query = query.order("finish_date");
+			} else if(offerFilter.orderByFinish == OfferFilter.Order.Desc) {
+				
+				query = query.order("-created_at");
+				query = query.order("-finish_date");
+			}
+			
+			//query = query.filter("user_id", userId);
+			
+			if(offerFilter.projection != null) {
+			
+				query = query.project(offerFilter.projection);
+			}
+			
+			query = query.limit(_limit);
+			
+			if (_cursorStr[0] != null) {
+				
+		        query = query.startAt(Cursor.fromWebSafeString(_cursorStr[0]));
+			}
+			
+			boolean continu = false;
+		    QueryResultIterator<Offer> iterator = query.iterator();
+		    while (iterator.hasNext()) {
+		    	
+		    	Offer offer = iterator.next();
+		    	_offerList.add(offer);
+		    	continu = true;
+		    }
+		    
+		    if (continu) {
+		    	
+		        Cursor cursor = iterator.getCursor();
+		        _cursorStr[0] = cursor.toWebSafeString();
+		    } else {
+		    	
+		    	_cursorStr[0] = null;
+		    }
+		}
+	}
+	
+	//Получение проекции заголовков для автодополнения
+	/*public static void getTitlesAutocomplete(Map<Params, Object> _paramsMap) {
+		
+		List<Offer> _offerList =
+				(List<Offer>) _paramsMap.get(Params.OfferList);
+		_offerList.clear();
+		ofy().clear();
+		Query<Offer> query =
+				ofy().load().type(Offer.class);
+		
+		if(_paramsMap.get(Params.InMemory) != null && (boolean) _paramsMap.get(Params.InMemory)) {
+			
+			Long userId = (Long) _paramsMap.get(Params.UserId);
+			query = query.filter("user_id", userId);
+			_offerList.addAll(query.list());
+		} else {
+			
+			Integer _limit = (Integer) _paramsMap.get(Params.Limit);
+			String[] _cursorStr = (String[]) _paramsMap.get(Params.CursorStringArray);
+			OfferFilter offerFilter = (OfferFilter) _paramsMap.get(Params.Filter);
+			
+			//.order("-created_at");
+			
 			if(offerFilter.createdDateFrom != null) {
 				
 				query = query.filter("created_at >=", offerFilter.createdDateFrom);
@@ -141,10 +255,10 @@ public class OfferDAO {
 			
 			//query = query.filter("user_id", userId);
 			
-			/*if(offerFilter.projection != null) {
+			if(offerFilter.projection != null) {
 			
 				query = query.project(offerFilter.projection);
-			}*/
+			}
 			
 			query = query.limit(_limit);
 			
@@ -171,7 +285,7 @@ public class OfferDAO {
 		    	_cursorStr[0] = null;
 		    }
 		}
-	}
+	}*/
 
 	public static void createOffer(Offer _offer) {
 

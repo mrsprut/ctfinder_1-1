@@ -31,6 +31,7 @@ public class HttpReqParams {
 	public final static String autocomplete = "autocomplete";
 	public final static String text = "text";
 	public final static String substring = "substring";
+	public final static String startstring = "startstring";
 	
 	public final static String country = "country";
 	
@@ -42,11 +43,13 @@ public class HttpReqParams {
 	/* Projections */
 	
 	public final static String projection = "projection";
+	
 	public final static String tableRowProjection = "table-row";
 	public final static String gridItemDetailsProjection = "grid-item-details";
 	public final static String tableRowEditProjection = "table-row-edit";
 	public final static String imageProjection = "image";
 	public final static String stateProjection = "state";
+	public final static String titleProjection = "title";
 	
 	/* Sort */
 	

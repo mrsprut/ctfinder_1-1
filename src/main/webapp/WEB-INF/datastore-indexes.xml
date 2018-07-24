@@ -25,4 +25,18 @@
         <property name="created_at" direction="desc" />
         <property name="finish_date"  direction="asc" />
     </datastore-index>
+    
+    <datastore-index kind="Offer" ancestor="false">
+        <property name="created_at" />
+        <property name="title_key" />
+    </datastore-index>
+    <datastore-index kind="Offer" ancestor="false">
+        <property name="created_at" direction="desc" />
+        <property name="title_key" />
+    </datastore-index>
+    
+    <datastore-index kind="Title" ancestor="false">
+        <property name="key" />
+        <property name="content" />
+    </datastore-index>
 </datastore-indexes>

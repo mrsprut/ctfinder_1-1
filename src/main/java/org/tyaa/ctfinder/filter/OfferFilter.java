@@ -15,4 +15,6 @@ public class OfferFilter extends AbstractFilter {
 	public Order orderByUrgency = null;
 	public Order orderByStart = null;
 	public Order orderByFinish = null;
+	
+	public String titleKey = null;
 }
