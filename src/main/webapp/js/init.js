@@ -26,7 +26,7 @@ var getCurrentPageName = function(){
 		
 		var localizeIndex = function (){
 			
-			preloaderOn("nocover");
+			preloaderOn();
 			$.ajax({
 				type: 'POST',
 				url: '/language?action=dictionary',
@@ -34,10 +34,9 @@ var getCurrentPageName = function(){
 				cache: false
 			}).done(function(responseText, textStatus, jqXHR) {
 				
-				//console.log(responseText.result);
+				//Получаем словарь
 				var dict = dictionaryResponseToArray(responseText.result);
-				//console.log(dict);
-				//Готовим шаблон при помощи библиотеки Hogan
+				//Готовим шаблон пунктов главного меню при помощи библиотеки Hogan
 			    var desktopNavTemplate = Hogan.compile(
 		    		'<div class="nav-wrapper container">'
 						+'<a id="logo-container" href="#" class="brand-logo">CTFinder</a>'
@@ -50,19 +49,36 @@ var getCurrentPageName = function(){
 						+'</ul>'
 					+'</div>'
 			    );
-			    //console.log(template);
-			    //Заполняем шаблон данными и помещаем на веб-страницу
+			    //Заполняем шаблон пунктов главного меню данными и помещаем на веб-страницу
 				$('nav').html(desktopNavTemplate.render(dict));
 				
+				//Пункты мобильного главного меню
 				var mobileNavTemplate = Hogan.compile(
 					'<li><a href="#home">{{index_nav_home}}</a></li>'
 					+'<li><a href="#find">{{index_nav_find}}</a></li>'
 					+'<li><a href="#create">{{index_nav_offer}}</a></li>'
 					+'<li><a href="#about">{{index_nav_about}}</a></li>'
 			    );
-			    //console.log(template);
-			    //Заполняем шаблон данными и помещаем на веб-страницу
 				$('#nav-mobile').html(mobileNavTemplate.render(dict));
+				
+				//Пункты главного меню в подвале
+				var footerNavTemplate = Hogan.compile(
+					'<h5 class="white-text">{{index_footer_sections_title}}</h5>'
+					+'<ul>'
+						+'<li><a class="white-text" href="#home">{{index_nav_home}}</a></li>'
+						+'<li><a class="white-text" href="#find">{{index_nav_find}}</a></li>'
+						+'<li><a class="white-text" href="#create">{{index_nav_offer}}</a></li>'
+						+'<li><a class="white-text" href="#about">{{index_nav_about}}</a></li>'
+					+'</ul>'
+			    );
+				$('#footer-navbar').html(footerNavTemplate.render(dict));
+				
+				//О нас в подвале
+				var footerAboutUsTemplate = Hogan.compile(
+						'<h5 class="white-text">{{index_about_us_title}}</h5>'
+						+'<p class="grey-text text-lighten-4">{{index_about_us_text}}</p>'
+				    );
+				$('#footer-about-us').html(footerAboutUsTemplate.render(dict));
 				
 				//Восстанавливаем класс active для пункта главного меню текущего раздела сайта
 				var currentPageName = getCurrentPageName();
@@ -133,6 +149,9 @@ var getCurrentPageName = function(){
 				});
 				
 				localizeIndex();
+				Object.keys(pageLocaleHandlers).forEach(function (key){
+					pageLocaleHandlers[key].call();
+				});
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
 				alert("Ошибка: " + jqXHR);

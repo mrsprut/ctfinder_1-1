@@ -1516,8 +1516,8 @@ public class OfferServlet extends HttpServlet {
 																, titleString
 																, offerStateString
 																, imageBase64
-																, descriptionString.length() > 25
-																		? descriptionString.substring(0, 25) + " ..."
+																, descriptionString.length() > 50
+																		? descriptionString.substring(0, 50) + " ..."
 																		: descriptionString
 																, DateTransform.ReversedToDirect(o.getCreated_at())
 															);

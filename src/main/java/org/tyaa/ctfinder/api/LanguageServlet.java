@@ -204,6 +204,13 @@ public class LanguageServlet extends HttpServlet {
 						}
 						case HttpReqParams.dictionary : {
 							try {
+								
+								String pageName = "";
+								
+								if (req.getParameterMap().keySet().contains(HttpReqParams.page)) {
+									pageName = req.getParameter(HttpReqParams.page).toUpperCase();
+								}
+								
 								Long currentLanguageId =
 										(Long)session.getAttribute(
 											SessionAttributes.languageId
@@ -218,7 +225,10 @@ public class LanguageServlet extends HttpServlet {
 								
 								Locale loc = new Locale(currentLanguage.getCode());
 								ResourceBundle bundle =
-										ResourceBundle.getBundle("org.tyaa.ctfinder.locale.ApplicationResources", loc);
+										ResourceBundle.getBundle(
+												"org.tyaa.ctfinder.locale.ApplicationResources" + pageName
+												, loc
+											);
 								List<DictionaryItem> dictionaryItems =
 										LocalizeHelper.appResourceToList(bundle);
 								
