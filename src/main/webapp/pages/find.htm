@@ -187,15 +187,16 @@
 	
 	//TODO 1. complete settings: categories, filters
 	//TODO 2. complete details: collaborators_count, desired_start_date, desired_finish_date
-	//TODO 3. search by title substring with autocomplete
-	//TODO 4. fix destroying of date fields in new offer form, fix dates comparing, fix card titles color
+	//TODO 3. fix destroying of date fields in new offer form, fix dates comparing, fix card titles color
 	//+ refreash offers table after status changed, tooltips
 	//+ preloader off on external sign out was finished
 	//+ add validator "if city presents then country must present"
 	//+ prevent default form submit event (on keypress) 
 	//+ add more offer types
 	//+ delete button
-	//TODO 5. next step: multylang v1
+	//+ show only active offers in the grid
+	//+ unsubscribe refernce in mails
+	//TODO 4. complete multylang v1
 	
 	//TODO add. 1: create translations for own offers
 	//TODO add. 2: localized example images
@@ -314,8 +315,8 @@
 	            var template = Hogan.compile(
 	                '{{#result}}'
 	                +'<p>'
-						+'<label for="category-{{id}}"> <input id="category-{{id}}"'
-							+'type="checkbox" /><span>{{description}}</span>'
+						+'<label for="{{id}}">'
+							+'<input id="{{id}}" type="checkbox" /><span>{{description}}</span>'
 						+'</label>'
 					+'</p>'
 					+'{{/result}}'
@@ -360,11 +361,12 @@
 			
 			var onTitleAutocompleteCallback = function(){
 
-				console.log("title autocompleted: " + $('#find-container input#search').val());
+				//console.log("title autocompleted: " + $('#find-container input#search').val());
 				resetInfinityScrollInfo();
-				doFilter({
+				/*doFilter({
 	                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-				});
+				});*/
+				doFilter();
 			}
 			
 			//country autocomplete
@@ -479,9 +481,10 @@
 					 if(e.keyCode == 13){
 						 
 						resetInfinityScrollInfo();
-						doFilter({
+						/*doFilter({
 				             'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-						});
+						});*/
+						doFilter();
 						return false;
 					 }
 					 //Собираем отформатированные даты из элементов Календарь
@@ -519,14 +522,12 @@
 		  	$('#search-form i').click(function(ev) {
 		  		
 		  		resetInfinityScrollInfo();
-				doFilter({
-		             'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-				});
+				doFilter();
 		  	});
 						
 			/* Offers grid */
 			
-			var populateOffersGrid = function(orderByParam){
+			var populateOffersGrid = function(filterData){
 		    	
 				//Добавляем на место таблицы полосу бесконечного прогресса -
 				//пока будет ожидаться ответ сервера
@@ -550,7 +551,7 @@
 		    	$.ajax({
 		            url: urlString,
 		            type: "POST",
-		            data: orderByParam,
+		            data: filterData,
 		            cache : false
 		        }).done(function(data) {
 		            
@@ -654,15 +655,41 @@
 
 			/* Filter */
 			
-			var doFilter = function(orderByParam){
+			var doFilter = function(){
 
-				populateOffersGrid(orderByParam);
+				var filterData =
+					{'order-by': $('form#order-rules input[type=radio]:checked').attr('id')};
+		  		
+		  		var countryName = $('form#filters input#country-input').val();
+		  		var cityName = $('form#filters input#city-input').val();
+		  		var collaboratorsCount = $('form#filters input#c-count-input').val();
+		  		
+		  		if(countryName != ""){
+		  			filterData['country'] = countryName;
+		  		}
+		  		if(cityName != ""){
+		  			filterData['city'] = cityName;
+		  		}
+		  		if(collaboratorsCount != ""){
+		  			filterData['c-count'] = collaboratorsCount;
+		  		}
+		  		
+		  		var categoriesArray = new Array();
+		  		$("form#categories input:checked").each(function() {
+		  			categoriesArray.push($(this).attr('id'));
+		  		});
+		  		if(categoriesArray.length > 0){
+		  			filterData["categories"] = categoriesArray;
+		  		}
+		  		
+				populateOffersGrid(filterData);
 			}
 			
 			//Apply the filter
-			doFilter({
+			/*doFilter({
                 'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-			});
+			});*/
+			doFilter();
 			
 			//обработчик выбора одного из чекбоксов фильтра по	
 			$('form#order-rules input[type=radio]').unbind("change");
@@ -671,9 +698,10 @@
 			    if(this.checked) {
 					
 			    	resetInfinityScrollInfo();
-			    	doFilter({
+			    	/*doFilter({
 		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});
+					});*/
+			    	doFilter();
 			    }
 			});
 			
@@ -684,9 +712,10 @@
 				if(!offerGridPopulating){
 					
 	    			resetInfinityScrollInfo();
-	    			doFilter({
+	    			/*doFilter({
 		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});
+					});*/
+	    			doFilter();
     			} else {
     				
     				setTimeout(onDateRangeChanged, 100);
@@ -711,9 +740,10 @@
 								- footerHeight
 								- $(window).height())) {
 						offerGridPopulating = true;  
-						doFilter({
+						/*doFilter({
 			                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-						});
+						});*/
+						doFilter();
 				    }
 				}
 			}
@@ -723,9 +753,10 @@
 				if(offerCounter != "full" && !offerGridPopulating){
 
 					offerGridPopulating = true;  
-					doFilter({
+					/*doFilter({
 		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});
+					});*/
+					doFilter();
 				} else if(offerCounter == "full"){
 					
 					$('#find-container #pointer-down').css('display', 'none');

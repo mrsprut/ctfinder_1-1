@@ -28,10 +28,14 @@ public class HttpReqParams {
 	public final static String userId = "user-id";	
 	public final static String authorId = "author-id";
 	
+	/* Autocomplete and filters */
+	
 	public final static String autocomplete = "autocomplete";
 	public final static String text = "text";
 	public final static String substring = "substring";
 	public final static String startstring = "startstring";
+	
+	public final static String categories = "categories[]";
 	
 	public final static String country = "country";
 	

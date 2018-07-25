@@ -1,5 +1,6 @@
 package org.tyaa.ctfinder.api;
 
+import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun;
 import static org.tyaa.ctfinder.common.ObjectifyQueryLauncher.objectifyRun2;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.SessionAttributes;
+import org.tyaa.ctfinder.controller.CountryDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.UserDAO;
 import org.tyaa.ctfinder.entity.Language;
@@ -109,10 +111,18 @@ public class AuthServlet extends HttpServlet {
 
 					// Use or store profile information
 
-					//String idString = request.getParameter("id");
+					//
 					User user = new User();
 					
-					ObjectifyService.run(new VoidWork() {
+					objectifyRun2(
+							userId
+							, user
+							, UserDAO::findUserByGoogleId
+							, out
+							, gson
+						);
+					
+					/*ObjectifyService.run(new VoidWork() {
 						public void vrun() {
 							try {
 								UserDAO.findUserByGoogleId(userId, user);
@@ -124,7 +134,7 @@ public class AuthServlet extends HttpServlet {
 								out.print(errorJson);
 							}
 						}
-					});
+					});*/
 					
 					if(user.getGoogle_id() == null || user.getGoogle_id().equals("")) {
 						

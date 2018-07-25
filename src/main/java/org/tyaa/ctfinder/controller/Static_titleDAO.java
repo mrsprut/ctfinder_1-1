@@ -93,6 +93,29 @@ public class Static_titleDAO {
 			_static_title.created_at = static_title.created_at;
 		}
 	}
+	
+	public static void getStaticTitleByContent(
+			String _content
+			, Static_title _static_title
+			) {
+		
+		Static_title static_title =
+				ofy().load()
+				.type(Static_title.class)
+				.filter("content", _content)
+				.first()
+				.now();
+		
+		if(static_title != null) {
+			
+			_static_title.setId(static_title.getId());
+			_static_title.setKey(static_title.getKey());
+			_static_title.setLang_id(static_title.getLang_id());
+			_static_title.setContent(static_title.getContent());
+			
+			_static_title.created_at = static_title.created_at;
+		}
+	}
 
 	public static void createStatic_title(Static_title _static_title) {
 

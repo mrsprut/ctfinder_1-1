@@ -1329,21 +1329,6 @@ public class OfferServlet extends HttpServlet {
 											//или совпадает с ней
 											if(req.getParameterMap().keySet().contains(HttpReqParams.substring)) {
 												
-												/*offers.removeIf((o) -> {
-													
-													Title t = LocalizeHelper.getLoclizedTitleObject(
-															((Offer)o).getTitle_key()
-															, currentLanguageId
-															, out
-															, gson
-														);
-													if (t.getContent().contains(req.getParameter(HttpReqParams.substring))) {
-														return false;
-													} else {
-														return true;
-													}
-												});*/
-												
 												filteredOffers =
 													offers.stream().filter((o) -> {
 														
@@ -1355,7 +1340,7 @@ public class OfferServlet extends HttpServlet {
 																, out
 																, gson
 															);
-														boolean substringIsPresent = false;
+														boolean substringPresents = false;
 														for (Title title : offerTitles) {
 															if (title.getContent().toLowerCase()
 																	.contains(
@@ -1363,31 +1348,71 @@ public class OfferServlet extends HttpServlet {
 																				.toLowerCase()
 																			)
 																) {
-																substringIsPresent = true;
+																substringPresents = true;
 																break;
 															}
 														}
-														return substringIsPresent;
-														/*Title t = LocalizeHelper.getLoclizedTitleObject(
-																((Offer)o).getTitle_key()
-																, currentLanguageId
-																, out
-																, gson
-															);*/
-														/*if (t.getContent().toLowerCase()
-																.contains(
-																		req.getParameter(HttpReqParams.substring)
-																			.toLowerCase()
-																		)
-															) {
-															return true;
-														} else {
-															return false;
-														}*/
+														return substringPresents;
 													}).collect(Collectors.toList());
 											} else {
 												filteredOffers.addAll(offers);
 											}
+											//Если в параметрах запроса от клиета присутствует список категорий,
+											//то после получения из БД диапазона частично отфильтрованных предложений
+											//отбираем только те, которые содержат идентификатор любой из категорий списка
+											if(req.getParameterMap().keySet().contains(HttpReqParams.categories)) {
+
+												String[] categories = req.getParameterValues(HttpReqParams.categories);
+												filteredOffers.removeIf((o) -> {
+													
+													boolean categoryIdAbsents = true;
+													for (String categoryId : categories) {
+														if(((Offer)o).getOffer_type_id().equals(Long.parseLong(categoryId))) {
+															categoryIdAbsents = false;
+															break;
+														}
+													}
+													return categoryIdAbsents;
+												});
+											}
+											//Дополнительный фильтр по стране
+											if(req.getParameterMap().keySet().contains(HttpReqParams.country)) {
+												
+												filteredOffers.removeIf((o) -> {
+													
+													if(((Offer)o).getCountry_id() != null) {
+														
+														Static_title countrySTitle = new Static_title();
+														objectifyRun2(
+																req.getParameter(HttpReqParams.country)
+																, countrySTitle
+																, Static_titleDAO::getStaticTitleByContent
+																, out
+																, gson
+															);
+														if(countrySTitle.getId() != null) {
+															
+															Country selectedCountry = new Country();
+															objectifyRun2(
+																	countrySTitle.getKey()
+																	, selectedCountry
+																	, CountryDAO::getCountryByTitleKey
+																	, out
+																	, gson
+																);
+															return !((Offer)o).getCountry_id()
+																		.equals(selectedCountry.getId());
+														} else {
+															
+															return true;
+														}
+													} else {
+													
+														return true;
+													}
+												});
+											}
+											
 											//Если после всех фильтров список оказался пуст,
 											//но курсор еще существует -
 											//делаем повторную попытку получить список,
