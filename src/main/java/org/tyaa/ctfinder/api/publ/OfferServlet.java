@@ -1413,6 +1413,61 @@ public class OfferServlet extends HttpServlet {
 												});
 											}
 											
+											//Дополнительный фильтр по городу
+											if(req.getParameterMap().keySet().contains(HttpReqParams.city)) {
+												
+												filteredOffers.removeIf((o) -> {
+													
+													if(((Offer)o).getCity_id() != null) {
+														
+														Static_title citySTitle = new Static_title();
+														objectifyRun2(
+																req.getParameter(HttpReqParams.city)
+																, citySTitle
+																, Static_titleDAO::getStaticTitleByContent
+																, out
+																, gson
+															);
+														if(citySTitle.getId() != null) {
+															
+															City selectedCity = new City();
+															objectifyRun2(
+																	citySTitle.getKey()
+																	, selectedCity
+																	, CityDAO::getCityByTitleKey
+																	, out
+																	, gson
+																);
+															return !((Offer)o).getCity_id()
+																		.equals(selectedCity.getId());
+														} else {
+															
+															return true;
+														}
+													} else {
+													
+														return true;
+													}
+												});
+											}
+											
+											//Дополнительный фильтр по текущему числу вакантных мест в предложении
+											if(req.getParameterMap().keySet().contains(HttpReqParams.collaboratorsCount)) {
+												
+												filteredOffers.removeIf((o) -> {
+													
+													if(((Offer)o).getCollaborators_count() != null) {
+																													
+														return !((Offer)o).getCollaborators_count()
+																		.equals(Integer.parseInt(req.getParameter(HttpReqParams.collaboratorsCount)));
+														
+													} else {
+													
+														return true;
+													}
+												});
+											}
+											
 											//Если после всех фильтров список оказался пуст,
 											//но курсор еще существует -
 											//делаем повторную попытку получить список,

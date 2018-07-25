@@ -38,6 +38,8 @@ public class HttpReqParams {
 	public final static String categories = "categories[]";
 	
 	public final static String country = "country";
+	public final static String city = "city";
+	public final static String collaboratorsCount = "c-count";
 	
 	public final static String createdDateFrom = "created-date-from";
 	public final static String createdDateTo = "created-date-to";

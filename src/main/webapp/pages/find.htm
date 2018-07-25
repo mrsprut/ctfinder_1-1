@@ -62,21 +62,43 @@
 							<div class="collapsible-body">
 								<form id="filters" action="#">
 									<div class="row">
-										<div class="input-field col s12">
-											<input type="text" id="country-input" class="autocomplete" autocomplete="off">
-											<label for="country-input">Страна</label>
+										 <div class="col s12">
+										 	<div class="row">
+												<div class="input-field col s12">
+													<i class="material-icons prefix">place</i>
+													<input type="text" id="country-input" class="autocomplete" autocomplete="off" placeholder="country">
+													<label for="country-input">Страна</label>
+												</div>
+											</div>
 										</div>
 									</div>
 									<div class="row">
-										<div class="input-field col s12">
-											<input type="text" id="city-input" class="autocomplete" autocomplete="off">
-											<label for="city-input">Город</label>
+										<div class="col s12">
+										 	<div class="row">
+												<div class="input-field col s12">
+													<i class="material-icons prefix">place</i>
+													<input type="text" id="city-input" class="autocomplete" autocomplete="off" placeholder="city">
+													<label for="city-input">Город</label>
+												</div>
+											</div>
 										</div>
 									</div>
 									<div class="row">
-										<div class="input-field col s12">
-											<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
-											<label for="c-count-input">Вакантных мест</label>
+										<div class="col s12">
+										 	<div class="row">
+												<div class="input-field col s6">
+													<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
+													<label for="c-count-input">Вакантных мест</label>
+												</div>
+												<div class="input-field col s6">
+													<p>
+														<label>
+															<input id="c-count-on-off" type="checkbox" />
+															<span>On / Off</span>
+														</label>
+													 </p>
+												</div>
+											</div>
 										</div>
 									</div>
 								</form>
@@ -196,6 +218,8 @@
 	//+ delete button
 	//+ show only active offers in the grid
 	//+ unsubscribe refernce in mails
+	//+ flag if the page is already localized
+	//+ categories filter handler
 	//TODO 4. complete multylang v1
 	
 	//TODO add. 1: create translations for own offers
@@ -336,27 +360,16 @@
 			
 			var onCountryAutocompleteCallback = function(){
 
-		        /*$('#events-container').html('<div class="preloader-wrapper big active"> <div class="spinner-layer spinner-green-only"> <div class="circle-clipper left"> <div class="circle"></div> </div><div class="gap-patch"> <div class="circle"></div> </div><div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>');
-		        $.ajax({
-		            url: "/events-ajax",
-		            type: "POST",
-		            data: {
-		                //'type': this.id
-		                'action': 'fetch-events-by-title'
-		                , 'title': $('input#search').val()
-		            },
-		            cache : false
-		        }).done(function(data) {
-		            
-		            //помещаем на веб-страницу
-		            $('#events-container').html(data);
-		        });*/
 				console.log("country autocompleted");
+				resetInfinityScrollInfo();
+		    	doFilter();
 			};
 			
 			var onCityAutocompleteCallback = function(){
 
 				console.log("city autocompleted");
+				resetInfinityScrollInfo();
+		    	doFilter();
 			};
 			
 			var onTitleAutocompleteCallback = function(){
@@ -670,10 +683,13 @@
 		  		if(cityName != ""){
 		  			filterData['city'] = cityName;
 		  		}
-		  		if(collaboratorsCount != ""){
-		  			filterData['c-count'] = collaboratorsCount;
+		  		if($('form#filters input#c-count-on-off').is(':checked')){
+			  		if(collaboratorsCount != ""){
+			  			filterData['c-count'] = collaboratorsCount;
+			  		} else {
+			  			filterData['c-count'] = -1;
+			  		}
 		  		}
-		  		
 		  		var categoriesArray = new Array();
 		  		$("form#categories input:checked").each(function() {
 		  			categoriesArray.push($(this).attr('id'));
@@ -691,7 +707,7 @@
 			});*/
 			doFilter();
 			
-			//обработчик выбора одного из чекбоксов фильтра по	
+			//обработчик выбора одного из чекбоксов сортировки
 			$('form#order-rules input[type=radio]').unbind("change");
 			$('form#order-rules input[type=radio]').change(function() {
 
@@ -703,6 +719,31 @@
 					});*/
 			    	doFilter();
 			    }
+			});
+			
+			//обработчик выбора одного из чекбоксов фильтра по категориям (типам предложений)
+			$('form#categories input[type=checkbox]').unbind("click");
+			$('form#categories input[type=checkbox]').click(function() {
+
+		    	resetInfinityScrollInfo();
+		    	doFilter();
+			});
+			
+			//обработчики изменений фильтра по текущему числу вакантных мест в предложении
+			$('form#filters input#c-count-input').unbind("change");
+			$('form#filters input#c-count-input').change(function() {
+
+				if($('form#filters input#c-count-on-off').is(':checked')) {
+			    	resetInfinityScrollInfo();
+			    	doFilter();
+				}
+			});
+			//обработчик изменений фильтра по текущему числу вакантных мест в предложении
+			$('form#filters input#c-count-on-off').unbind("change");
+			$('form#filters input#c-count-on-off').change(function() {
+
+		    	resetInfinityScrollInfo();
+		    	doFilter();
 			});
 			
 			/* Date range */
