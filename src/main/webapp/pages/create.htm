@@ -682,6 +682,7 @@
 				$('form#create-offer-form input#country-input').val('');
 				$('form#create-offer-form input#city-input').val('');
 				$('form#create-offer-form input#c-count-input').val('');
+				$('form#create-offer-form input#c-count-input').attr('min', 1);
 				$('form#create-offer-form input#start-date-input').val('');
 				$('form#create-offer-form input#finish-date-input').val('');
 				$('form#create-offer-form input#image-input').val('');
@@ -779,7 +780,7 @@
 			});
 			
 			$('form#create-offer-form #cancell-new-order').unbind("click");
-			//Кнопка запроса на создание или обновление предложения
+			//Кнопка отмены редактирования предложения
 			$('form#create-offer-form #cancell-new-order').click(function(ev){
 				
 				ev.preventDefault();
@@ -818,8 +819,10 @@
 			        }).done(function(data) {
 			        	
 			        	if(data.result != null && data.result.length > 0){
+			        		
 				        	populateOfferTypesSelect();
 				        	resetNewOrderForm();
+				        	$('form#create-offer-form input#c-count-input').attr('min', 0);
 				        	isFormValid();
 				        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
 				        	

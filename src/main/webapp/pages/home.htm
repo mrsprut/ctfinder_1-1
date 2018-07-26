@@ -154,7 +154,10 @@
 	
 	var localizeHome = function (){
 		
-		//console.log("localizeHome");
+		//Оптимистичное локирование:
+		//делаем допущение, что локализация пройдет успешно,
+		//и устанавливаем флаг, что она уже выполняется
+		pageLocalization["home"] = true;
 		//preloaderOn();
 		$.ajax({
 			type: 'POST',
@@ -198,11 +201,12 @@
 		}).always(function() {
 		    
 			//preloaderOff();
+			pageLocalization["home"] = false;
 		});
 	}
 	
 	pageLocaleHandlers["home"] = localizeHome;
-	//localizeHome();
+	localizeHome();
 	
 	app.handler(function() {
 

@@ -4,6 +4,13 @@ var noItemsImage = '<img class="responsive-img" src="../img/flat-search-find.png
 
 //Набор ссылок на функции локализации страниц
 var pageLocaleHandlers = {};
+//Флаги выполнения начальной локализации страниц
+var pageLocalization = {
+		'home':false
+		, 'find':false
+		, 'offer':false
+		, 'about':false
+};
 
 //Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
 Date.prototype.toDateInputValue = (function() {

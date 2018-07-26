@@ -150,7 +150,11 @@ var getCurrentPageName = function(){
 				
 				localizeIndex();
 				Object.keys(pageLocaleHandlers).forEach(function (key){
-					pageLocaleHandlers[key].call();
+					if(!pageLocalization[key]){
+						pageLocaleHandlers[key].call();
+					} else {
+						//pageLocalization[key] = false;
+					}
 				});
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				  
