@@ -72,4 +72,8 @@ public class HttpReqParams {
 	
 	public final static String sortFinishDesc = "sort-finish-desc";
 	public final static String sortFinishAsc = "sort-finish-asc";
+	
+	/* Subscription */
+	
+	public final static String subscriberId = "subscriber-id";
 }

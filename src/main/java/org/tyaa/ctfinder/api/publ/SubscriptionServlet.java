@@ -117,14 +117,28 @@ public class SubscriptionServlet extends HttpServlet {
 								
 								Long authorId =
 										Long.parseLong(req.getParameter(HttpReqParams.authorId));
-								Long subscriberId =
-										(Long)session.getAttribute(
-											SessionAttributes.userId
-										);
 								
+								//Если запрос пришел со страницы сайта во время работы с ним -
+								//берем идентификатор пользователя из сеанса,
+								//если запрос пришел со страницы отписки - берем из параметра запроса
+								Long subscriberId = null;
+								if(req.getParameterMap().keySet().contains(HttpReqParams.subscriberId)) {
+									
+									subscriberId =
+											Long.parseLong(
+												req.getParameter(HttpReqParams.subscriberId)
+											);
+								} else {
+									
+									subscriberId =
+											(Long)session.getAttribute(
+												SessionAttributes.userId
+											);
+								}
+								
+								//Получение объекта подписки из БД
 								Subscription subscription =
 										new Subscription();
-								
 								objectifyRun3(
 										authorId
 										, subscriberId
@@ -139,7 +153,7 @@ public class SubscriptionServlet extends HttpServlet {
 										, out
 										, gson
 									);
-								
+								//Удаление объекта подписки из БД
 								objectifyRun(
 										subscription.getId()
 										, SubscriptionDAO::removeSubscription

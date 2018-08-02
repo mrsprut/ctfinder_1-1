@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>CTFinder - unsubscription</title>
+	<!--Import materialize.css 1.0.0-rc.1-->
+	<link type="text/css" rel="stylesheet" href="/css/materialize.css" media="screen,projection" />
+</head>
+<body>
+	<div class="container">
+		<div id="content" class="valign-wrapper">
+			<div>
+				<h1 class="center-align">CTFinder - unsubscription</h1>
+			</div>
+			<div>
+				<button id="unsubscribe" class="waves-effect waves-light btn center-align" type="button">Unsubscribe</button>
+			</div>
+		</div>
+	</div>
+	<!--Import jQuery before materialize.js-->
+	<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+	<!-- materialize.min.js 1.0.0-rc.1 -->
+	<script type="text/javascript" src="/js/materialize.js"></script>
+	<script type="text/javascript">
+		//Получаем текущую строку параметров
+		var urlParams = new URLSearchParams(window.location.search);
+		var authorId = urlParams.get('author-id');
+		var subscriberId = urlParams.get('subscriber-id');
+		//Обработчик клика по кнопке "Отписаться"
+    	var unsubscribeHandler = function(ev){
+			
+			ev.preventDefault();
+			//preloaderOn("nocover");
+			var deleteSubscriptionUrlString =
+	        	"/subscription?action=delete"
+	        			+ "&author-id=" + authorId
+	        			+ "&subscriber-id=" + subscriberId;
+			$.ajax({
+	            url: deleteSubscriptionUrlString,
+	            type: "POST",
+	            cache : false
+	        }).done(function(data) {
+	        	
+	        	if(data.result != null && data.result[0] == "deleted"){
+	        		
+	        		$('#content').html('<h1 class="center-align">CTFinder - unsubscription is completed</h1>');
+	        	} else {
+	        		//alert('Error');
+	        	}
+	        }).fail(function(jqXHR, textStatus, errorThrown) {
+				  
+				alert("Error: " + jqXHR);
+			}).always(function() {
+			    
+				//preloaderOff();
+		  	});
+		}
+		$('#unsubscribe').click(unsubscribeHandler);
+	</script>
+</body>
+</html>

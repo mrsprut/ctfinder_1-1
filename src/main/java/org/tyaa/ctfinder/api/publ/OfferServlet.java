@@ -601,7 +601,10 @@ public class OfferServlet extends HttpServlet {
 													+ title
 													+ "(ID: "
 													+ offer.getId()
-													+ ")";
+													+ "). "
+													+ "Unsubscription link: https://creativetfinder.appspot.com/pages/static/unsubscription.html?author-id="
+														+ authorId
+														+ "&subscriber-id=";
 											String subjectString = "New offer";
 											String fromAddressString = "tyaamariupol@gmail.com";
 											String fromNameString = "CTFinder";
@@ -628,11 +631,14 @@ public class OfferServlet extends HttpServlet {
 												
 												//log.info("toNameString " + toNameString);
 												//log.info("toAddressString " + toAddressString);
+												String customMessageString = 
+														messageString
+														+ subscriberUser.getId();
 												
 												// Отправляем сообщение
 												try {
 													mailer.sendPlainMsg(
-															messageString
+															customMessageString
 															, subjectString
 															, fromAddressString
 															, fromNameString
