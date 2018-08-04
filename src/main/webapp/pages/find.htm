@@ -264,13 +264,20 @@
       },
     });*/
 	
-	app.handler(function() {
+	app.handler(function(params) {
 
 		//console.log('this ' + $(this));
 		//var $container = $(this).find("#page-container");
 		//console.log('container ' + $container);
 
 		return function(params) {
+			
+			//Переменная для дескриптора интервала попыток
+			//получить и отобразить детализацию предложения
+			//при загрузке страницы с параметром - идентификатором предложения
+			var externalOpenDetailsInterval = null;
+			//Флаг процесса попытки получения детализации предложения
+			var gettingOfferDetails = false;
 
 			//Пустые объекты для хранения данных автодолнения
 			//выбора страны и города, которые будут приходить с сервера 
@@ -568,95 +575,95 @@
 		            cache : false
 		        }).done(function(data) {
 		            
-		            //помещаем на веб-страницу
-		            //$('#events-container').html(data);
-		            
-		        	fetchedCount = data.result[0].items.length;
-		        	if(data.result[0].cursor_str != "end" && fetchedCount > 0){
-		        		
-		        		cursorString = data.result[0].cursor_str;
-		        		if(offerCounter == 0 && fetchedCount > 0){
-		        			$('#offer-grid-container > div').html('');
-		        		}
-		        		offerCounter += fetchedCount;
-		        		var offerCounterTail = offerCounter % offerLimitDefault;
-		        		if(offerCounterTail != 0 && offerLimit == offerLimitDefault){
+		            //если удалось получить объект ответа о предложениях
+		            if(data.result[0] != undefined) {
+		            	
+			        	fetchedCount = data.result[0].items.length;
+			        	if(data.result[0].cursor_str != "end" && fetchedCount > 0){
 			        		
-			        		offerLimit += offerLimitDefault - offerCounterTail;
+			        		cursorString = data.result[0].cursor_str;
+			        		if(offerCounter == 0 && fetchedCount > 0){
+			        			$('#offer-grid-container > div').html('');
+			        		}
+			        		offerCounter += fetchedCount;
+			        		var offerCounterTail = offerCounter % offerLimitDefault;
+			        		if(offerCounterTail != 0 && offerLimit == offerLimitDefault){
+				        		
+				        		offerLimit += offerLimitDefault - offerCounterTail;
+				        		
+				        	} else if(offerLimit != offerLimitDefault) {
+				        		
+				        		offerLimit = offerLimitDefault;
+				        	}
+	
+			        		//if(fetchedCount > 0){
+					            //Готовим шаблон offer grid item при помощи библиотеки Hogan
+							  	var template = Hogan.compile(
+						  			'{{#items}}'
+					                +'<div class="col s12 m12 l6 xl4">'
+						                +'<div class="card hoverable {{offer_type}}">'
+						                    +'<div class="card-image">'
+						                      +'<img src="{{image}}">'
+						                      +'<div class="card-title">'
+						                      	+'<div>{{title}}</div>'
+						                      	+'<div>({{offer_type}})</div>'
+						                      	+'<div class="card-title-date">{{created_at}}</div>'
+						                      +'</div>'
+						                    +'</div>'
+						                    +'<div class="card-content">'
+						                      +'<p>{{content_preview}}</p>'
+						                    +'</div>'
+						                    +'<div class="card-action">'
+						                      +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">Details...</a>'
+						                    +'</div>'
+						                  +'</div>'
+						            +'</div>'
+						      		+ '{{/items}}'
+						  		);
+							  	//Заполняем шаблон данными и помещаем на веб-страницу
+								$('#offer-grid-container > div').append(template.render(data.result[0]));
+							  	//
+								$('#find-container #pointer-down').css('display', 'block');
+							//}
+	
+					  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
+				            $("table td:contains('забронирован')").parent().addClass("BlueRow");
+				            $("table td:contains('выполнен')").parent().addClass("GreenRow");
+				            //$("table td:contains('отменен')").parent().addClass("RedRow");
+				            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
+				            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
+				            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
+				            $("table tr:not(:first)").unbind("click");
+				            $("table tr:not(:first)").click(function(){
+	
+				                //Разблокируем кнопки, когда выбрана строка таблицы
+				                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
+				                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
+				                //(оно могло быть ранее установлено на одну из строк)
+				                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
+				            });
+				            //Очищаем списки в форме
+				            $('#manicurists-select select')
+				                .find('option')
+				                .remove();
+	
+				            $('#time-select select')
+				                .find('option')
+				                .remove();
+				            //Отключаем элементы ввода в форме
+				            $('#time-select select').attr('disabled', '');
+				            $('form#create-order button').attr('disabled', '');
+				            //Заполняем список выбора мастеров
+				            populateManicuristsList();
+				            //Активируем список выбора времени
+				            $('#time-select select').formSelect();*/
+			        	} else {
 			        		
-			        	} else if(offerLimit != offerLimitDefault) {
-			        		
-			        		offerLimit = offerLimitDefault;
+			        		$('#find-container #pointer-down').css('display', 'none');
+			        		offerCounter = "full";
 			        	}
-
-		        		//if(fetchedCount > 0){
-				            //Готовим шаблон offer grid item при помощи библиотеки Hogan
-						  	var template = Hogan.compile(
-					  			'{{#items}}'
-				                +'<div class="col s12 m12 l6 xl4">'
-					                +'<div class="card hoverable {{offer_type}}">'
-					                    +'<div class="card-image">'
-					                      +'<img src="{{image}}">'
-					                      +'<div class="card-title">'
-					                      	+'<div>{{title}}</div>'
-					                      	+'<div>({{offer_type}})</div>'
-					                      	+'<div class="card-title-date">{{created_at}}</div>'
-					                      +'</div>'
-					                    +'</div>'
-					                    +'<div class="card-content">'
-					                      +'<p>{{content_preview}}</p>'
-					                    +'</div>'
-					                    +'<div class="card-action">'
-					                      +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">Details...</a>'
-					                    +'</div>'
-					                  +'</div>'
-					            +'</div>'
-					      		+ '{{/items}}'
-					  		);
-						  	//Заполняем шаблон данными и помещаем на веб-страницу
-							$('#offer-grid-container > div').append(template.render(data.result[0]));
-						  	//
-							$('#find-container #pointer-down').css('display', 'block');
-						//}
-
-				  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
-			            $("table td:contains('забронирован')").parent().addClass("BlueRow");
-			            $("table td:contains('выполнен')").parent().addClass("GreenRow");
-			            //$("table td:contains('отменен')").parent().addClass("RedRow");
-			            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
-			            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
-			            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
-			            $("table tr:not(:first)").unbind("click");
-			            $("table tr:not(:first)").click(function(){
-
-			                //Разблокируем кнопки, когда выбрана строка таблицы
-			                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
-			                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
-			                //(оно могло быть ранее установлено на одну из строк)
-			                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
-			            });
-			            //Очищаем списки в форме
-			            $('#manicurists-select select')
-			                .find('option')
-			                .remove();
-
-			            $('#time-select select')
-			                .find('option')
-			                .remove();
-			            //Отключаем элементы ввода в форме
-			            $('#time-select select').attr('disabled', '');
-			            $('form#create-order button').attr('disabled', '');
-			            //Заполняем список выбора мастеров
-			            populateManicuristsList();
-			            //Активируем список выбора времени
-			            $('#time-select select').formSelect();*/
-		        	} else {
-		        		
-		        		$('#find-container #pointer-down').css('display', 'none');
-		        		offerCounter = "full";
-		        	}
-		        	//preloaderOff();
-		        	offerGridPopulating = false;
+		            }
+		            offerGridPopulating = false;
 		        }).fail(function(jqXHR, textStatus, errorThrown) {
 					  
 					alert("Ошибка: " + jqXHR);
@@ -812,6 +819,195 @@
 			
 			/* Offer details modal */
 			
+			var showOfferDetails = function(id){
+				
+				var urlString =
+		        	"/offer?action=get"
+		        			+"&id=" + id
+		        			+"&projection=grid-item-details";
+    			$.ajax({
+		            url: urlString,
+		            type: "POST",
+		            cache : false
+		        }).done(function(data) {
+		        	
+		        	if(data.result[0] != undefined){
+		        		
+			        	var template = Hogan.compile(
+					  			
+				      		'<h3 class="header">{{title}}</h3>'
+				      		+ '<h4>({{offer_type}})</h4>'
+				      	    + '<div class="card ' + offerDetailsOrientation + '">'
+				      	      +'<div class="card-image details-image">'
+				      	        +'<img src="{{image}}">'
+				      	      +'</div>'
+				      	      +'<div class="card-stacked">'
+				      	        +'<div class="card-content">'
+				      	      		+ '<h4>Подробности</h4>'
+				      	      		+'<p>'
+				      	      			+'<strong>Автор: </strong>{{author_name}} '
+				      	      			+'{{#subscription}}'
+					      	      			+'<button id="unsubscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
+					      	      				+'Отписаться'
+				      	      				+'</button>'
+				      	      			+'{{/subscription}}'
+					      	      		+'{{^subscription}}'
+					      	      			+'<button id="subscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
+					      	      				+'Подписаться'
+				      	      				+'</button>'
+				      	      			+'{{/subscription}}'
+			      	      			+'</p>'
+				      	      		+'<p><strong>Состояние </strong>{{state}}</p>'
+				      	      		+'<p><strong>Создано: </strong>{{created_at}}</p>'
+				      	      		+'<p><strong>Страна: </strong>{{country}}</p>'
+				      	      		+'<p><strong>Город: </strong>{{city}}</p>'
+				      	      		+ '<h4>Описание</h4>'
+				      	          	+'<p>{{content}}</p>'
+				      	        +'</div>'
+				      	        +'<div class="card-action">'
+				      	          +'<a href="{{id}}"><h4>Join</h4></a>'
+				      	        +'</div>'
+				      	      +'</div>'
+				      	    +'</div>'
+				  		);
+			        	
+			        	$('#offer-details .modal-content')
+			        		.html(template.render(data.result[0]));
+			        	
+			        	var $currentSubscribeButton = null;
+			        	
+			        	//Обработчик клика по кнопке "Подписаться"
+			        	var subscribeHandler = function(ev){
+		        			
+		        			ev.preventDefault();
+		        			preloaderOn("nocover");
+							var createSubscriptionUrlString =
+					        	"/subscription?action=create"
+					        			+"&author-id=" + $(this).data("authorId");
+							$.ajax({
+					            url: createSubscriptionUrlString,
+					            type: "POST",
+					            cache : false
+					        }).done(function(data) {
+					        	
+					        	if(data.result != null && data.result[0] == "created"){
+					        		
+					        		$currentSubscribeButton.attr('id', 'unsubscribe');
+					        		$currentSubscribeButton.text('Отписаться');
+					        		$currentSubscribeButton.unbind("click");
+					        		$currentSubscribeButton.click(unsubscribeHandler);
+					        	} else {
+					        		alert('Ошибка отправки запроса');
+					        	}
+					        }).fail(function(jqXHR, textStatus, errorThrown) {
+								  
+								alert("Ошибка отправки запроса: " + jqXHR);
+							}).always(function() {
+							    
+								preloaderOff();
+						  	});
+		        		}
+			        	
+			        	//Обработчик клика по кнопке "Отписаться"
+			        	var unsubscribeHandler = function(ev){
+		        			
+		        			ev.preventDefault();
+		        			preloaderOn("nocover");
+							var deleteSubscriptionUrlString =
+					        	"/subscription?action=delete"
+					        			+"&author-id=" + $(this).data("authorId");
+							$.ajax({
+					            url: deleteSubscriptionUrlString,
+					            type: "POST",
+					            cache : false
+					        }).done(function(data) {
+					        	
+					        	if(data.result != null && data.result[0] == "deleted"){
+					        		
+					        		$currentSubscribeButton.attr('id', 'subscribe');
+					        		$currentSubscribeButton.text('Подписаться');
+					        		$currentSubscribeButton.unbind("click");
+					        		$currentSubscribeButton.click(subscribeHandler);
+					        	} else {
+					        		alert('Ошибка отправки запроса');
+					        	}
+					        }).fail(function(jqXHR, textStatus, errorThrown) {
+								  
+								alert("Ошибка отправки запроса: " + jqXHR);
+							}).always(function() {
+							    
+								preloaderOff();
+						  	});
+		        		}
+			        	
+			        	var $subscribeButton =
+			        		$('#offer-details .modal-content .card-content button#subscribe');
+			        	if($subscribeButton.length > 0){
+			        		
+			        		$currentSubscribeButton = $subscribeButton;
+			        		$subscribeButton.unbind("click");
+			        		$subscribeButton.click(subscribeHandler);
+			        	}
+			        	
+			        	var $unsubscribeButton =
+			        		$('#offer-details .modal-content .card-content button#unsubscribe');
+			        	if($unsubscribeButton.length > 0){
+			        		
+			        		$currentSubscribeButton = $unsubscribeButton;
+			        		$unsubscribeButton.unbind("click");
+			        		$unsubscribeButton.click(unsubscribeHandler);
+			        	}
+			        	
+			        	//Обработчик клика по ссылке "Присоединиться"
+			        	$('#offer-details .modal-content .card-action > a').unbind("click");
+						$('#offer-details .modal-content .card-action > a').click(function(ev){
+							
+							ev.preventDefault();
+							preloaderOn("nocover");
+							var urlString =
+					        	"/offer?action=join"
+					        			+"&id=" + data.result[0].id;
+							$.ajax({
+					            url: urlString,
+					            type: "POST",
+					            cache : false
+					        }).done(function(data) {
+					        	
+					        	if(data.result[0] == "sent"){
+					        		$('#offer-details .modal-content .card-action')
+					        			.html('<p>Запрос отправлен автору задачи на электронную почту. Если через некоторое время он не пришлет Вам ответное письмо - можете повторить отправку или связаться с ним напрямую по адресу, указанному в описании задачи</p>');
+					        	} else {
+					        		alert('Ошибка отправки запроса');
+					        	}
+					        }).fail(function(jqXHR, textStatus, errorThrown) {
+								  
+								alert("Ошибка отправки запроса: " + jqXHR);
+							}).always(function() {
+							    
+								preloaderOff();
+						  	});
+						});
+						//Если получение детализации прошло успешно - останавливаем
+						//повторение попыток
+						if(externalOpenDetailsInterval != null){
+							
+							clearInterval(externalOpenDetailsInterval);
+							externalOpenDetailsInterval = null;
+						}
+		        	}
+		        }).fail(function(jqXHR, textStatus, errorThrown) {
+					  
+					alert("Ошибка: " + jqXHR);
+				}).always(function() {
+					
+					//В любом случае сбрасываем флаг процесса попытки получения детализации
+					gettingOfferDetails = false;
+					preloaderOff();
+			  	});
+			};
+			
+			//Обработчик клика по ссылке "Детально"
+			//на любой карточке предложения в результатах поиска
 			$(document).unbind("click");
 			$(document).on(
 		    		'click'
@@ -819,180 +1015,49 @@
 		    		, function(){
 		    			
 		    			preloaderOn("nocover");
+		    			//Считывание значения дополнительного атрибута
+		    			//из элемента-ссылки, по которой кликнул пользователь
 		    			var id = $(this).data('offerid');
-		    			
-		    			var urlString =
-				        	"/offer?action=get"
-				        			+"&id=" + id
-				        			+"&projection=grid-item-details";
-		    			$.ajax({
-				            url: urlString,
-				            type: "POST",
-				            cache : false
-				        }).done(function(data) {
-				        	
-				        	var template = Hogan.compile(
-						  			
-					      		'<h3 class="header">{{title}}</h3>'
-					      		+ '<h4>({{offer_type}})</h4>'
-					      	    + '<div class="card ' + offerDetailsOrientation + '">'
-					      	      +'<div class="card-image details-image">'
-					      	        +'<img src="{{image}}">'
-					      	      +'</div>'
-					      	      +'<div class="card-stacked">'
-					      	        +'<div class="card-content">'
-					      	      		+ '<h4>Подробности</h4>'
-					      	      		+'<p>'
-					      	      			+'<strong>Автор: </strong>{{author_name}} '
-					      	      			+'{{#subscription}}'
-						      	      			+'<button id="unsubscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
-						      	      				+'Отписаться'
-					      	      				+'</button>'
-					      	      			+'{{/subscription}}'
-						      	      		+'{{^subscription}}'
-						      	      			+'<button id="subscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
-						      	      				+'Подписаться'
-					      	      				+'</button>'
-					      	      			+'{{/subscription}}'
-				      	      			+'</p>'
-					      	      		+'<p><strong>Состояние </strong>{{state}}</p>'
-					      	      		+'<p><strong>Создано: </strong>{{created_at}}</p>'
-					      	      		+'<p><strong>Страна: </strong>{{country}}</p>'
-					      	      		+'<p><strong>Город: </strong>{{city}}</p>'
-					      	      		+ '<h4>Описание</h4>'
-					      	          	+'<p>{{content}}</p>'
-					      	        +'</div>'
-					      	        +'<div class="card-action">'
-					      	          +'<a href="{{id}}"><h4>Join</h4></a>'
-					      	        +'</div>'
-					      	      +'</div>'
-					      	    +'</div>'
-					  		);
-				        	
-				        	$('#offer-details .modal-content')
-				        		.html(template.render(data.result[0]));
-				        	
-				        	var $currentSubscribeButton = null;
-				        	
-				        	//Обработчик клика по кнопке "Подписаться"
-				        	var subscribeHandler = function(ev){
-			        			
-			        			ev.preventDefault();
-			        			preloaderOn("nocover");
-								var createSubscriptionUrlString =
-						        	"/subscription?action=create"
-						        			+"&author-id=" + $(this).data("authorId");
-								$.ajax({
-						            url: createSubscriptionUrlString,
-						            type: "POST",
-						            cache : false
-						        }).done(function(data) {
-						        	
-						        	if(data.result != null && data.result[0] == "created"){
-						        		
-						        		$currentSubscribeButton.attr('id', 'unsubscribe');
-						        		$currentSubscribeButton.text('Отписаться');
-						        		$currentSubscribeButton.unbind("click");
-						        		$currentSubscribeButton.click(unsubscribeHandler);
-						        	} else {
-						        		alert('Ошибка отправки запроса');
-						        	}
-						        }).fail(function(jqXHR, textStatus, errorThrown) {
-									  
-									alert("Ошибка отправки запроса: " + jqXHR);
-								}).always(function() {
-								    
-									preloaderOff();
-							  	});
-			        		}
-				        	
-				        	//Обработчик клика по кнопке "Отписаться"
-				        	var unsubscribeHandler = function(ev){
-			        			
-			        			ev.preventDefault();
-			        			preloaderOn("nocover");
-								var deleteSubscriptionUrlString =
-						        	"/subscription?action=delete"
-						        			+"&author-id=" + $(this).data("authorId");
-								$.ajax({
-						            url: deleteSubscriptionUrlString,
-						            type: "POST",
-						            cache : false
-						        }).done(function(data) {
-						        	
-						        	if(data.result != null && data.result[0] == "deleted"){
-						        		
-						        		$currentSubscribeButton.attr('id', 'subscribe');
-						        		$currentSubscribeButton.text('Подписаться');
-						        		$currentSubscribeButton.unbind("click");
-						        		$currentSubscribeButton.click(subscribeHandler);
-						        	} else {
-						        		alert('Ошибка отправки запроса');
-						        	}
-						        }).fail(function(jqXHR, textStatus, errorThrown) {
-									  
-									alert("Ошибка отправки запроса: " + jqXHR);
-								}).always(function() {
-								    
-									preloaderOff();
-							  	});
-			        		}
-				        	
-				        	var $subscribeButton =
-				        		$('#offer-details .modal-content .card-content button#subscribe');
-				        	if($subscribeButton.length > 0){
-				        		
-				        		$currentSubscribeButton = $subscribeButton;
-				        		$subscribeButton.unbind("click");
-				        		$subscribeButton.click(subscribeHandler);
-				        	}
-				        	
-				        	var $unsubscribeButton =
-				        		$('#offer-details .modal-content .card-content button#unsubscribe');
-				        	if($unsubscribeButton.length > 0){
-				        		
-				        		$currentSubscribeButton = $unsubscribeButton;
-				        		$unsubscribeButton.unbind("click");
-				        		$unsubscribeButton.click(unsubscribeHandler);
-				        	}
-				        	
-				        	//Обработчик клика по ссылке "Присоединиться"
-				        	$('#offer-details .modal-content .card-action > a').unbind("click");
-							$('#offer-details .modal-content .card-action > a').click(function(ev){
-								
-								ev.preventDefault();
-								preloaderOn("nocover");
-								var urlString =
-						        	"/offer?action=join"
-						        			+"&id=" + data.result[0].id;
-								$.ajax({
-						            url: urlString,
-						            type: "POST",
-						            cache : false
-						        }).done(function(data) {
-						        	
-						        	if(data.result[0] == "sent"){
-						        		$('#offer-details .modal-content .card-action')
-						        			.html('<p>Запрос отправлен автору задачи на электронную почту. Если через некоторое время он не пришлет Вам ответное письмо - можете повторить отправку или связаться с ним напрямую по адресу, указанному в описании задачи</p>');
-						        	} else {
-						        		alert('Ошибка отправки запроса');
-						        	}
-						        }).fail(function(jqXHR, textStatus, errorThrown) {
-									  
-									alert("Ошибка отправки запроса: " + jqXHR);
-								}).always(function() {
-								    
-									preloaderOff();
-							  	});
-							});
-				        }).fail(function(jqXHR, textStatus, errorThrown) {
-							  
-							alert("Ошибка: " + jqXHR);
-						}).always(function() {
-						    
-							preloaderOff();
-					  	});;
+		    			//Вызов функции отображения окна детализации
+		    			//выбранного предложения
+		    			showOfferDetails(id);
 		    		});
+			
+			//Функция получения и показа детализации предложения,
+			//когда страница загружается синхронно с параметром - идентификатором предложения
+			var openDetailsByExternal = function(){
+				
+				//Если не происодит предыдущая попытка
+				console.log('authorized: ' + authorized + '; ' + 'localized: ' + localized + 'gettingOfferDetails: ' + gettingOfferDetails);
+				if(!gettingOfferDetails && authorized && localized){
+					
+					gettingOfferDetails = true;
+					//Заполняем модальное окно детализации
+	            	showOfferDetails(params);
+	                //Получаем объект модального окна детализации
+	            	var offerDetailsModal =
+	    		    	M.Modal.getInstance($('#offer-details'));
+	                //Отображаем окно
+	            	offerDetailsModal.open();
+				}
+			};
+			
+			//Если параметр в адресной строке задан
+            if (params != undefined) {
+            	//Пытаемся получить и отобразить детализацию предложения,
+            	//пока попытка не увенчается успехом
+            	
+            	externalOpenDetailsInterval =
+            		setInterval(openDetailsByExternal, 500);
+            	//localized = false;
+            	
+                /*try{
+                	openDetailsByExternal();
+                } catch (err){
+                	console.log('openDetailsByExternal error: ' + err);
+                	openDetailsByExternal();
+                }*/
+            }
 
 			setTimeout(preloaderOff, 500);
 		};

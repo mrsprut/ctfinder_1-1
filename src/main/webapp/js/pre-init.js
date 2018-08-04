@@ -1,4 +1,6 @@
 var GoogleAuth; // Google Auth object
+var authorized = false;
+var localized = false;
 
 var noItemsImage = '<img class="responsive-img" src="../img/flat-search-find.png">';
 

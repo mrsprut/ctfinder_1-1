@@ -576,6 +576,14 @@ public class OfferServlet extends HttpServlet {
 											//Send created message to all subscribers
 											Long authorId = userId;
 											//log.info("authorId " + authorId);
+											User authorUser = new User();
+											objectifyRun2(
+													authorId
+													, authorUser
+													, UserDAO::getUser
+													, out
+													, gson
+												);
 											
 											List<Subscription> subscriptions = new ArrayList<>();
 											
@@ -596,10 +604,10 @@ public class OfferServlet extends HttpServlet {
 											Mailer mailer = new Mailer();
 											String messageString =
 													"User "
-													+ authorId
-													+ " published new offer "
+													+ authorUser.getName()
+													+ " published new offer: '"
 													+ title
-													+ "(ID: "
+													+ "' (URL: https://creativetfinder.appspot.com/#find:"
 													+ offer.getId()
 													+ "). "
 													+ "Unsubscription link: https://creativetfinder.appspot.com/pages/static/unsubscription.html?author-id="
@@ -1696,9 +1704,9 @@ public class OfferServlet extends HttpServlet {
 									String messageString =
 											"User "
 											+ candidateUser.getName()
-											+ " wants to join your project "
+											+ " wants to join your project: '"
 											+ titleString
-											+ "(ID: "
+											+ "' (URL: https://creativetfinder.appspot.com/#find:"
 											+ o.getId()
 											+ ")"
 											+ ". Get in touch with him by email: "

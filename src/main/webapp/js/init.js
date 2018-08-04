@@ -92,12 +92,14 @@ var getCurrentPageName = function(){
 				alert("Ошибка: " + jqXHR);
 			}).always(function() {
 			    
+				localized = true;
 				preloaderOff();
 			});
 		}
 		
 		var getLanguages = function (){
 			
+			localized = false;
 			$.ajax({
 				type: 'POST',
 				url: '/language?action=get-all',
@@ -214,6 +216,8 @@ function onSignIn(googleUser) {
 	  $("#useremail").text(xhr.response.result[0].email);
 	  $("#userpicture").attr("src", xhr.response.result[0].pictureUrl);
 	  
+	  authorized = true;
+	  
 	  preloaderOff();
 	};
 	xhr.send('idtoken=' + id_token);
@@ -230,6 +234,7 @@ function signOut() {
     auth2.signOut().then(function () {
     	
     	//$(document.body).find("section#find, section#create").html("");
+    	authorized = false;
     	preloaderOff();
     	
     	/*var xhr = new XMLHttpRequest();
