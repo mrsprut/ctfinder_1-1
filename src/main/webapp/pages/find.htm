@@ -207,20 +207,15 @@
 </div>
 <script type="text/javascript">
 	
-	//TODO 1. complete settings: categories, filters
-	//TODO 2. complete details: collaborators_count, desired_start_date, desired_finish_date
-	//TODO 3. fix destroying of date fields in new offer form, fix dates comparing, fix card titles color
+	//TODO 1. complete details: collaborators_count, desired_start_date, desired_finish_date
+	//TODO 2. fix destroying of date fields in new offer form, fix card titles color
 	//+ refreash offers table after status changed, tooltips
 	//+ preloader off on external sign out was finished
-	//+ add validator "if city presents then country must present"
 	//+ prevent default form submit event (on keypress) 
 	//+ add more offer types
 	//+ delete button
 	//+ show only active offers in the grid
-	//+ unsubscribe refernce in mails
-	//+ flag if the page is already localized
-	//+ categories filter handler
-	//TODO 4. complete multylang v1
+	//TODO 3. complete multylang v1
 	
 	//TODO add. 1: create translations for own offers
 	//TODO add. 2: localized example images
@@ -728,14 +723,6 @@
 			    }
 			});
 			
-			//обработчик выбора одного из чекбоксов фильтра по категориям (типам предложений)
-			$('form#categories input[type=checkbox]').unbind("click");
-			$('form#categories input[type=checkbox]').click(function() {
-
-		    	resetInfinityScrollInfo();
-		    	doFilter();
-			});
-			
 			//обработчики изменений фильтра по текущему числу вакантных мест в предложении
 			$('form#filters input#c-count-input').unbind("change");
 			$('form#filters input#c-count-input').change(function() {
@@ -771,10 +758,27 @@
 			}
 			
 			$(document).unbind("change");
+			
 			$(document).on(
 		    		'change'
 		    		, '#find-container #calendarFrom, #find-container #calendarTo'
 		    		, onDateRangeChanged);
+			
+			//обработчик выбора одного из чекбоксов фильтра по категориям (типам предложений)
+			//$('form#categories input[type=checkbox]').unbind("change");
+			/*$('form#categories input[type=checkbox]').change(function() {
+				console.log("checkbox = " + $(this));
+		    	resetInfinityScrollInfo();
+		    	doFilter();
+			});*/
+			$(document).on(
+		    		'change'
+		    		, 'form#categories input[type=checkbox]'
+		    		, function(){
+		    			
+		    			resetInfinityScrollInfo();
+				    	doFilter();
+		    		});
 			
 			/* Grid infinity scroll */
 			
@@ -1028,7 +1032,7 @@
 			var openDetailsByExternal = function(){
 				
 				//Если не происодит предыдущая попытка
-				console.log('authorized: ' + authorized + '; ' + 'localized: ' + localized + 'gettingOfferDetails: ' + gettingOfferDetails);
+				//console.log('authorized: ' + authorized + '; ' + 'localized: ' + localized + 'gettingOfferDetails: ' + gettingOfferDetails);
 				if(!gettingOfferDetails && authorized && localized){
 					
 					gettingOfferDetails = true;

@@ -276,7 +276,6 @@
 					
 					//$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
 					//$('form#create-offer-form button').prop('disabled', false);
-					//console.log('setCustomValidity +');
 					isTypeValid = true;
 				}
 				
@@ -287,7 +286,13 @@
 				if(startDateInputVal != '' && finishDateInputVal != ''){
 
 					//... и конечная дата больше или равна стартовой
-					if(finishDateInputVal.localeCompare(startDateInputVal) >= 0){
+					//if(finishDateInputVal.localeCompare(startDateInputVal) >= 0){
+					/*console.log('formatDate(finishDateInputVal) = '
+							+ formatDate(finishDateInputVal)
+							+ '; formatDate(startDateInputVal)'
+							+ formatDate(startDateInputVal)
+						);*/
+					if(formatDate(finishDateInputVal) >= formatDate(startDateInputVal)){
 						
 						isDateRangeValid = true;
 					} else {
