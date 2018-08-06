@@ -1891,11 +1891,73 @@ public class OfferServlet extends HttpServlet {
 							}
 							case HttpReqParams.delete : {
 								
-								ArrayList<String> al = new ArrayList<>();
-								al.add(HttpRespWords.deleted);
-								RespData rd = new RespData(al);
-								String successJson = gson.toJson(rd);
-								out.print(successJson);
+								try {
+									//Get offer's id
+									String offerId =
+											req.getParameter(HttpReqParams.id);
+									Offer o = new Offer();
+									//Получение объекта из БД
+									objectifyRun2(
+											offerId
+											, o
+											, OfferDAO::getOffer
+											, out
+											, gson
+										);
+									
+									//Получаем из БД список объектов заголовков
+									List<Title> titles = new ArrayList<>();
+									objectifyRun2(
+										o.getTitle_key()
+										, titles
+										, TitleDAO::getTitlesByKey
+										, out
+										, gson
+									);
+									//Удаление всех объектов заголовков из БД
+									for (Title title : titles) {
+										objectifyRun(
+												title
+												, TitleDAO::delete
+												, out
+												, gson
+											);
+									}
+									//Получаем из БД список объектов Description
+									List<Description> descriptions = new ArrayList<>();
+									objectifyRun2(
+										o.getDescription_key()
+										, descriptions
+										, DescriptionDAO::getDescriptionsByKey
+										, out
+										, gson
+									);
+									//Удаление всех объектов описаний предложения из БД
+									for (Description description : descriptions) {
+										objectifyRun(
+												description
+												, DescriptionDAO::delete
+												, out
+												, gson
+											);
+									}
+									//Удаление объекта предложения из БД
+									objectifyRun(
+											o
+											, OfferDAO::delete
+											, out
+											, gson
+										);
+									
+									ArrayList<String> al = new ArrayList<>();
+									al.add(HttpRespWords.deleted);
+									RespData rd = new RespData(al);
+									String successJson = gson.toJson(rd);
+									out.print(successJson);
+								} catch (Exception ex) {
+									
+									ObjectifyQueryLauncher.printException(ex, out, gson);
+								}
 								break;
 							}
 						}

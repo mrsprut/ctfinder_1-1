@@ -120,4 +120,9 @@ public class TitleDAO {
 
 		ofy().save().entity(_title).now();
 	}
+	
+	public static void delete(Title _title) {
+
+		ofy().delete().entity(_title).now();
+	}
 }

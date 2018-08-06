@@ -7,12 +7,14 @@
 	<link type="text/css" rel="stylesheet" href="/css/materialize.css" media="screen,projection" />
 </head>
 <body>
-	<div class="container">
-		<div id="content" class="valign-wrapper">
-			<div>
-				<h1 class="center-align">CTFinder - unsubscription</h1>
+	<div id="content" class="container">
+		<div class="row">
+			<div  class="col s12 valign-wrapper">
+				<h2 class="center-align">CTFinder - unsubscription</h2>
 			</div>
-			<div>
+		</div>
+		<div class="row">
+			<div  class="col s12 valign-wrapper">
 				<button id="unsubscribe" class="waves-effect waves-light btn center-align" type="button">Unsubscribe</button>
 			</div>
 		</div>
@@ -43,7 +45,7 @@
 	        	
 	        	if(data.result != null && data.result[0] == "deleted"){
 	        		
-	        		$('#content').html('<h1 class="center-align">CTFinder - unsubscription is completed</h1>');
+	        		$('#content').html('<h2 class="center-align">CTFinder - unsubscription is completed</h2>');
 	        	} else {
 	        		//alert('Error');
 	        	}

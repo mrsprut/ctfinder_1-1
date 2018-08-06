@@ -2,6 +2,10 @@ package org.tyaa.ctfinder.controller;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.tyaa.ctfinder.common.CopyHelper;
 import org.tyaa.ctfinder.entity.Description;
 import org.tyaa.ctfinder.entity.Title;
 
@@ -42,6 +46,23 @@ public class DescriptionDAO {
 		}
 	}
 	
+	public static void getDescriptionsByKey(
+			String _key
+			, List<Description> _descriptions
+			) {
+		
+		List<Description> descriptions =
+				ofy().load()
+				.type(Description.class)
+				.filter("key", _key)
+				.list();
+		
+		if(descriptions != null) {
+			
+			_descriptions.addAll(descriptions);
+		}
+	}
+	
 	public static void getDescriptionByKeyAndLang(
 			String _key
 			, Long _langId
@@ -68,5 +89,10 @@ public class DescriptionDAO {
 	public static void createDescriprion(Description _description) {
 
 		ofy().save().entity(_description).now();
+	}
+	
+	public static void delete(Description _description) {
+
+		ofy().delete().entity(_description).now();
 	}
 }

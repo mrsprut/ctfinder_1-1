@@ -647,7 +647,7 @@
 				    }
 				}
 			});
-		    
+		    //Обработчик изменений дат в фильтре списка предложений
 		    $(document).on(
 		    		'change'
 		    		, 'div#offers-date-filter input#calendarFrom, div#offers-date-filter input#calendarTo'
@@ -943,6 +943,8 @@
 								        		
 								        		$('#create-container .modal-content')
 								        			.html("Состояние предложения обновлено");
+								        		resetInfinityScrollInfo();
+								        		populateOfferTable();
 								        	} else {
 								        		
 								        		$('#create-container .modal-content')
@@ -1049,6 +1051,43 @@
 				  	});*/
 		        }
 			}
+		  	
+		  	//Функция удаления предложения
+		    function deleteOffer(){
+		
+		        if ($('.selectedTableRow').find('th').length === 0) {
+		
+		            alert('Сначала выберите одну строку в таблице');
+		        } else {
+		        	
+		        	var id = $('.selectedTableRow').find('th').text();
+	    			
+	    			var urlString =
+			        	"/offer?action=delete"
+			        			+"&id=" + id;
+	    			
+	    			$.ajax({
+			            url: urlString,
+			            type: "POST",
+			            cache : false
+			        }).done(function(data) {
+			        	
+			        	if(data.result != null && data.result[0] == 'deleted'){
+			        		
+			        		resetInfinityScrollInfo();
+			        		populateOfferTable();
+			        	} else {
+			        		alert("Ошибка");
+			        	}
+			        }).fail(function(jqXHR, textStatus, errorThrown) {
+						  
+						alert("Ошибка: " + jqXHR);
+					}).always(function() {
+					    
+						preloaderOff();
+				  	});
+		        }
+			}
 			
 		  	//Обработчик кнопки Выполнен
 		  	$('#editOffer').unbind("click");
@@ -1066,6 +1105,15 @@
 		        ev.preventDefault();
 
 		        editOfferState();
+			});
+		    
+		  	//Обработчик кнопки Delete
+		  	$('#deleteOffer').unbind("click");
+		    $('#deleteOffer').click(function(ev){
+
+		        ev.preventDefault();
+
+		        deleteOffer();
 			});
 		    
 		    //Обработчик кнопки показа изображения одного из предложений из таблицы

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.tyaa.ctfinder.entity.Description;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Offer;
 import org.tyaa.ctfinder.entity.Offer_type;
@@ -290,5 +291,10 @@ public class OfferDAO {
 	public static void createOffer(Offer _offer) {
 
 		ofy().save().entity(_offer).now();
+	}
+	
+	public static void delete(Offer _offer) {
+
+		ofy().delete().entity(_offer).now();
 	}
 }
