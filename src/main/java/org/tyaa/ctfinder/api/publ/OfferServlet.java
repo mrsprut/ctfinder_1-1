@@ -1371,6 +1371,31 @@ public class OfferServlet extends HttpServlet {
 											} else {
 												filteredOffers.addAll(offers);
 											}
+											//Удаляем из выборки предложения, состояние которых равно
+											//"полностью выполнено" или "отменено"
+											State fulfilledState = new State();
+											objectifyRun2(
+													"fulfilled_state_static_title"
+													, fulfilledState
+													, StateDAO::getStateByTitleKey
+													, out
+													, gson
+												);
+											Long fulfilledStateId = fulfilledState.getId();
+											State cancelledState = new State();
+											objectifyRun2(
+													"cancelled_state_static_title"
+													, cancelledState
+													, StateDAO::getStateByTitleKey
+													, out
+													, gson
+												);
+											Long cancelledStateId = cancelledState.getId();
+											filteredOffers.removeIf((o) -> {
+												
+												return o.getState_id().equals(fulfilledStateId)
+														|| o.getState_id().equals(cancelledStateId);
+											});
 											//Если в параметрах запроса от клиета присутствует список категорий,
 											//то после получения из БД диапазона частично отфильтрованных предложений
 											//отбираем только те, которые содержат идентификатор любой из категорий списка
