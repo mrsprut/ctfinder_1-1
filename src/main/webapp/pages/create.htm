@@ -218,6 +218,14 @@
 			//Блокируем кнопк, пока не будет
 			$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
 			
+			//$('form#create-offer-form').submit(function (ev){ ev.preventDefault(); });
+			$(window).keydown(function(event){
+			    if(event.keyCode == 13) {
+			      event.preventDefault();
+			      return false;
+			    }
+		  	});
+			
 			$.validator.setDefaults(
 					{
 						ignore: [],
@@ -590,6 +598,7 @@
 			            $("#offer-table-container td:contains('in_progress')").parent().addClass("BlueRow");
 			            $("#offer-table-container td:contains('fulfilled')").parent().addClass("GreenRow");
 			            $("#offer-table-container td:contains('suspended')").parent().addClass("RedRow");
+			            $("#offer-table-container td:contains('cancelled')").parent().addClass("GrayRow");
 			            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
 			            $("#changeOfferState, #editOffer, #deleteOffer").attr('disabled', '');
 			            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
