@@ -66,8 +66,8 @@
 										 	<div class="row">
 												<div class="input-field col s12">
 													<i class="material-icons prefix">place</i>
-													<input type="text" id="country-input" class="autocomplete" autocomplete="off" placeholder="country">
-													<label for="country-input">Страна</label>
+													<input type="text" id="country-input" class="autocomplete" autocomplete="off" placeholder="Country">
+													<label for="country-input">Country</label>
 												</div>
 											</div>
 										</div>
@@ -77,8 +77,8 @@
 										 	<div class="row">
 												<div class="input-field col s12">
 													<i class="material-icons prefix">place</i>
-													<input type="text" id="city-input" class="autocomplete" autocomplete="off" placeholder="city">
-													<label for="city-input">Город</label>
+													<input type="text" id="city-input" class="autocomplete" autocomplete="off" placeholder="City">
+													<label for="city-input">City</label>
 												</div>
 											</div>
 										</div>
@@ -88,7 +88,7 @@
 										 	<div class="row">
 												<div class="input-field col s6">
 													<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
-													<label for="c-count-input">Вакантных мест</label>
+													<label for="c-count-input">Vacant places</label>
 												</div>
 												<div class="input-field col s6">
 													<p>
@@ -240,7 +240,15 @@
 			var dict = dictionaryResponseToArray(responseText.result);
 			
 			$('#find_title_categories').html(dict.find_title_categories);
+			
 			$('#find_title_filters').html(dict.find_title_filters);
+			$('#country-input').attr('placeholder', dict.find_country_input);
+			$('label[for=country-input]').html(dict.find_country_input);
+			$('#city-input').attr('placeholder', dict.find_city_input);
+			$('label[for=city-input]').html(dict.find_city_input);
+			$('label[for=c-count-input]').html(dict.find_c_count_input);
+			$('#c-count-on-off ~ span').html(dict.find_c_count_on_off);
+			
 			$('#find_title_order').html(dict.find_title_order);
 			
 		}).fail(function(jqXHR, textStatus, errorThrown) {
