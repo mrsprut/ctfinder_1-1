@@ -6,7 +6,7 @@
 					<ul class="collapsible">
 						<li>
 							<div class="collapsible-header">
-								<i class="material-icons">list</i>Категории
+								<i class="material-icons">list</i><span id="find_title_categories">Categories</span>
 							</div>
 							<div class="collapsible-body">
 								<form id="categories" action="#">
@@ -57,7 +57,7 @@
 						</li>
 						<li>
 							<div class="collapsible-header">
-								<i class="material-icons">filter_list</i>Фильтр
+								<i class="material-icons">filter_list</i><span id="find_title_filters">Filters</span>
 							</div>
 							<div class="collapsible-body">
 								<form id="filters" action="#">
@@ -106,7 +106,7 @@
 						</li>
 						<li>
 							<div class="collapsible-header">
-								<i class="material-icons">sort</i>Сортировка
+								<i class="material-icons">sort</i><span id="find_title_order">Order</span>
 							</div>
 							<div class="collapsible-body">
 								<form  id="order-rules" action="#">
@@ -224,11 +224,38 @@
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
 	$('#find-container .modal').modal();
-	/*$('#find-container .modal').modal(
-		onOpenStart: function() { 
+
+	var localizeFind = function (){
+		
+		pageLocalization["find"] = true;
+		
+		$.ajax({
+			type: 'POST',
+			url: '/language?action=dictionary&page=find',
+			dataType: 'json',
+			cache: false
+		}).done(function(responseText, textStatus, jqXHR) {
 			
-		}
-	);*/
+			//Получаем словарь
+			var dict = dictionaryResponseToArray(responseText.result);
+			
+			$('#find_title_categories').html(dict.find_title_categories);
+			$('#find_title_filters').html(dict.find_title_filters);
+			$('#find_title_order').html(dict.find_title_order);
+			
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			  
+			alert("Ошибка: " + jqXHR);
+		}).always(function() {
+		    
+			//preloaderOff();
+			pageLocalization["find"] = false;
+		});
+	}
+	
+	pageLocaleHandlers["find"] = localizeFind;
+	localizeFind();
+	
 	//Определяем текущую дату
 	var nowDate = new Date();
 	//Устанавливаем в элементы ввода Дата (Календарь) текущую дату,
@@ -241,22 +268,6 @@
     	, 'setDefaultDate':true
     	, 'autoClose':true
 	});
-	
-	/*$('input#country-input').autocomplete({
-      data: {
-        "USA": null,
-        "Россия": null,
-        "Украина": null
-      },
-    });*/
-
-    /*$('input#city-input').autocomplete({
-      data: {
-        "Киев": null,
-        "Львов": null,
-        "Мариуполь": null
-      },
-    });*/
 	
 	app.handler(function(params) {
 
