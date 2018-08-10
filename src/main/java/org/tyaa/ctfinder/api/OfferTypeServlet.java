@@ -19,11 +19,14 @@ import javax.servlet.http.HttpSession;
 import org.tyaa.ctfinder.common.ErrorStrings;
 import org.tyaa.ctfinder.common.HttpReqParams;
 import org.tyaa.ctfinder.common.HttpRespWords;
+import org.tyaa.ctfinder.common.LocalizeHelper;
 import org.tyaa.ctfinder.common.SessionAttributes;
 import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
+import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Offer_type;
 import org.tyaa.ctfinder.entity.Static_description;
+import org.tyaa.ctfinder.entity.Static_title;
 import org.tyaa.ctfinder.model.OfferTypeItem;
 import org.tyaa.ctfinder.model.RespData;
 
@@ -103,6 +106,13 @@ public class OfferTypeServlet extends HttpServlet {
 							}
 							case HttpReqParams.getAll : {
 								
+								//Получаем из сессии значение текущего языка
+						    	//(по умолчанию выдает английский язык)
+						    	Long currentLanguageId =
+										(Long)session.getAttribute(
+											SessionAttributes.languageId
+										);
+								
 								List<Offer_type> offerTypeList = new ArrayList<>();
 								objectifyRun(
 										offerTypeList
@@ -115,13 +125,20 @@ public class OfferTypeServlet extends HttpServlet {
 									offerTypeList.stream()
 										.map(
 											ot -> {
-												Static_description st = new Static_description();
-												objectifyRun2(
+												Static_description st =
+													LocalizeHelper.getLocalizedSDescriptionObject(
+														((Offer_type)ot).getDescription_key()
+														, currentLanguageId
+														, out
+														, gson
+													);
+												
+												/*objectifyRun2(
 														((Offer_type)ot).getDescription_key()
 														, st
 														, Static_descriprionDAO::getStaticDescriptionByKey
 														, out
-														, gson);
+														, gson);*/
 												return new OfferTypeItem(
 														((Offer_type)ot).getId()
 														, st.getContent()

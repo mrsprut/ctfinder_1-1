@@ -77,18 +77,6 @@ function init() {
 	});
 }
 
-/*document.getElementById("g-signin2")
-	.addEventListener(
-			"click"
-			, function(){
-				
-				preloaderOn();
-		});*/
-/*$('div#g-signin2').click(function(){
-	
-	preloaderOn();
-});*/
-
 function checkSigninStatus(isSignedIn) {
 
 	preloaderOn();
@@ -125,7 +113,7 @@ function checkSigninStatus(isSignedIn) {
 			//GoogleAuth.disconnect();
 		};
 		xhr.send(null);
-
+		//preloaderOff();
 		//TODO полное отсоединение от профиля
 	}
 	//preloaderOff();

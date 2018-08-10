@@ -227,9 +227,10 @@ $('#signout-li').click(signOut);
 
 function signOut() {
 	
-	preloaderOn();
+	//preloaderOn();
 	$(document.body).find("section#find, section#create").html("");
     var auth2 = gapi.auth2.getAuthInstance();
+    //preloaderOff();
     
     auth2.signOut().then(function () {
     	

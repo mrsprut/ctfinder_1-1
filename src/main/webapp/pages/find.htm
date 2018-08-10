@@ -112,38 +112,36 @@
 								<form  id="order-rules" action="#">
 									<p>
 										<label> <input id="sort-created-desc" name="sort-group" type="radio" checked="checked" />
-											<span>сначала новые по дате создания</span>
+											<span>newest by creation date</span>
 										</label>
 									</p>
 									<p>
 										<label> <input  id="sort-created-asc" name="sort-group" type="radio" />
-											<span>сначала старые по дате создания</span>
+											<span>oldest by creation date</span>
 										</label>
 									</p>
 									<p>
-										<label> <input id="sort-urgency-asc" name="sort-group" type="radio" /> <span>от
-												краткосрочных к длительным</span>
+										<label> <input id="sort-urgency-asc" name="sort-group" type="radio" /> <span>from short-term to long-term</span>
 										</label>
 									</p>
 									<p>
-										<label> <input id="sort-urgency-desc" name="sort-group" type="radio" /> <span>от
-												длительных к краткосрочным</span>
+										<label> <input id="sort-urgency-desc" name="sort-group" type="radio" /> <span>from long-term to short-term</span>
 										</label>
 									</p>
 									<p>
-										<label> <input id="sort-start-asc" name="sort-group" type="radio" /> <span>сначала ближайшие по дате старта</span>
+										<label> <input id="sort-start-asc" name="sort-group" type="radio" /> <span>closest starting date first</span>
 										</label>
 									</p>
 									<p>
-										<label> <input id="sort-start-desc" name="sort-group" type="radio" /> <span>сначала позднейшие по дате старта</span>
+										<label> <input id="sort-start-desc" name="sort-group" type="radio" /> <span>later by start date</span>
 										</label>
 									</p>
 									<p>
-										<label> <input id="sort-finish-asc" name="sort-group" type="radio" /> <span>сначала ближайшие по дате окончания</span>
+										<label> <input id="sort-finish-asc" name="sort-group" type="radio" /> <span>closest end date first</span>
 										</label>
 									</p>
 									<p>
-										<label> <input id="sort-finish-desc" name="sort-group" type="radio" /> <span>сначала позднейшие по дате окончания</span>
+										<label> <input id="sort-finish-desc" name="sort-group" type="radio" /> <span>later by end date</span>
 										</label>
 									</p>
 								</form>
@@ -160,7 +158,7 @@
 				<form id="search-form" class="col s12">
 					<div class="input-field">
 						<i class="material-icons prefix">search</i>
-						<input id="search" class="autocomplete" autocomplete="off" type="text" placeholder="поиск по заголовкам" required>
+						<input id="search" class="autocomplete" autocomplete="off" type="text" placeholder="search by title" required>
 						<!-- <label class="label-icon" for="search">поиск по заголовкам</label> -->
 					</div>
 				</form>
@@ -168,13 +166,13 @@
 			<div class="row">
 				<div class="col s6">
 					<form>
-						<label for="calendarFrom"> Начиная с: </label>
+						<label for="calendarFrom"> From: </label>
 						<input id="calendarFrom" name="calendarFrom" type="text" class="datepicker"> </input>
 					</form>
 				</div>
 				<div class="col s6">
 					<form>
-						<label for="calendarTo"> по: </label>
+						<label for="calendarTo"> to: </label>
 						<input id="calendarTo" name="calendarTo" type="text" class="datepicker"> </input>
 					</form>
 				</div>
@@ -224,6 +222,38 @@
 	$('.sidenav').sidenav();
 	$('.collapsible').collapsible();
 	$('#find-container .modal').modal();
+	
+	var populateCategories = function(){
+		
+		$.ajax({
+			type: 'POST',
+			url: '/offertype?action=get-all',
+			dataType: 'json',
+			cache: false
+		}).done(function(responseText, textStatus, jqXHR) {
+			  
+			//console.log(responseText);
+			//Готовим шаблон списка при помощи библиотеки Hogan
+            var template = Hogan.compile(
+                '{{#result}}'
+                +'<p>'
+					+'<label for="{{id}}">'
+						+'<input id="{{id}}" type="checkbox" /><span>{{description}}</span>'
+					+'</label>'
+				+'</p>'
+				+'{{/result}}'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+			$('#categories').html(template.render(responseText));
+			
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			  
+			alert("Ошибка: " + jqXHR);
+		}).always(function() {
+		    
+			preloaderOff();
+	  	});
+	};
 
 	var localizeFind = function (){
 		
@@ -240,6 +270,7 @@
 			var dict = dictionaryResponseToArray(responseText.result);
 			
 			$('#find_title_categories').html(dict.find_title_categories);
+			populateCategories();
 			
 			$('#find_title_filters').html(dict.find_title_filters);
 			$('#country-input').attr('placeholder', dict.find_country_input);
@@ -250,6 +281,18 @@
 			$('#c-count-on-off ~ span').html(dict.find_c_count_on_off);
 			
 			$('#find_title_order').html(dict.find_title_order);
+			$('#sort-created-desc ~ span').html(dict.find_sort_created_desc);
+			$('#sort-created-asc ~ span').html(dict.find_sort_created_asc);
+			$('#sort-urgency-desc ~ span').html(dict.find_sort_urgency_desc);
+			$('#sort-urgency-asc ~ span').html(dict.find_sort_urgency_asc);
+			$('#sort-start-desc ~ span').html(dict.find_sort_start_desc);
+			$('#sort-start-asc ~ span').html(dict.find_sort_start_asc);
+			$('#sort-finish-desc ~ span').html(dict.find_sort_finish_desc);
+			$('#sort-finish-asc ~ span').html(dict.find_sort_finish_asc);
+			
+			$('#search').attr('placeholder', dict.find_search_placeholder);
+			$('label[for=calendarFrom]').html(dict.find_date_from);
+			$('label[for=calendarTo]').html(dict.find_date_to);
 			
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			  
@@ -347,7 +390,8 @@
 			
 			//Получаем с сервера все типы событий
 			//и заполняем ими раздел "категрии" в боковой панели
-			$.ajax({
+			//populateCategories();
+			/*$.ajax({
 				type: 'POST',
 				url: '/offertype?action=get-all',
 				dataType: 'json',
@@ -374,7 +418,7 @@
 			}).always(function() {
 			    
 				preloaderOff();
-		  	});
+		  	});*/
 			
 			/* Filter: country n city autocomplete */
 			
