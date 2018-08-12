@@ -1,7 +1,7 @@
 <div id="create-container" class="container">
 	<div class="row">
 		<div class="col s12 m3 l3 xl3">
-			<h5>Создать</h5>
+			<h5 id="form-title">Create</h5>
 			<div class="card">
 				<div class="card-content">
 					<form id="create-offer-form">
@@ -10,32 +10,32 @@
 		                    <label for="title">title:</label>
 	                    </div>
 	                    <div class="input-field">
-		                    <label for="content">content:</label>
+		                    <label for="content">description:</label>
 		                    <textarea name="content" id="content" class="materialize-textarea"></textarea>
 	                    </div>
 	                    <!-- Сюда при помощи jquery помещается шаблон, заполненный offer types -->
                         <div id="offer-type-select" class="input-field">
                         	<select id="offertypeselector" name="offertypeselector" required="required" class="validate">
-			                	<option disabled selected="selected" value="">Тип задания</option>
+			                	<option disabled selected="selected" value="">Category</option>
 			                </select>
 						</div>
 						<br>
 						<div class="input-field">
 							<input type="text" id="country-input" class="autocomplete" autocomplete="off">
-							<label for="country-input">Страна</label>
+							<label for="country-input">Country</label>
 						</div>
 						<div class="input-field">
 							<input type="text" id="city-input" class="autocomplete" autocomplete="off">
-							<label for="city-input">Город</label>
+							<label for="city-input">City</label>
 						</div>
 						<div class="input-field">
 							<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
-							<label for="c-count-input">Вакантных мест</label>
+							<label for="c-count-input">Vacant places</label>
 						</div>
 						<div class="row">
 							<div class="input-field col s9">
 	                      		<input type="text" id="start-date-input" class="datepicker">
-	                      		<label for="start-date-input">Желаемая дата старта</label>
+	                      		<label for="start-date-input">Desired start date</label>
                       		</div>
                       		<div class="input-field col s3">
                       			<input type="button" class="waves-effect waves-light btn" id="remove-start-date" value="X">
@@ -44,14 +44,14 @@
 						<div class="row">
 							<div class="input-field col s9">
 	                      		<input type="text" id="finish-date-input" class="datepicker">
-	                      		<label for="finish-date-input">Желаемая дата окончания</label>
+	                      		<label for="finish-date-input">Desired end date</label>
 	                   		</div>
 	                   		<div class="input-field col s3">
 						        <input type="button" class="waves-effect waves-light btn" id="remove-finish-date" value="X">
 		                    </div>
 						</div>
 						<div class="file-field input-field">
-							<label for="image-input">Изображение</label>
+							<label for="image-input">Image</label>
 							<div class="btn">
 							  <span><i class="material-icons right">image</i></span>
 							  <input type="file" id="image-input">
@@ -60,27 +60,27 @@
 							  <input class="file-path validate" type="text">
 							</div>
 					    </div>
-	                    <button id="submit-new-order" class="btn waves-effect waves-light" type="submit" name="action">Submit
+	                    <button id="submit-new-offer" class="btn waves-effect waves-light" type="submit" name="action">Submit
 	                        <i class="material-icons right">send</i>
 	                    </button>
-	                    <button id="cancell-new-order" class="btn waves-effect waves-light" type="submit" name="cancell">Cancell</button>
+	                    <button id="cancell-new-offer" class="btn waves-effect waves-light" type="submit" name="cancell">Cancell</button>
 					</form>
 				</div>
 			</div>
 		</div>
 
 		<div class="col s12 m9 l9 xl9">
-			<h5 id="offers-title">Предложения</h5>
+			<h5 id="offers-title">Offers</h5>
 			<div class="row" id="offers-date-filter">
 				<div class="col s6">
 					<form>
-						<label for="calendarFrom"> Начиная с: </label>
+						<label for="calendarFrom"> From: </label>
 						<input id="calendarFrom" name="calendarFrom" type="text" class="datepicker"> </input>
 					</form>
 				</div>
 				<div class="col s6">
 					<form>
-						<label for="calendarTo"> по: </label>
+						<label for="calendarTo"> to: </label>
 						<input id="calendarTo" name="calendarTo" type="text" class="datepicker"> </input>
 					</form>
 				</div>
@@ -99,11 +99,11 @@
 							<div class="card-content">
 								<form>
 									<button id="editOffer" class="waves-effect waves-light btn"
-										type="button">Изменить</button>
+										type="button">Edit</button>
 									<button id="deleteOffer" class="waves-effect waves-light btn"
-										type="button">Удаление</button>
+										type="button">Delete</button>
 									<button id="changeOfferState" data-target="offer-create-modal" class="modal-trigger waves-effect waves-light btn"
-										type="button">Состояние</button>
+										type="button">State</button>
 								</form>
 							</div>
 						</div>
@@ -120,32 +120,75 @@
 			<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
 		</div>
 	</div>
-	<!-- <div id="offer-state" class="modal">
-		<div class="modal-content">
-		    
-		</div>
-		<div class="modal-footer">
-			<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
-		</div>
-	</div> -->
 </div>
 <script type="text/javascript">
 		
 	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('#create-container .modal').modal();
+	
+	var localizeCreate = function (){
+		
+		pageLocalization["create"] = true;
+		
+		$.ajax({
+			type: 'POST',
+			url: '/language?action=dictionary&page=create',
+			dataType: 'json',
+			cache: false
+		}).done(function(responseText, textStatus, jqXHR) {
+			
+			//Получаем словарь
+			var dict = dictionaryResponseToArray(responseText.result);
+			
+			$('#form-title').html(dict.create_form_title);
+			
+			$('label[for=title]').html(dict.create_input_title);
+			$('label[for=content]').html(dict.create_input_description);
+			$('#offertypeselector option').first().html(dict.create_select_type);
+			$('label[for=country-input]').html(dict.create_input_country);
+			$('label[for=city-input]').html(dict.create_input_city);
+			$('label[for=c-count-input]').html(dict.create_input_collaborators);
+			$('label[for=start-date-input]').html(dict.create_input_desired_start);
+			$('label[for=finish-date-input]').html(dict.create_input_desired_end);
+			$('label[for=image-input]').html(dict.create_input_image);
+			
+			$('#submit-new-offer')
+				.contents()
+			    .filter(function() {
+		        	return this.nodeType === 3;
+			      })
+			      .first()
+		      	.replaceWith(dict.create_submit_button);
+			$('#cancell-new-offer').html(dict.create_cancell_button);
+			
+			
+			$('#offers-title').html(dict.create_table_title);
+			
+			$('label[for=calendarFrom]').html(dict.create_date_from);
+			$('label[for=calendarTo]').html(dict.create_date_to);
+			
+			$('#editOffer').html(dict.create_edit_button);
+			$('#deleteOffer').html(dict.create_delete_button);
+			$('#changeOfferState').html(dict.create_state_button);
+			
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			  
+			alert("Ошибка: " + jqXHR);
+		}).always(function() {
+		    
+			pageLocalization["create"] = false;
+		});
+	}
+	
+	pageLocaleHandlers["create"] = localizeCreate;
+	localizeCreate();
+	
 	//Устанавливаем в элемент ввода Дата (Календарь) текущую дату,
     //вызывая на ней предварительно нашу корректирующую функцию
 	$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
 		.val(new Date().toDateInputValue());
-	
 	//Задаем календарю окно допустимых дат - от текущей включительно -> infinity
     var minDate = new Date();
-    /*$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
-	    .attr({
-	       "min" : minDate.toDateInputValue(),
-		});*/
-    
-    //Date range filter
     var nowDate = new Date();
     var lastYearDate = new Date();
     lastYearDate.setDate(lastYearDate.getDate() - 365);
@@ -183,7 +226,7 @@
     });
     
   	//Блокируем кнопк, пока не будет
-    $('form#create-offer-form #submit-new-order').prop('disabled', 'disabled');
+    $('form#create-offer-form #submit-new-offer').prop('disabled', 'disabled');
 
 	app.handler(function() {
 
@@ -216,9 +259,10 @@
 			}
 			
 			//Блокируем кнопк, пока не будет
-			$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+			$("form#create-offer-form #submit-new-offer").attr('disabled', 'disabled');
 			
-			//$('form#create-offer-form').submit(function (ev){ ev.preventDefault(); });
+			//Блокируем обработку нажатия клавиши Ввод,
+			//чтобы не отправлялась форма
 			$(window).keydown(function(event){
 			    if(event.keyCode == 13) {
 			      event.preventDefault();
@@ -267,23 +311,15 @@
 				
 				if ($('form#create-offer-form').valid()) {
 		        	
-		            //$('form#create-offer-form button').prop('disabled', false);
 					isTitleContentValid = true;
 		        } else {
 		        	
-		            //$('form#create-offer-form button').prop('disabled', 'disabled');
 		        }
 				
 				if($('form#create-offer-form #offer-type-select select option:selected').val() == ""){
 					
-					//$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('Тип задания не выбран');
-					//$('form#create-offer-form button').prop('disabled', 'disabled');
-					//console.log('setCustomValidity -');
-					
 				} else {
 					
-					//$('form#create-offer-form #offer-type-select select')[0].setCustomValidity('');
-					//$('form#create-offer-form button').prop('disabled', false);
 					isTypeValid = true;
 				}
 				
@@ -294,12 +330,6 @@
 				if(startDateInputVal != '' && finishDateInputVal != ''){
 
 					//... и конечная дата больше или равна стартовой
-					//if(finishDateInputVal.localeCompare(startDateInputVal) >= 0){
-					/*console.log('formatDate(finishDateInputVal) = '
-							+ formatDate(finishDateInputVal)
-							+ '; formatDate(startDateInputVal)'
-							+ formatDate(startDateInputVal)
-						);*/
 					if(formatDate(finishDateInputVal) >= formatDate(startDateInputVal)){
 						
 						isDateRangeValid = true;
@@ -326,10 +356,10 @@
 				
 				if(isTitleContentValid && isTypeValid && isDateRangeValid && isCountryCityValid){
 					
-					$('form#create-offer-form #submit-new-order').prop('disabled', false);
+					$('form#create-offer-form #submit-new-offer').prop('disabled', false);
 				} else {
 					
-					$('form#create-offer-form #submit-new-order').prop('disabled', 'disabled');
+					$('form#create-offer-form #submit-new-offer').prop('disabled', 'disabled');
 				}
 			}
 			//Запуск валидации формы при изменении содержимого любого из полей ввода
@@ -710,9 +740,9 @@
 				});
 			}
 			
-			$('form#create-offer-form #submit-new-order').unbind("click");
+			$('form#create-offer-form #submit-new-offer').unbind("click");
 			//Кнопка запроса на создание или обновление предложения
-			$('form#create-offer-form #submit-new-order').click(function(ev){
+			$('form#create-offer-form #submit-new-offer').click(function(ev){
 				
 				ev.preventDefault();
 				//console.log($('form#create-offer-form c-count-input').val());
@@ -787,15 +817,15 @@
 				resetNewOrderForm();
 				
 				isFormValid();
-				$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+				$("form#create-offer-form #submit-new-offer").attr('disabled', 'disabled');
 				
 				//console.log($('form#create-offer-form textarea#content'));
 				//console.log($('form#create-offer-form textarea#content').html());
 			});
 			
-			$('form#create-offer-form #cancell-new-order').unbind("click");
+			$('form#create-offer-form #cancell-new-offer').unbind("click");
 			//Кнопка отмены редактирования предложения
-			$('form#create-offer-form #cancell-new-order').click(function(ev){
+			$('form#create-offer-form #cancell-new-offer').click(function(ev){
 				
 				ev.preventDefault();
 				
@@ -806,7 +836,7 @@
 				selectedOfferId = 0;
 				
 				isFormValid();
-				$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+				$("form#create-offer-form #submit-new-offer").attr('disabled', 'disabled');
 			});
 			
 			/* Offer management buttons */
@@ -838,7 +868,7 @@
 				        	resetNewOrderForm();
 				        	$('form#create-offer-form input#c-count-input').attr('min', 0);
 				        	isFormValid();
-				        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
+				        	$("form#create-offer-form #submit-new-offer").attr('disabled', 'disabled');
 				        	
 				        	selectedOfferId = id;
 				        	
@@ -1003,61 +1033,6 @@
 					    
 						preloaderOff();
 				  	});
-		        	/*var id = $('.selectedTableRow').find('th').text();
-	    			
-	    			var urlString =
-			        	"/offer?action=get"
-			        			+"&id=" + id
-			        			+"&projection=table-row-edit";
-	    			
-	    			$.ajax({
-			            url: urlString,
-			            type: "POST",
-			            cache : false
-			        }).done(function(data) {
-			        	
-			        	if(data.result != null && data.result.length > 0){
-				        	populateOfferTypesSelect();
-				        	resetNewOrderForm();
-				        	isFormValid();
-				        	$("form#create-offer-form #submit-new-order").attr('disabled', 'disabled');
-				        	
-				        	selectedOfferId = id;
-				        	
-				        	$('form#create-offer-form input#title')
-				        		.val(data.result[0].title);
-							$('form#create-offer-form textarea#content')
-								.val(data.result[0].content);
-							
-							var country =
-								data.result[0].country != "-"
-									? data.result[0].country
-									: "";
-							var city =
-								data.result[0].city != "-"
-									? data.result[0].city
-									: "";
-							var collaboratorsCount =
-								data.result[0].collaborators_count != "-1"
-									? data.result[0].collaborators_count
-									: "";
-							var startDate = data.result[0].desired_start_date;
-							var finishDate = data.result[0].desired_finish_date;
-							$('form#create-offer-form input#country-input').val(country);
-							$('form#create-offer-form input#city-input').val(city);
-							$('form#create-offer-form input#c-count-input').val(collaboratorsCount);
-							$('form#create-offer-form input#start-date-input').val(startDate);
-							$('form#create-offer-form input#finish-date-input').val(finishDate);
-			        	} else {
-			        		alert("Ошибка");
-			        	}
-			        }).fail(function(jqXHR, textStatus, errorThrown) {
-						  
-						alert("Ошибка: " + jqXHR);
-					}).always(function() {
-					    
-						preloaderOff();
-				  	});*/
 		        }
 			}
 		  	

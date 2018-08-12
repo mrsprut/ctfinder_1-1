@@ -438,11 +438,7 @@
 			
 			var onTitleAutocompleteCallback = function(){
 
-				//console.log("title autocompleted: " + $('#find-container input#search').val());
 				resetInfinityScrollInfo();
-				/*doFilter({
-	                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-				});*/
 				doFilter();
 			}
 			
@@ -479,16 +475,10 @@
 					    	//
 					    	console.log(countryAutocomplete);
 					    	countryAutocomplete.open();
-					    	//$('input#country-input').keydown();
-					    	/*if(typeof countryAutocomplete.open === 'function') {
-					    		
-					    		countryAutocomplete.open();
-					    	}*/
 					});
 				 }
 				 else {
 				   // code-triggered event
-					 //$('input#country-input').keyup();
 				 }
 			});
 			
@@ -526,13 +516,10 @@
 					    	console.log(cityAutocomplete);
 							
 					    	cityAutocomplete.open();
-					    	
-					    	//$('input#city-input').keydown();
 					});
 				 }
 				 else {
 				   // code-triggered event
-					 //$('input#city-input').keyup();
 				 }
 			});
 			
@@ -558,9 +545,6 @@
 					 if(e.keyCode == 13){
 						 
 						resetInfinityScrollInfo();
-						/*doFilter({
-				             'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-						});*/
 						doFilter();
 						return false;
 					 }
@@ -623,7 +607,6 @@
 		        			+ "&created-date-to=" + dateTo
 		        			+ ((searchByTitleStart != "") ? ("&substring=" + searchByTitleStart) : "")
 		        			+ ((cursorString != null) ? ("&cursor=" + cursorString) : "");
-		      	//+"&order-by=sort-created-desc"
 				
 		    	$.ajax({
 		            url: urlString,
@@ -653,67 +636,33 @@
 				        		offerLimit = offerLimitDefault;
 				        	}
 	
-			        		//if(fetchedCount > 0){
-					            //Готовим шаблон offer grid item при помощи библиотеки Hogan
-							  	var template = Hogan.compile(
-						  			'{{#items}}'
-					                +'<div class="col s12 m12 l6 xl4">'
-						                +'<div class="card hoverable {{offer_type}}">'
-						                    +'<div class="card-image">'
-						                      +'<img src="{{image}}">'
-						                      +'<div class="card-title">'
-						                      	+'<div>{{title}}</div>'
-						                      	+'<div>({{offer_type}})</div>'
-						                      	+'<div class="card-title-date">{{created_at}}</div>'
-						                      +'</div>'
-						                    +'</div>'
-						                    +'<div class="card-content">'
-						                      +'<p>{{content_preview}}</p>'
-						                    +'</div>'
-						                    +'<div class="card-action">'
-						                      +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">Details...</a>'
-						                    +'</div>'
-						                  +'</div>'
-						            +'</div>'
-						      		+ '{{/items}}'
-						  		);
-							  	//Заполняем шаблон данными и помещаем на веб-страницу
-								$('#offer-grid-container > div').append(template.render(data.result[0]));
-							  	//
-								$('#find-container #pointer-down').css('display', 'block');
-							//}
-	
-					  		/*//Расцветка для разных состояний заказа, классы цветов определены в файле стилей
-				            $("table td:contains('забронирован')").parent().addClass("BlueRow");
-				            $("table td:contains('выполнен')").parent().addClass("GreenRow");
-				            //$("table td:contains('отменен')").parent().addClass("RedRow");
-				            //Блокируем кнопки работы со строками таблицы, пока не будет выбрана строка
-				            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
-				            //Устанавливаем обработчик кликов на все строки таблицы кроме заголовка
-				            $("table tr:not(:first)").unbind("click");
-				            $("table tr:not(:first)").click(function(){
-	
-				                //Разблокируем кнопки, когда выбрана строка таблицы
-				                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
-				                //Отмечаем текст выбранной строки зеленым цветом, с остальных строк выделение убираем
-				                //(оно могло быть ранее установлено на одну из строк)
-				                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
-				            });
-				            //Очищаем списки в форме
-				            $('#manicurists-select select')
-				                .find('option')
-				                .remove();
-	
-				            $('#time-select select')
-				                .find('option')
-				                .remove();
-				            //Отключаем элементы ввода в форме
-				            $('#time-select select').attr('disabled', '');
-				            $('form#create-order button').attr('disabled', '');
-				            //Заполняем список выбора мастеров
-				            populateManicuristsList();
-				            //Активируем список выбора времени
-				            $('#time-select select').formSelect();*/
+				            //Готовим шаблон offer grid item при помощи библиотеки Hogan
+						  	var template = Hogan.compile(
+					  			'{{#items}}'
+				                +'<div class="col s12 m12 l6 xl4">'
+					                +'<div class="card hoverable {{offer_type}}">'
+					                    +'<div class="card-image">'
+					                      +'<img src="{{image}}">'
+					                      +'<div class="card-title">'
+					                      	+'<div>{{title}}</div>'
+					                      	+'<div>({{offer_type}})</div>'
+					                      	+'<div class="card-title-date">{{created_at}}</div>'
+					                      +'</div>'
+					                    +'</div>'
+					                    +'<div class="card-content">'
+					                      +'<p>{{content_preview}}</p>'
+					                    +'</div>'
+					                    +'<div class="card-action">'
+					                      +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">Details...</a>'
+					                    +'</div>'
+					                  +'</div>'
+					            +'</div>'
+					      		+ '{{/items}}'
+					  		);
+						  	//Заполняем шаблон данными и помещаем на веб-страницу
+							$('#offer-grid-container > div').append(template.render(data.result[0]));
+						  	//
+							$('#find-container #pointer-down').css('display', 'block');
 			        	} else {
 			        		
 			        		$('#find-container #pointer-down').css('display', 'none');
@@ -766,9 +715,6 @@
 			}
 			
 			//Apply the filter
-			/*doFilter({
-                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-			});*/
 			doFilter();
 			
 			//обработчик выбора одного из чекбоксов сортировки
@@ -778,9 +724,6 @@
 			    if(this.checked) {
 					
 			    	resetInfinityScrollInfo();
-			    	/*doFilter({
-		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});*/
 			    	doFilter();
 			    }
 			});
@@ -809,9 +752,6 @@
 				if(!offerGridPopulating){
 					
 	    			resetInfinityScrollInfo();
-	    			/*doFilter({
-		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});*/
 	    			doFilter();
     			} else {
     				
@@ -827,12 +767,6 @@
 		    		, onDateRangeChanged);
 			
 			//обработчик выбора одного из чекбоксов фильтра по категориям (типам предложений)
-			//$('form#categories input[type=checkbox]').unbind("change");
-			/*$('form#categories input[type=checkbox]').change(function() {
-				console.log("checkbox = " + $(this));
-		    	resetInfinityScrollInfo();
-		    	doFilter();
-			});*/
 			$(document).on(
 		    		'change'
 		    		, 'form#categories input[type=checkbox]'
@@ -853,10 +787,7 @@
 							($(document).height()
 								- footerHeight
 								- $(window).height())) {
-						offerGridPopulating = true;  
-						/*doFilter({
-			                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-						});*/
+						offerGridPopulating = true;
 						doFilter();
 				    }
 				}
@@ -866,10 +797,7 @@
 
 				if(offerCounter != "full" && !offerGridPopulating){
 
-					offerGridPopulating = true;  
-					/*doFilter({
-		                'order-by': $('form#order-rules input[type=radio]:checked').attr('id')
-					});*/
+					offerGridPopulating = true;
 					doFilter();
 				} else if(offerCounter == "full"){
 					
