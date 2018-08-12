@@ -183,7 +183,7 @@
 	<div class="row">
 		<div class="col s12 m12 l12 xl12">
 			<div id="offer-grid-container">
-				<div class="row flex"></div>
+				<div class="row"></div>
 			</div>
 		</div>
 	</div>
@@ -254,6 +254,9 @@
 			preloaderOff();
 	  	});
 	};
+	
+	var findModalDict = {};
+	var findCardDict = {};
 
 	var localizeFind = function (){
 		
@@ -293,6 +296,22 @@
 			$('#search').attr('placeholder', dict.find_search_placeholder);
 			$('label[for=calendarFrom]').html(dict.find_date_from);
 			$('label[for=calendarTo]').html(dict.find_date_to);
+			
+			
+			$('.card-action > a').html(dict.find_card_details);
+			
+			for(var key in dict) {
+				
+			  if (key.indexOf("modal") !== -1) {
+			  		
+				  var val = dict[key];
+				  findModalDict[key] = val;
+			  } else if (key.indexOf("card") !== -1) {
+			  		
+				  var val = dict[key];
+				  findCardDict[key] = val;
+			  }
+			}
 			
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			  
@@ -349,15 +368,7 @@
 			} else {
 				offerLimitDefault = 2;
 			}
-			/*if(windowWidth <= 600){
-				offerLimitDefault = 2;
-			} else if(windowWidth <= 992){
-				offerLimitDefault = 2;
-			} else if(windowWidth <= 1200){
-				offerLimitDefault = 3;
-			}*/
-			//console.log(windowWidth);
-			//console.log(offerLimitDefault);
+			
 			//Начальные настройки бесконечной прокрутки предложений
 			var cursorString = null;
 		    var offerLimit = offerLimitDefault;
@@ -384,41 +395,6 @@
 			    
 			    $('#offer-grid-container > div').html(noItemsImage);
 			}
-			//resetInfinityScrollInfo();
-			//Настройка календарей - верхней и нижней границ временного диапазона
-			
-			
-			//Получаем с сервера все типы событий
-			//и заполняем ими раздел "категрии" в боковой панели
-			//populateCategories();
-			/*$.ajax({
-				type: 'POST',
-				url: '/offertype?action=get-all',
-				dataType: 'json',
-				cache: false
-			}).done(function(responseText, textStatus, jqXHR) {
-				  
-				//console.log(responseText);
-				//Готовим шаблон списка при помощи библиотеки Hogan
-	            var template = Hogan.compile(
-	                '{{#result}}'
-	                +'<p>'
-						+'<label for="{{id}}">'
-							+'<input id="{{id}}" type="checkbox" /><span>{{description}}</span>'
-						+'</label>'
-					+'</p>'
-					+'{{/result}}'
-	            );
-	            //Заполняем шаблон данными и помещаем на веб-страницу
-				$('#categories').html(template.render(responseText));
-				
-			}).fail(function(jqXHR, textStatus, errorThrown) {
-				  
-				alert("Ошибка: " + jqXHR);
-			}).always(function() {
-			    
-				preloaderOff();
-		  	});*/
 			
 			/* Filter: country n city autocomplete */
 			
@@ -653,7 +629,9 @@
 					                      +'<p>{{content_preview}}</p>'
 					                    +'</div>'
 					                    +'<div class="card-action">'
-					                      +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">Details...</a>'
+					                      	+'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">'
+					                      		+ findCardDict.find_card_details
+			                      			+'</a>'
 					                    +'</div>'
 					                  +'</div>'
 					            +'</div>'
@@ -827,6 +805,8 @@
 		        	
 		        	if(data.result[0] != undefined){
 		        		
+		        		data.result[0]['dict'] = findModalDict;
+		        		//console.log(data.result[0]);
 			        	var template = Hogan.compile(
 					  			
 				      		'<h3 class="header">{{title}}</h3>'
@@ -837,29 +817,29 @@
 				      	      +'</div>'
 				      	      +'<div class="card-stacked">'
 				      	        +'<div class="card-content">'
-				      	      		+ '<h4>Подробности</h4>'
+				      	      		+ '<h4>{{dict.find_modal_details_title}}</h4>'
 				      	      		+'<p>'
-				      	      			+'<strong>Автор: </strong>{{author_name}} '
+				      	      			+'<strong>{{dict.find_modal_author}}: </strong>{{author_name}} '
 				      	      			+'{{#subscription}}'
 					      	      			+'<button id="unsubscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
-					      	      				+'Отписаться'
+					      	      				+'{{dict.find_modal_unsubscribe_button}}'
 				      	      				+'</button>'
 				      	      			+'{{/subscription}}'
 					      	      		+'{{^subscription}}'
 					      	      			+'<button id="subscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
-					      	      				+'Подписаться'
+					      	      				+'{{dict.find_modal_subscribe_button}}'
 				      	      				+'</button>'
 				      	      			+'{{/subscription}}'
 			      	      			+'</p>'
-				      	      		+'<p><strong>Состояние </strong>{{state}}</p>'
-				      	      		+'<p><strong>Создано: </strong>{{created_at}}</p>'
-				      	      		+'<p><strong>Страна: </strong>{{country}}</p>'
-				      	      		+'<p><strong>Город: </strong>{{city}}</p>'
-				      	      		+ '<h4>Описание</h4>'
+				      	      		+'<p><strong>{{dict.find_modal_state}}: </strong>{{state}}</p>'
+				      	      		+'<p><strong>{{dict.find_modal_created}}: </strong>{{created_at}}</p>'
+				      	      		+'<p><strong>{{dict.find_modal_country}}: </strong>{{country}}</p>'
+				      	      		+'<p><strong>{{dict.find_modal_city}}: </strong>{{city}}</p>'
+				      	      		+ '<h4>{{dict.find_modal_description_title}}</h4>'
 				      	          	+'<p>{{content}}</p>'
 				      	        +'</div>'
 				      	        +'<div class="card-action">'
-				      	          +'<a href="{{id}}"><h4>Join</h4></a>'
+				      	          +'<a href="{{id}}"><h4>{{dict.find_modal_join_ref}}</h4></a>'
 				      	        +'</div>'
 				      	      +'</div>'
 				      	    +'</div>'
@@ -887,7 +867,7 @@
 					        	if(data.result != null && data.result[0] == "created"){
 					        		
 					        		$currentSubscribeButton.attr('id', 'unsubscribe');
-					        		$currentSubscribeButton.text('Отписаться');
+					        		$currentSubscribeButton.text(findModalDict.find_modal_unsubscribe_button);
 					        		$currentSubscribeButton.unbind("click");
 					        		$currentSubscribeButton.click(unsubscribeHandler);
 					        	} else {
@@ -919,7 +899,7 @@
 					        	if(data.result != null && data.result[0] == "deleted"){
 					        		
 					        		$currentSubscribeButton.attr('id', 'subscribe');
-					        		$currentSubscribeButton.text('Подписаться');
+					        		$currentSubscribeButton.text(findModalDict.find_modal_subscribe_button);
 					        		$currentSubscribeButton.unbind("click");
 					        		$currentSubscribeButton.click(subscribeHandler);
 					        	} else {
