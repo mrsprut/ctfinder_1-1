@@ -56,6 +56,10 @@ public class OfferGridItemDetails {
 			, String author_name
 			, Long author_id
 			, Boolean subscription
+			
+			, String collaborators_count
+			, String desired_start_date
+			, String desired_finish_date
 		) {
 		super();
 		this.id = id;
@@ -72,5 +76,9 @@ public class OfferGridItemDetails {
 		this.author_name = author_name;
 		this.author_id = author_id;
 		this.subscription = subscription;
+		
+		this.collaborators_count = collaborators_count;
+		this.desired_start_date = desired_start_date;
+		this.desired_finish_date = desired_finish_date;
 	}
 }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -930,6 +931,36 @@ public class OfferServlet extends HttpServlet {
 														? true
 														: false;
 												
+												Language currentLanguage = new Language();
+												objectifyRun2(
+														currentLanguageId
+														, currentLanguage
+														, LanguageDAO::getLang
+														, out
+														, gson);
+												
+												Locale loc = new Locale(currentLanguage.getCode());
+												ResourceBundle bundle =
+														ResourceBundle.getBundle(
+																"org.tyaa.ctfinder.locale.ApplicationResourcesCommon"
+																, loc
+															);
+												String collaboratorsCount =
+														(o.getCollaborators_count() != null
+																&& !o.getCollaborators_count().equals(-1))
+														? o.getCollaborators_count().toString()
+														: bundle.getString("common_unbounded");
+												
+												String desiredStartDateString =
+														(o.getStart_date() != null && !o.getStart_date().equals(""))
+														? DateTransform.ReversedToDirect(o.getStart_date())
+														: "";
+												
+												String desiredFinishDateString =
+														(o.getFinish_date() != null && !o.getFinish_date().equals(""))
+														? DateTransform.ReversedToDirect(o.getFinish_date())
+														: "";
+												
 												//Populate the response object
 												OfferGridItemDetails offerDetails =
 													new OfferGridItemDetails (
@@ -947,6 +978,10 @@ public class OfferServlet extends HttpServlet {
 														, userAuthorName
 														, userAuthorId
 														, subscribed
+														
+														, collaboratorsCount
+														, desiredStartDateString
+														, desiredFinishDateString
 													);
 												
 												//

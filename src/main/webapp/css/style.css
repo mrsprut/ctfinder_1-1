@@ -261,4 +261,6 @@ tr.GrayRow {background-color:#9E9E9E;}
 	pointer-events: auto !important;
 }
 
-#offer-details h3, #offer-details h4 { color: #4db6ac !important; }
+#offer-details h3, #offer-details h4 { color: #4db6ac; }
+
+#offer-details .card-action a h4 { color: #ffab40; }
