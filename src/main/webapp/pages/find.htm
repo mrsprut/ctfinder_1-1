@@ -205,14 +205,13 @@
 </div>
 <script type="text/javascript">
 	
-	//TODO 1. complete details: collaborators_count, desired_start_date, desired_finish_date
-	//TODO 2. fix destroying of date fields in new offer form, fix card titles color
+	//TODO 1. fix destroying of date fields in new offer form
 	//+ tooltips
 	//+ preloader off on external sign out finished
 	//+ add more offer types
 	//+ update offers title n descr in selected lang
 	//+ modal instead of alert
-	//TODO 3. complete multylang v1
+	//TODO 2. complete multylang v1
 	
 	//TODO add. 1: create translations for own offers
 	//TODO add. 2: localized example images
@@ -952,7 +951,7 @@
 					        	
 					        	if(data.result[0] == "sent"){
 					        		$('#offer-details .modal-content .card-action')
-					        			.html('<p>Запрос отправлен автору задачи на электронную почту. Если через некоторое время он не пришлет Вам ответное письмо - можете повторить отправку или связаться с ним напрямую по адресу, указанному в описании задачи</p>');
+					        			.html('<p>' + findModalDict.find_modal_request_was_sent + '</p>');
 					        	} else {
 					        		alert('Ошибка отправки запроса');
 					        	}
