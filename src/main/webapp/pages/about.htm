@@ -85,6 +85,48 @@ Unlike job search sites for earning money, <strong> CTFinder </ strong> is desig
 			<p id="about-service-features-text-8" class="left-align light">But conscious <strong> HB-activity </strong> often hamper the lack of time, money and, in general, freedom over the circumstances of the social elements. We invite you to unite in order to rise together on the <strong> third stage of HB </strong>. This is the stage of realizing the paramount importance of developing a qualitatively new culture and overcoming with it the global problems that are on our way today. To communicate about this, groups in social networks (<a href="https://vk.com/humanbuilders"> https://vk.com/humanbuilders</a>, <a href = "https://www.facebook.com/groups/150758748845784/"> https://www.facebook.com/groups/150758748845784/</a>) and a special web portal Technocom (<a href ="https://tehnokom.su/">https://tehnokom.su/</a>), we are waiting for you there!</p>
 		</div>
 	</div>
+	
+	<div class="row">
+		<div class="col s12 center">
+			<h4 id="about-service-features-label-3">The founders</h4>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col s12 m12 l6 xl4">
+			<div class="card">
+		        <div class="card-image">
+		          <img src="../img/founder_1.png">
+		          <span id="about-service-founder-1" class="card-title">Evgenii Kiianov</span>
+		        </div>
+		        <div class="card-content">
+		          <p id="about-service-founder-1-description" >The developer. Student STEP computer academy.</p>
+		        </div>
+	      	</div>
+		</div>
+		<div class="col s12 m12 l6 xl4">
+			<div class="card">
+		        <div class="card-image">
+		          <img src="../img/founder_2.png">
+		          <span id="about-service-founder-2" class="card-title">Yurii Trofimenko</span>
+		        </div>
+		        <div class="card-content">
+		          <p id="about-service-founder-2-description" >Head of the diploma project. STEP computer academy teacher</p>
+		        </div>
+	      	</div>
+		</div>
+		<div class="col s12 m12 l6 xl4">
+			<div class="card">
+		        <div class="card-image">
+		          <img src="../img/founder_3.png">
+		          <span id="about-service-founder-3" class="card-title">Aleksandra Balaniuk</span>
+		        </div>
+		        <div class="card-content">
+		          <p id="about-service-founder-3-description" >Head of the diploma project. STEP computer academy teacher</p>
+		        </div>
+	      	</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 
@@ -114,6 +156,14 @@ Unlike job search sites for earning money, <strong> CTFinder </ strong> is desig
 			$('#about-service-features-text-7').html(dict.about_service_features_text_7);
 			$('#about-service-features-text-8').html(dict.about_service_features_text_8);
 			
+			$('#about-service-features-label-3').html(dict.about_service_features_label_3);
+			$('#about-service-founder-1').html(dict.about_service_founder_1);
+			$('#about-service-founder-1-description').html(dict.about_service_founder_1_description);
+			$('#about-service-founder-2').html(dict.about_service_founder_2);
+			$('#about-service-founder-2-description').html(dict.about_service_founder_2_description);
+			$('#about-service-founder-3').html(dict.about_service_founder_3);
+			$('#about-service-founder-3-description').html(dict.about_service_founder_3_description);
+			
 			/*for(var key in dict) {
 				
 			  if (key.indexOf("modal") !== -1) {
@@ -132,7 +182,6 @@ Unlike job search sites for earning money, <strong> CTFinder </ strong> is desig
 			alert("Ошибка: " + jqXHR);
 		}).always(function() {
 		    
-			//preloaderOff();
 			pageLocalization["about"] = false;
 		});
 	}
@@ -149,7 +198,6 @@ Unlike job search sites for earning money, <strong> CTFinder </ strong> is desig
 		styles.href = 'css/carousel.css';
 		document.getElementsByTagName('head')[0].appendChild(styles);
 		
-		//console.log($('#storyCarousel1'));
 		//window.scrollTo(0,1);
 		//window.scrollTo(1,0);
 		$('#storyCarousel1, #storyCarousel2').carousel({
@@ -190,59 +238,8 @@ Unlike job search sites for earning money, <strong> CTFinder </ strong> is desig
 	
 	app.handler(function() {
 
-		//console.log('this ' + $(this));
-		//var $container = $(this).find("#page-container");
-		//console.log('container ' + $container);
-		
-		/*$(document).ready(function(){
-	      
-			(function(){
-				  
-					
-					//window.scrollTo(0, 1);
-					//window.scrollTo(1, 0);
-			})();
-	    });*/
-
 		return function(params) {
 
-			//window.scrollTo(0, 1);
-			//window.scrollTo(1, 0);
-			/*$.ajax({
-				type: 'POST',
-				url: '/prostogae?action=get-data-by-section&section=home',
-				//contentType: 'text/plain',
-				cache: false
-			}).done(function(responseText, textStatus, jqXHR) {
-				  //if got code 200
-				  if(responseText !== '' && responseText !== 'error'){
-					  
-						//
-						console.log(responseText.content);
-						//$('section#copyright p#p-content').text(responseText.content);
-
-					  	var template = Hogan.compile("<p>{{content}}</p>");
-						//var output = template.render(responseText);
-						//var $container = $(this).find("section#copyright #page-container");
-					  	$container.html(template.render(responseText));
-				  } else {
-					  
-				  //
-				  }
-				  //stopLoadingAnimation();
-				  $(".loader").css("display", "none");
-			}).fail(function(jqXHR, textStatus, errorThrown) {
-				  
-				//if got code 404 or 500, etc.
-				//stopLoadingAnimation();
-				$(".loader").css("display", "none");
-			});*/
-			
-			/*var preloaderHide = function(){
-			   
-				$(".preloader-wrapper").css("display", "none");
-			}*/
-			
 			setTimeout(preloaderOff, 500);
 		};
 	});
