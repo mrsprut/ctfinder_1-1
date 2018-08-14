@@ -9,10 +9,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.tyaa.ctfinder.controller.DescriptionDAO;
 import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
 import org.tyaa.ctfinder.controller.TitleDAO;
+import org.tyaa.ctfinder.entity.Description;
 import org.tyaa.ctfinder.entity.Language;
 import org.tyaa.ctfinder.entity.Static_description;
 import org.tyaa.ctfinder.entity.Static_title;
@@ -121,90 +123,138 @@ public class LocalizeHelper {
 		return dictionaryItems;
 	}
 	
-	//Получение локализованного объекта статического заголовка
-		//по ключу
-		public static Title getLoclizedTitleObject(
-			String _titleKey
-			, Long _langId
-			, PrintWriter _out
-			, Gson _gson) {
-			
-			Title title = new Title();
+	//Получение локализованного объекта заголовка
+	//по ключу
+	public static Title getLoclizedTitleObject(
+		String _titleKey
+		, Long _langId
+		, PrintWriter _out
+		, Gson _gson) {
+		
+		Title title = new Title();
+		objectifyRun3(
+				_titleKey
+				, _langId
+				, title
+				, TitleDAO::getTitleByKeyAndLang
+				, _out
+				, _gson
+			);
+		if(title.getId() == null) {
+		
+			Language englishLanguage = new Language();
+			objectifyRun2(
+					"en"
+					, englishLanguage
+					, LanguageDAO::getLangByCode
+					, _out
+					, _gson);
 			objectifyRun3(
 					_titleKey
-					, _langId
+					, englishLanguage.getId()
 					, title
 					, TitleDAO::getTitleByKeyAndLang
 					, _out
 					, _gson
 				);
-			if(title.getId() == null) {
-			
-				Language englishLanguage = new Language();
-				objectifyRun2(
-						"en"
-						, englishLanguage
-						, LanguageDAO::getLangByCode
-						, _out
-						, _gson);
-				objectifyRun3(
-						_titleKey
-						, englishLanguage.getId()
-						, title
-						, TitleDAO::getTitleByKeyAndLang
-						, _out
-						, _gson
-					);
-			}
-			return title;
 		}
-		
-		//Получение текста локализованного статического заголовка
-		//по ключу
-		public static String getLoclizedTitle(
-				String _titleKey
-				, Long _langId
-				, PrintWriter _out
-				, Gson _gson) {
-				
-				return getLoclizedTitleObject(_titleKey, _langId, _out, _gson).getContent();
-		}
-		
-		//Получение локализованного объекта статического описания
-		//по ключу
-		public static Static_description getLocalizedSDescriptionObject(
-			String _staticDescrKey
+		return title;
+	}
+	
+	//Получение текста локализованного заголовка
+	//по ключу
+	public static String getLoclizedTitle(
+			String _titleKey
 			, Long _langId
 			, PrintWriter _out
 			, Gson _gson) {
 			
-			Static_description staticDescription = new Static_description();
+			return getLoclizedTitleObject(_titleKey, _langId, _out, _gson).getContent();
+	}
+	
+
+	public static Description getLoclizedDescriptionObject(
+		String _descriptionKey
+		, Long _langId
+		, PrintWriter _out
+		, Gson _gson) {
+		
+		Description description = new Description();
+		objectifyRun3(
+				_descriptionKey
+				, _langId
+				, description
+				, DescriptionDAO::getDescriptionByKeyAndLang
+				, _out
+				, _gson
+			);
+		if(description.getId() == null) {
+		
+			Language englishLanguage = new Language();
+			objectifyRun2(
+					"en"
+					, englishLanguage
+					, LanguageDAO::getLangByCode
+					, _out
+					, _gson);
+			objectifyRun3(
+					_descriptionKey
+					, englishLanguage.getId()
+					, description
+					, DescriptionDAO::getDescriptionByKeyAndLang
+					, _out
+					, _gson
+				);
+		}
+		return description;
+	}
+	
+	//Получение текста локализованного заголовка
+	//по ключу
+	public static String getLoclizedDescription(
+			String _descriptionKey
+			, Long _langId
+			, PrintWriter _out
+			, Gson _gson) {
+			
+			return getLoclizedDescriptionObject(_descriptionKey, _langId, _out, _gson).getContent();
+	}
+	
+	//Получение локализованного объекта статического описания
+	//по ключу
+	public static Static_description getLocalizedSDescriptionObject(
+		String _staticDescrKey
+		, Long _langId
+		, PrintWriter _out
+		, Gson _gson) {
+		
+		Static_description staticDescription = new Static_description();
+		objectifyRun3(
+				_staticDescrKey
+				, _langId
+				, staticDescription
+				, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
+				, _out
+				, _gson
+			);
+		if(staticDescription.getId() == null) {
+		
+			Language englishLanguage = new Language();
+			objectifyRun2(
+					"en"
+					, englishLanguage
+					, LanguageDAO::getLangByCode
+					, _out
+					, _gson);
 			objectifyRun3(
 					_staticDescrKey
-					, _langId
+					, englishLanguage.getId()
 					, staticDescription
 					, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
 					, _out
 					, _gson
 				);
-			if(staticDescription.getId() == null) {
-			
-				Language englishLanguage = new Language();
-				objectifyRun2(
-						"en"
-						, englishLanguage
-						, LanguageDAO::getLangByCode
-						, _out
-						, _gson);
-				objectifyRun3(
-						_staticDescrKey
-						, englishLanguage.getId()
-						, staticDescription
-						, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
-						, _out
-						, _gson
-					);
-			}
-			return staticDescription;
 		}
+		return staticDescription;
+	}
 }

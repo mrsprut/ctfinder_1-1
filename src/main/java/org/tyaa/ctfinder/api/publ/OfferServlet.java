@@ -11,18 +11,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,54 +30,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.tyaa.ctfinder.common.DateTransform;
-import org.tyaa.ctfinder.common.ErrorStrings;
-import org.tyaa.ctfinder.common.HttpReqParams;
-import org.tyaa.ctfinder.common.HttpRespWords;
-import org.tyaa.ctfinder.common.KeyGen;
-import org.tyaa.ctfinder.common.LocalizeHelper;
-import org.tyaa.ctfinder.common.Mailer;
-import org.tyaa.ctfinder.common.ObjectifyQueryLauncher;
-import org.tyaa.ctfinder.common.SessionAttributes;
-import org.tyaa.ctfinder.controller.CityDAO;
-import org.tyaa.ctfinder.controller.CountryDAO;
-import org.tyaa.ctfinder.controller.DescriptionDAO;
-import org.tyaa.ctfinder.controller.LanguageDAO;
-import org.tyaa.ctfinder.controller.OfferDAO;
-import org.tyaa.ctfinder.controller.Offer_typeDAO;
-import org.tyaa.ctfinder.controller.StateDAO;
-import org.tyaa.ctfinder.controller.Static_descriprionDAO;
-import org.tyaa.ctfinder.controller.Static_titleDAO;
-import org.tyaa.ctfinder.controller.SubscriptionDAO;
-import org.tyaa.ctfinder.controller.TitleDAO;
-import org.tyaa.ctfinder.controller.UserDAO;
-import org.tyaa.ctfinder.entity.City;
-import org.tyaa.ctfinder.entity.Country;
-import org.tyaa.ctfinder.entity.Description;
-import org.tyaa.ctfinder.entity.Language;
-import org.tyaa.ctfinder.entity.Offer;
-import org.tyaa.ctfinder.entity.Offer_type;
-import org.tyaa.ctfinder.entity.State;
-import org.tyaa.ctfinder.entity.Static_description;
-import org.tyaa.ctfinder.entity.Static_title;
-import org.tyaa.ctfinder.entity.Subscription;
-import org.tyaa.ctfinder.entity.Title;
-import org.tyaa.ctfinder.entity.User;
+import org.tyaa.ctfinder.common.*;
+import org.tyaa.ctfinder.controller.*;
+import org.tyaa.ctfinder.entity.*;
 import org.tyaa.ctfinder.filter.OfferFilter;
 import org.tyaa.ctfinder.filter.TitleFilter;
-import org.tyaa.ctfinder.model.ContinuData;
-import org.tyaa.ctfinder.model.OfferGridItem;
-import org.tyaa.ctfinder.model.OfferGridItemDetails;
-import org.tyaa.ctfinder.model.OfferTableRow;
-import org.tyaa.ctfinder.model.OfferTableRowEdit;
-import org.tyaa.ctfinder.model.RespData;
+import org.tyaa.ctfinder.model.*;
 import org.tyaa.ctfinder.projection.OfferProjections;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.VoidWork;
 
 /**
  * Servlet implementation class TasksServlet
@@ -114,7 +74,6 @@ public class OfferServlet extends HttpServlet {
      */
     public OfferServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -181,36 +140,11 @@ public class OfferServlet extends HttpServlet {
 									//Получаем из параметра запроса содержимое заголовка предложения
 									String title =
 											req.getParameter("title");
-									/*//Создаем и заполняем сущность заголовка предложения
-									Title newOfferTitle =
-										new Title(
-												KeyGen.text2KeyText(title) + "_offer_title"
-												, englishLanguage.getId()
-												, title);
-									objectifyRun(
-											newOfferTitle
-											, TitleDAO::createTitle
-											, out
-											, gson
-										);
-									String offerTitleKey = newOfferTitle.getKey();*/
 
 									//4. 
 									//Выполняем то же самое для основного содержания предложения
 									String description =
 											req.getParameter("content");
-									/*Description newOfferDescription =
-										new Description(
-												KeyGen.text2KeyText(description) + "_offer_description"
-												, englishLanguage.getId()
-												, description);
-									objectifyRun(
-											newOfferDescription
-											, DescriptionDAO::createDescriprion
-											, out
-											, gson
-										);
-									String offerDescriptionKey = newOfferDescription.getKey();*/
 									
 									//6
 									Long countryId = null;
@@ -229,15 +163,6 @@ public class OfferServlet extends HttpServlet {
 												countryList.stream()
 													.filter(
 														c -> {
-															/*Static_title st = new Static_title();
-															objectifyRun2(
-																((Country)c).getTitle_key()
-																, st
-																//, req.getParameter(HttpReqParams.autocomplete)
-																, Static_titleDAO::getStaticTitleByKey
-																, out
-																, gson
-															);*/
 															Static_title st = LocalizeHelper.getLoclizedSTitleObject(
 																	((Country)c).getTitle_key()
 																	, currentLanguageId
@@ -364,17 +289,16 @@ public class OfferServlet extends HttpServlet {
 										o.setCollaborators_count(collaboratorsCount);
 										
 										//Получаем из БД старый объект заголовка
-										Title titleEntity = new Title();
-										objectifyRun3(
-											o.getTitle_key()
-											, englishLanguage.getId()
-											, titleEntity
-											, TitleDAO::getTitleByKeyAndLang
-											, out
-											, gson
-										);
+										Title titleEntity =
+												LocalizeHelper.getLoclizedTitleObject(
+														o.getTitle_key()
+														, currentLanguageId
+														, out
+														, gson
+													);
 										//Из старого объекта заголовка узнаем старый заголовок предложения
 										String oldTitleString = titleEntity.getContent();
+										
 										//Если новый заголовок предложения отличается от старого
 										if(!oldTitleString.equals(title)) {
 											//Записываем в объект заголовка новое содержание
@@ -389,15 +313,13 @@ public class OfferServlet extends HttpServlet {
 										}
 										
 										//Получаем из БД старый объект
-										Description descriptionEntity = new Description();
-										objectifyRun3(
-											o.getDescription_key()
-											, englishLanguage.getId()
-											, descriptionEntity
-											, DescriptionDAO::getDescriptionByKeyAndLang
-											, out
-											, gson
-										);
+										Description descriptionEntity =
+												LocalizeHelper.getLoclizedDescriptionObject(
+														o.getDescription_key()
+														, currentLanguageId
+														, out
+														, gson
+													);
 										String oldDescriptionString = descriptionEntity.getContent();
 										if(!oldDescriptionString.equals(description)) {
 											//Записываем в объект новое содержание
@@ -791,10 +713,6 @@ public class OfferServlet extends HttpServlet {
 												, gson
 											);
 											descriptionString = description.getContent();
-											/*descriptionString = 
-												descriptionString.length() > 25
-												? descriptionString.substring(0, 25) + " ..."
-												: descriptionString;*/
 										}
 												
 										//Country
@@ -808,16 +726,6 @@ public class OfferServlet extends HttpServlet {
 													, out
 													, gson
 												);
-											/*Static_title offerCountrySt = new Static_title();		
-											objectifyRun3(
-													offerCountry.getTitle_key()
-													, englishLanguage.getId()
-													, offerCountrySt
-													, Static_titleDAO::getStaticTitleByKeyAndLang
-													, out
-													, gson
-												);
-											countryString = offerCountrySt.getContent();*/
 											countryString =
 													LocalizeHelper.getLoclizedSTitle(
 															offerCountry.getTitle_key()
@@ -837,16 +745,6 @@ public class OfferServlet extends HttpServlet {
 													, out
 													, gson
 												);
-											/*Static_title offerCitySt = new Static_title();		
-											objectifyRun3(
-													offerCity.getTitle_key()
-													, englishLanguage.getId()
-													, offerCitySt
-													, Static_titleDAO::getStaticTitleByKeyAndLang
-													, out
-													, gson
-												);
-											cityString = offerCitySt.getContent();*/
 											cityString =
 													LocalizeHelper.getLoclizedSTitle(
 															offerCity.getTitle_key()
@@ -1022,9 +920,7 @@ public class OfferServlet extends HttpServlet {
 															, out
 															, gson
 														);
-													/*if(state.getId() != null) {}
-													offerStateString =
-															state.getId().toString() + " " + state.getTitle_key();*/
+													
 													Static_title stateTitle = new Static_title();
 													objectifyRun3(
 														state.getTitle_key()
@@ -1060,8 +956,6 @@ public class OfferServlet extends HttpServlet {
 												//
 												List al = new ArrayList<>();
 												al.add(offerTableRowEdit);
-												//String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
-												//al.add(new ContinuData(gridItems, nextCursorString));
 												RespData rd = new RespData(al);
 												String successJson = gson.toJson(rd);
 												out.print(successJson);
@@ -1177,7 +1071,6 @@ public class OfferServlet extends HttpServlet {
 																		, out
 																		, gson
 																	);
-																//offerTypeDescriptionString = "+";
 																Static_description offerTypeDescription =
 																		new Static_description();
 																objectifyRun3(
@@ -1219,9 +1112,7 @@ public class OfferServlet extends HttpServlet {
 																		, out
 																		, gson
 																	);
-																/*if(state.getId() != null) {}
-																offerStateString =
-																		state.getId().toString() + " " + state.getTitle_key();*/
+																
 																Static_title stateTitle = new Static_title();
 																objectifyRun3(
 																	state.getTitle_key()
@@ -1255,8 +1146,7 @@ public class OfferServlet extends HttpServlet {
 										offersOut =
 												offerTableRowStream.collect(Collectors.toList());
 										
-										//List al = new ArrayList<>();
-										//al.add(offersOut);
+										
 										RespData rd = new RespData(offersOut);
 										String successJson = gson.toJson(rd);
 										out.print(successJson);
@@ -1265,7 +1155,6 @@ public class OfferServlet extends HttpServlet {
 										//средствами СУБД
 										List<Offer> offers = new ArrayList<>();
 										List<Offer> filteredOffers = new ArrayList<>();
-										//List<Offer> offersOut = new ArrayList<>();
 										Integer limit =
 												Integer.parseInt(req.getParameter(HttpReqParams.limit));
 										String[] cursorStr =
@@ -1274,7 +1163,6 @@ public class OfferServlet extends HttpServlet {
 												: new String[] {null};
 										
 										OfferFilter offerFilter = new OfferFilter();
-										//OfferFilter.reset(offerFilter, OfferFilter.class);
 										
 										//Filter by ...
 										
@@ -1290,22 +1178,6 @@ public class OfferServlet extends HttpServlet {
 											offerFilter.createdDateTo =
 													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));
 										}
-										
-										//by title start
-										/*if(req.getParameterMap().keySet().contains(HttpReqParams.substring)) {
-											
-											Title title = new Title();
-											objectifyRun2(
-												offer.getTitle_key()
-												, titleFilter.startString
-												, title
-												, TitleDAO::getTitleByKey
-												, out
-												, gson
-											);
-											offerFilter.titleKey =
-													req.getParameter(HttpReqParams.startstring);
-										}*/
 										
 										//Order by ...
 										if(req.getParameterMap().keySet().contains(HttpReqParams.orderBy)) {
@@ -1354,9 +1226,6 @@ public class OfferServlet extends HttpServlet {
 													break;
 												}
 											}
-											
-											/*offerFilter.createdDateTo =
-													DateTransform.DirectToReversed(req.getParameter(HttpReqParams.createdDateTo));*/
 										}
 										
 										Map<OfferDAO.Params, Object> paramsMap = new HashMap<>();
@@ -1638,9 +1507,6 @@ public class OfferServlet extends HttpServlet {
 																, out
 																, gson
 															);
-														/*if(state.getId() != null) {}
-														offerStateString =
-																state.getId().toString() + " " + state.getTitle_key();*/
 														Static_title stateTitle = new Static_title();
 														objectifyRun3(
 															state.getTitle_key()
@@ -1685,7 +1551,6 @@ public class OfferServlet extends HttpServlet {
 										
 										//
 										List al = new ArrayList<>();
-										//al.add(offers);
 										String nextCursorString = (cursorStr[0] != null) ? cursorStr[0] : "end";
 										al.add(new ContinuData(gridItems, nextCursorString));
 										RespData rd = new RespData(al);
@@ -1942,8 +1807,6 @@ public class OfferServlet extends HttpServlet {
 										&& titleStrings.size() < resultsCountMax
 									);
 								
-								//ArrayList<String> al = new ArrayList<>();
-								//al.add(HttpRespWords.deleted);
 								RespData rd = new RespData(titleStrings);
 								String successJson = gson.toJson(rd);
 								out.print(successJson);
@@ -2051,7 +1914,6 @@ public class OfferServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
@@ -2100,15 +1962,6 @@ public class OfferServlet extends HttpServlet {
 		//заносим в него то же самое название новой страны
 		//и сохраняем его в БД
 		if(!_currentLanguageId.equals(englishLanguage.getId())) {
-			
-			//Получаем объект current языка
-			/*Language currentLanguage = new Language();
-			objectifyRun2(
-					_currentLanguageId
-					, currentLanguage
-					, LanguageDAO::getLang
-					, _out
-					, _gson);*/
 			
 			Static_title newCountryStLocal =
 					new Static_title(
