@@ -126,6 +126,15 @@
 	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('#create-container .modal').modal();
 	
+	var createModalInstance =
+		M.Modal.getInstance($('#create-container .modal'));
+	var showInCreateModal = function (_content){
+		$('#offer-create-modal .modal-content').html(_content);
+		createModalInstance.open();
+	};
+	
+	var createModalDict = {};
+	
 	var localizeCreate = function (){
 		
 		pageLocalization["create"] = true;
@@ -171,9 +180,19 @@
 			$('#deleteOffer').html(dict.create_delete_button);
 			$('#changeOfferState').html(dict.create_state_button);
 			
+			for(var key in dict) {
+				
+			  if (key.indexOf("modal") !== -1) {
+			  		
+				  var val = dict[key];
+				  createModalDict[key] = val;
+			  }
+			}
+			
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			  
-			alert("Ошибка: " + jqXHR);
+			//alert("Ошибка: " + jqXHR);
+			showInCreateModal("Ошибка: " + jqXHR);
 		}).always(function() {
 		    
 			pageLocalization["create"] = false;
@@ -414,7 +433,8 @@
 				}).fail(function(jqXHR, textStatus, errorThrown) {
 					  
 					//console.log(textStatus);
-					alert("Ошибка получения списка типов заданий: " + jqXHR);
+					//alert("Ошибка получения списка типов заданий: " + jqXHR);
+					showInCreateModal("Ошибка получения списка типов заданий: " + jqXHR);
 				});
 		    }
 
@@ -790,22 +810,26 @@
 			    	
 			    	if(resp.error != "" || resp == ""){
 			    		
-			    		alert("Ошибка создания предложения");
+			    		//alert("Ошибка создания предложения");
 			    		//console.log(resp + " " + resp.error);
+			    		showInCreateModal("Ошибка создания предложения");
 			    	} else if (resp.result[0] == "created"){
 			    		
-			    		alert("Предложение успешно создано");
+			    		//alert("Предложение успешно создано");
+			    		showInCreateModal("Предложение успешно создано");
 			    		resetInfinityScrollInfo();
 			    		populateOfferTable();
 			    	} else if (resp.result[0] == "updated"){
 			    		
-			    		alert("Предложение успешно обновлено");
+			    		//alert("Предложение успешно обновлено");
+			    		showInCreateModal(createModalDict.create_modal_updated);
 			    		resetInfinityScrollInfo();
 			    		populateOfferTable();
 			    	}
 				}).fail(function(jqXHR, textStatus, errorThrown) {
 					  
-					alert("Ошибка: " + jqXHR);
+					//alert("Ошибка: " + jqXHR);
+					showInCreateModal("Ошибка: " + jqXHR);
 				}).always(function() {
 				    
 					preloaderOff();
@@ -846,7 +870,8 @@
 		
 		        if ($('.selectedTableRow').find('th').length === 0) {
 		
-		            alert('Сначала выберите одну строку в таблице');
+		            //alert('Сначала выберите одну строку в таблице');
+		            showInCreateModal('Сначала выберите одну строку в таблице');
 		        } else {
 		        	
 		        	var id = $('.selectedTableRow').find('th').text();
@@ -897,11 +922,13 @@
 							$('form#create-offer-form input#start-date-input').val(startDate);
 							$('form#create-offer-form input#finish-date-input').val(finishDate);
 			        	} else {
-			        		alert("Ошибка");
+			        		//alert("Ошибка");
+			        		showInCreateModal("Ошибка");
 			        	}
 			        }).fail(function(jqXHR, textStatus, errorThrown) {
 						  
-						alert("Ошибка: " + jqXHR);
+						//alert("Ошибка: " + jqXHR);
+			        	showInCreateModal("Ошибка: " + jqXHR);
 					}).always(function() {
 					    
 						preloaderOff();
@@ -914,7 +941,8 @@
 		
 		        if ($('.selectedTableRow').find('th').length === 0) {
 		
-		            alert('Сначала выберите одну строку в таблице');
+		            //alert('Сначала выберите одну строку в таблице');
+		        	showInCreateModal('Сначала выберите одну строку в таблице');
 		        } else {
 		        	
 		        	preloaderOn("nocover");
@@ -981,7 +1009,7 @@
 								        	if(data.result != null && data.result[0] == "updated"){
 								        		
 								        		$('#create-container .modal-content')
-								        			.html("Состояние предложения обновлено");
+								        			.html(createModalDict.create_modal_status_updated);
 								        		resetInfinityScrollInfo();
 								        		populateOfferTable();
 								        	} else {
@@ -1012,11 +1040,13 @@
 				    				});
 				    				
 					        	} else {
-					        		alert('Ошибка');
+					        		//alert('Ошибка');
+					        		showInCreateModal('Ошибка');
 					        	}
 					        }).fail(function(jqXHR, textStatus, errorThrown) {
 								  
-								alert("Ошибка: " + jqXHR);
+								//alert("Ошибка: " + jqXHR);
+								showInCreateModal("Ошибка: " + jqXHR);
 							}).always(function() {
 							    
 								preloaderOff();
@@ -1024,11 +1054,13 @@
 		    	            
 		    				
 			        	} else {
-			        		alert('Ошибка');
+			        		//alert('Ошибка');
+			        		showInCreateModal('Ошибка');
 			        	}
 			        }).fail(function(jqXHR, textStatus, errorThrown) {
 						  
-						alert("Ошибка: " + jqXHR);
+						//alert("Ошибка: " + jqXHR);
+			        	showInCreateModal("Ошибка: " + jqXHR);
 					}).always(function() {
 					    
 						preloaderOff();
@@ -1041,7 +1073,8 @@
 		
 		        if ($('.selectedTableRow').find('th').length === 0) {
 		
-		            alert('Сначала выберите одну строку в таблице');
+		            //alert('Сначала выберите одну строку в таблице');
+		            showInCreateModal('Сначала выберите одну строку в таблице');
 		        } else {
 		        	
 		        	var id = $('.selectedTableRow').find('th').text();
@@ -1061,11 +1094,13 @@
 			        		resetInfinityScrollInfo();
 			        		populateOfferTable();
 			        	} else {
-			        		alert("Ошибка");
+			        		//alert("Ошибка");
+			        		showInCreateModal("Ошибка");
 			        	}
 			        }).fail(function(jqXHR, textStatus, errorThrown) {
 						  
-						alert("Ошибка: " + jqXHR);
+						//alert("Ошибка: " + jqXHR);
+			        	showInCreateModal("Ошибка: " + jqXHR);
 					}).always(function() {
 					    
 						preloaderOff();
@@ -1128,11 +1163,13 @@
 			        		$('#create-container .modal-content')
 			        			.html('<img src="' + data.result[0] + '">');
 			        	} else {
-			        		alert('Ошибка');
+			        		//alert('Ошибка');
+			        		showInCreateModal("Ошибка");
 			        	}
 			        }).fail(function(jqXHR, textStatus, errorThrown) {
 						  
-						alert("Ошибка: " + jqXHR);
+						//alert("Ошибка: " + jqXHR);
+			        	showInCreateModal("Ошибка: " + jqXHR);
 					}).always(function() {
 					    
 						preloaderOff();

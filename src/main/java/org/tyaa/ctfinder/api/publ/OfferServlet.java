@@ -1277,6 +1277,7 @@ public class OfferServlet extends HttpServlet {
 											}
 											//Удаляем из выборки предложения, состояние которых равно
 											//"полностью выполнено" или "отменено"
+											//или число вакансий равно 0
 											State fulfilledState = new State();
 											objectifyRun2(
 													"fulfilled_state_static_title"
@@ -1298,7 +1299,9 @@ public class OfferServlet extends HttpServlet {
 											filteredOffers.removeIf((o) -> {
 												
 												return o.getState_id().equals(fulfilledStateId)
-														|| o.getState_id().equals(cancelledStateId);
+														|| o.getState_id().equals(cancelledStateId)
+														|| (o.getCollaborators_count() != null
+															&& o.getCollaborators_count().equals(0));
 											});
 											//Если в параметрах запроса от клиета присутствует список категорий,
 											//то после получения из БД диапазона частично отфильтрованных предложений
