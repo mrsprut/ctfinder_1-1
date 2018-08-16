@@ -80,6 +80,18 @@ var getCurrentPageName = function(){
 				    );
 				$('#footer-about-us').html(footerAboutUsTemplate.render(dict));
 				
+				//Контакты в подвале
+				var footerConnectTemplate = Hogan.compile(
+					'<h5 class="white-text">{{index_footer_connect_title}}</h5>'
+					+'<ul>'
+						+'<li><a class="white-text" href="mailto:tyaamariupol@gmail.com">E-mail</a></li>'
+						+'<li><a class="white-text" href="#!">VK group</a></li>'
+						+'<li><a class="white-text" href="#!">FB group</a></li>'
+						+'<li><a class="white-text" href="#!">YouTube</a></li>'
+					+'</ul>'
+			    );
+				$('#footer-connect').html(footerConnectTemplate.render(dict));
+				
 				//Восстанавливаем класс active для пункта главного меню текущего раздела сайта
 				var currentPageName = getCurrentPageName();
 				//console.log('nav ul > li > a[href=\\#' + currentPageName + '], ul.sidenav a[href=\\#' + currentPageName + ']');

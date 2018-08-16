@@ -134,6 +134,62 @@
 	};
 	
 	var createModalDict = {};
+	var createSelectDict = {};
+
+    //Функция получения списка всех типов предложений
+    var populateOfferTypesSelect = function(){
+    	
+    	$.ajax({
+			type: 'POST',
+			url: '/offertype?action=get-all',
+			dataType: 'json',
+			cache: false
+		}).done(function(responseText, textStatus, jqXHR) {
+			  
+			//Готовим шаблон списка при помощи библиотеки Hogan
+            var template = Hogan.compile(
+        		'<select>'
+                +'<option disabled="" selected="" value="">'+createSelectDict.create_select_type+'</option>'
+                +'{{#result}}'                
+                +   '<option value="{{id}}">'
+                +       '{{description}}'
+                +   '</option>'
+                +'{{/result}}'
+    			+'</select>'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+			$('#offer-type-select').html(template.render(responseText));
+			$('#offer-type-select select').formSelect();
+			
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			  
+			//console.log(textStatus);
+			//alert("Ошибка получения списка типов заданий: " + jqXHR);
+			showInCreateModal("Ошибка получения списка типов заданий: " + jqXHR);
+		});
+    }
+    
+	//Готовим функцию create таблицы
+    function createOfferTable() {
+		
+    	$('#offer-table-container').html(
+    	
+    			'<table class="table">'
+				+  '<thead>'
+				+    '<tr>'
+				+      '<th id="offer-table-id">id</th>'
+				+       '<th id="offer-table-name">title</th>'
+                +       '<th id="offer-table-type">type</th>'
+                +       '<th id="offer-table-image">image</th>'
+                +       '<th id="offer-table-status">status</th>'
+                +       '<th id="offer-table-created">created</th>'
+				+    '</tr>'
+				+  '</thead>'
+				+  '<tbody>'
+                +  '</tbody>'
+				+ '</table>'
+    	);
+	}
 	
 	var localizeCreate = function (){
 		
@@ -153,7 +209,7 @@
 			
 			$('label[for=title]').html(dict.create_input_title);
 			$('label[for=content]').html(dict.create_input_description);
-			$('#offertypeselector option').first().html(dict.create_select_type);
+			
 			$('label[for=country-input]').html(dict.create_input_country);
 			$('label[for=city-input]').html(dict.create_input_city);
 			$('label[for=c-count-input]').html(dict.create_input_collaborators);
@@ -170,7 +226,7 @@
 		      	.replaceWith(dict.create_submit_button);
 			$('#cancell-new-offer').html(dict.create_cancell_button);
 			
-			
+			//Table
 			$('#offers-title').html(dict.create_table_title);
 			
 			$('label[for=calendarFrom]').html(dict.create_date_from);
@@ -186,8 +242,24 @@
 			  		
 				  var val = dict[key];
 				  createModalDict[key] = val;
+			  } else if (key.indexOf("select") !== -1) {
+			  		
+				  var val = dict[key];
+				  createSelectDict[key] = val;
 			  }
 			}
+			
+			populateOfferTypesSelect();
+			$('#offer-type-select option').first().html(dict.create_select_type);
+			
+		    createOfferTable();
+			$('#offer-table-id').html(dict.create_table_id);
+			$('#offer-table-name').html(dict.create_table_name);
+			$('#offer-table-type').html(dict.create_table_type);
+			$('#offer-table-image').html(dict.create_table_image);
+			$('#offer-table-status').html(dict.create_table_status);
+			$('#offer-table-created').html(dict.create_table_created);
+			
 			
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			  
@@ -248,10 +320,6 @@
     $('form#create-offer-form #submit-new-offer').prop('disabled', 'disabled');
 
 	app.handler(function() {
-
-		//console.log('this ' + $(this));
-		//var $container = $(this).find("#page-container");
-		//console.log('container ' + $container);
 
 		return function(params) {
 			
@@ -404,41 +472,8 @@
 		    });
 		    
 		    isFormValid();
-		    
-		    //Функция получения списка всех типов предложений
-		    var populateOfferTypesSelect = function(){
-		    	
-		    	$.ajax({
-					type: 'POST',
-					url: '/offertype?action=get-all',
-					dataType: 'json',
-					cache: false
-				}).done(function(responseText, textStatus, jqXHR) {
-					  
-					//Готовим шаблон списка при помощи библиотеки Hogan
-		            var template = Hogan.compile(
-	            		'<select>'
-	                    +'<option disabled="" selected="" value="">type choice</option>'
-	                    +'{{#result}}'                
-	                    +   '<option value="{{id}}">'
-	                    +       '{{description}}'
-	                    +   '</option>'
-	                    +'{{/result}}'
-		    			+'</select>'
-		            );
-		            //Заполняем шаблон данными и помещаем на веб-страницу
-					$('#offer-type-select').html(template.render(responseText));
-					$('#offer-type-select select').formSelect();
-					
-				}).fail(function(jqXHR, textStatus, errorThrown) {
-					  
-					//console.log(textStatus);
-					//alert("Ошибка получения списка типов заданий: " + jqXHR);
-					showInCreateModal("Ошибка получения списка типов заданий: " + jqXHR);
-				});
-		    }
 
-		    populateOfferTypesSelect();
+		    //populateOfferTypesSelect();
 			
 			var onCountryAutocompleteCallback = function(){
 
@@ -533,53 +568,8 @@
 				 }
 			});
 			
-			//Готовим функцию таблицы
-		    function createOfferTable() {
-				
-		    	$('#offer-table-container').html(
-		    	
-		    			'<table class="table">'
-						+  '<thead>'
-						+    '<tr>'
-						+      '<th>ID</th>'
-						+       '<th>title</th>'
-		                +       '<th>type</th>'
-		                +       '<th>image</th>'
-		                +       '<th>status</th>'
-		                +       '<th>created</th>'
-						+    '</tr>'
-						+  '</thead>'
-						+  '<tbody>'
-		                +  '</tbody>'
-						+ '</table>'
-		    	);
-			}
-			
-		    createOfferTable();
-			
 			//Готовим функцию заполнения таблицы данными о заказах (строками расписания)
 		    function populateOfferTable() {
-		        
-		    	/*var offerTableHeight =
-		    		$(window).height()
-		    			- $('nav').height();
-		    			//- $('footer').height();
-		    	console.log('$(window).height() ' + $(window).height());
-		    	console.log("$('nav').height() " + $('nav').height());
-		    	console.log("$('footer').height() " + $('footer').height());
-		    	console.log(offerTableHeight);
-		    	offerTableHeight =
-		    		offerTableHeight
-		    			- $('h5#offers-title').height()
-		    			- $('div#offers-date-filter').height()
-		    			- $('div#offer-table-container').height()
-		    			- $('div#offers-buttons').height();
-		    	var offerRowHeight =
-		    		$('div#offer-table-container thead>tr').height();
-		    	var offerLimit = Math.ceil(offerTableHeight / offerRowHeight);
-		    	console.log(offerTableHeight);
-		    	console.log(offerRowHeight);
-		    	console.log(offerLimit);*/
 		    			    	
 				//Добавляем на место таблицы полосу бесконечного прогресса - пока будет ожидаться ответ сервера
 		        preloaderOn("nocover");
@@ -614,16 +604,8 @@
 			        		
 			        		offerCounter++;
 			        	}
-			        	//var offers = data.result[0].items;
-			            //В ответ получаем json-строку с данными о
-			            //для выбранной даты
-			            /*$.each(offers, function(index, value) {
-			                
-			                //Форматируем даты создания записей перед подстановкой в шаблон
-			                offers[index].created_at = formatDate(value.created_at);
-			            });*/
 
-			            //Готовим шаблон таблицы заказов (расписания) при помощи библиотеки Hogan
+			            //Готовим шаблон таблицы Offers при помощи библиотеки Hogan
 					  	var template = Hogan.compile(
 				  			'{{#result}}'
 							+ 	'<tr>'
