@@ -695,6 +695,7 @@ public class InitServlet extends HttpServlet {
 					, gson
 				);*/
 			
+			
 			/* Migration 8 */
 			
 			//Создаем в БД записи для описаний типов предложений
@@ -728,6 +729,347 @@ public class InitServlet extends HttpServlet {
 			objectifyRun(
 					graphicDesignEnSd
 					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);*/
+			
+			
+			/* Migration 9 */
+			
+			//Создаем в БД дополнительные записи для описаний типов предложений
+			//на английском и русском языках
+			
+			//Получаем из БД объект английского языка
+			/*Language englishLanguage = new Language();
+			objectifyRun2(
+					"en"
+					, englishLanguage
+					, LanguageDAO::getLangByCode
+					, out
+					, gson
+				);
+			
+			//Получаем из БД объект русского языка
+			Language russianLanguage = new Language();
+			objectifyRun2(
+					"ru"
+					, russianLanguage
+					, LanguageDAO::getLangByCode
+					, out
+					, gson
+				);
+			
+			//1. естественные науки
+			//Создаем объект описания типа предложения на английском
+			Static_description naturalSciencesEnSd = new Static_description();
+			naturalSciencesEnSd.setKey("natural_sciences_offer_type");
+			naturalSciencesEnSd.setLang_id(englishLanguage.getId());
+			naturalSciencesEnSd.setContent("natural science");
+			objectifyRun(
+					naturalSciencesEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description naturalSciencesRuSd = new Static_description();
+			naturalSciencesRuSd.setKey("natural_sciences_offer_type");
+			naturalSciencesRuSd.setLang_id(russianLanguage.getId());
+			naturalSciencesRuSd.setContent("естественные науки");
+			objectifyRun(
+					naturalSciencesRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type naturalSciencesOt = new Offer_type();
+			naturalSciencesOt.setDescription_key(naturalSciencesEnSd.getKey());
+			objectifyRun(
+					naturalSciencesOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//2. помощь животным
+			//Создаем объект описания типа предложения на английском
+			Static_description helpAnimalsEnSd = new Static_description();
+			helpAnimalsEnSd.setKey("help_animals_offer_type");
+			helpAnimalsEnSd.setLang_id(englishLanguage.getId());
+			helpAnimalsEnSd.setContent("help animals");
+			objectifyRun(
+					helpAnimalsEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description helpAnimalsRuSd = new Static_description();
+			helpAnimalsRuSd.setKey("help_animals_offer_type");
+			helpAnimalsRuSd.setLang_id(russianLanguage.getId());
+			helpAnimalsRuSd.setContent("помощь животным");
+			objectifyRun(
+					helpAnimalsRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type helpAnimalsOt = new Offer_type();
+			helpAnimalsOt.setDescription_key(helpAnimalsEnSd.getKey());
+			objectifyRun(
+					helpAnimalsOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//3. природа
+			//Создаем объект описания типа предложения на английском
+			Static_description natureEnSd = new Static_description();
+			natureEnSd.setKey("nature_offer_type");
+			natureEnSd.setLang_id(englishLanguage.getId());
+			natureEnSd.setContent("nature");
+			objectifyRun(
+					natureEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description natureRuSd = new Static_description();
+			natureRuSd.setKey("nature_offer_type");
+			natureRuSd.setLang_id(russianLanguage.getId());
+			natureRuSd.setContent("природа");
+			objectifyRun(
+					natureRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type natureOt = new Offer_type();
+			natureOt.setDescription_key(natureEnSd.getKey());
+			objectifyRun(
+					natureOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//4. проектирование техники
+			//Создаем объект описания типа предложения на английском
+			Static_description engineeringEnSd = new Static_description();
+			engineeringEnSd.setKey("engineering_offer_type");
+			engineeringEnSd.setLang_id(englishLanguage.getId());
+			engineeringEnSd.setContent("engineering");
+			objectifyRun(
+					engineeringEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description engineeringRuSd = new Static_description();
+			engineeringRuSd.setKey("engineering_offer_type");
+			engineeringRuSd.setLang_id(russianLanguage.getId());
+			engineeringRuSd.setContent("проектирование техники");
+			objectifyRun(
+					engineeringRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type engineeringOt = new Offer_type();
+			engineeringOt.setDescription_key(engineeringEnSd.getKey());
+			objectifyRun(
+					engineeringOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//5. промышленность
+			//Создаем объект описания типа предложения на английском
+			Static_description industryEnSd = new Static_description();
+			industryEnSd.setKey("industry_offer_type");
+			industryEnSd.setLang_id(englishLanguage.getId());
+			industryEnSd.setContent("industry");
+			objectifyRun(
+					industryEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description industryRuSd = new Static_description();
+			industryRuSd.setKey("industry_offer_type");
+			industryRuSd.setLang_id(russianLanguage.getId());
+			industryRuSd.setContent("промышленность");
+			objectifyRun(
+					industryRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type industryOt = new Offer_type();
+			industryOt.setDescription_key(industryEnSd.getKey());
+			objectifyRun(
+					industryOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//6. программирование
+			//Создаем объект описания типа предложения на английском
+			Static_description programmingEnSd = new Static_description();
+			programmingEnSd.setKey("programming_offer_type");
+			programmingEnSd.setLang_id(englishLanguage.getId());
+			programmingEnSd.setContent("programming");
+			objectifyRun(
+					programmingEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description programmingRuSd = new Static_description();
+			programmingRuSd.setKey("programming_offer_type");
+			programmingRuSd.setLang_id(russianLanguage.getId());
+			programmingRuSd.setContent("программирование");
+			objectifyRun(
+					programmingRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type programmingOt = new Offer_type();
+			programmingOt.setDescription_key(programmingEnSd.getKey());
+			objectifyRun(
+					programmingOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//7. общественные науки
+			//Создаем объект описания типа предложения на английском
+			Static_description socialScienceEnSd = new Static_description();
+			socialScienceEnSd.setKey("social_science_offer_type");
+			socialScienceEnSd.setLang_id(englishLanguage.getId());
+			socialScienceEnSd.setContent("social science");
+			objectifyRun(
+					socialScienceEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description socialScienceRuSd = new Static_description();
+			socialScienceRuSd.setKey("social_science_offer_type");
+			socialScienceRuSd.setLang_id(russianLanguage.getId());
+			socialScienceRuSd.setContent("общественные науки");
+			objectifyRun(
+					socialScienceRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type socialScienceOt = new Offer_type();
+			socialScienceOt.setDescription_key(socialScienceEnSd.getKey());
+			objectifyRun(
+					socialScienceOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//8. перевод
+			//Создаем объект описания типа предложения на английском
+			Static_description translationEnSd = new Static_description();
+			translationEnSd.setKey("translation_offer_type");
+			translationEnSd.setLang_id(englishLanguage.getId());
+			translationEnSd.setContent("translation");
+			objectifyRun(
+					translationEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description translationRuSd = new Static_description();
+			translationRuSd.setKey("translation_offer_type");
+			translationRuSd.setLang_id(russianLanguage.getId());
+			translationRuSd.setContent("перевод");
+			objectifyRun(
+					translationRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type translationOt = new Offer_type();
+			translationOt.setDescription_key(translationEnSd.getKey());
+			objectifyRun(
+					translationOt
+					, Offer_typeDAO::createOffer_type
+					, out
+					, gson
+				);
+			
+			//9. образование
+			//Создаем объект описания типа предложения на английском
+			Static_description educationEnSd = new Static_description();
+			educationEnSd.setKey("education_offer_type");
+			educationEnSd.setLang_id(englishLanguage.getId());
+			educationEnSd.setContent("education");
+			objectifyRun(
+					educationEnSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект описания типа предложения на русском
+			Static_description educationRuSd = new Static_description();
+			educationRuSd.setKey("education_offer_type");
+			educationRuSd.setLang_id(russianLanguage.getId());
+			educationRuSd.setContent("образование");
+			objectifyRun(
+					educationRuSd
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			//Создаем объект типа предложения с указанием ранее созданного ключа
+			Offer_type educationOt = new Offer_type();
+			educationOt.setDescription_key(educationEnSd.getKey());
+			objectifyRun(
+					educationOt
+					, Offer_typeDAO::createOffer_type
 					, out
 					, gson
 				);*/
