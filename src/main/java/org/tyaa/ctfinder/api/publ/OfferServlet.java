@@ -669,7 +669,7 @@ public class OfferServlet extends HttpServlet {
 													, gson
 												);
 											//offerTypeDescriptionString = "+";
-											Static_description offerTypeDescription =
+											/*Static_description offerTypeDescription =
 													new Static_description();
 											objectifyRun3(
 												offerType.getDescription_key()
@@ -678,7 +678,14 @@ public class OfferServlet extends HttpServlet {
 												, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
 												, out
 												, gson
-											);
+											);*/
+											Static_description offerTypeDescription =
+													LocalizeHelper.getLocalizedSDescriptionObject(
+															offerType.getDescription_key()
+															, currentLanguageId
+															, out
+															, gson
+														);
 											if(offerTypeDescription.getContent() != null) {
 												offerTypeDescriptionString =
 														offerTypeDescription.getContent();
@@ -770,9 +777,6 @@ public class OfferServlet extends HttpServlet {
 															, out
 															, gson
 														);
-													/*if(state.getId() != null) {}
-													offerStateString =
-															state.getId().toString() + " " + state.getTitle_key();*/
 													Static_title stateTitle = new Static_title();
 													objectifyRun3(
 														state.getTitle_key()
@@ -1071,7 +1075,7 @@ public class OfferServlet extends HttpServlet {
 																		, out
 																		, gson
 																	);
-																Static_description offerTypeDescription =
+																/*Static_description offerTypeDescription =
 																		new Static_description();
 																objectifyRun3(
 																	offerType.getDescription_key()
@@ -1080,7 +1084,14 @@ public class OfferServlet extends HttpServlet {
 																	, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
 																	, out
 																	, gson
-																);
+																);*/
+																Static_description offerTypeDescription =
+																		LocalizeHelper.getLocalizedSDescriptionObject(
+																				offerType.getDescription_key()
+																				, currentLanguageId
+																				, out
+																				, gson
+																			);
 																if(offerTypeDescription.getContent() != null) {
 																	offerTypeDescriptionString =
 																			offerTypeDescription.getContent();
@@ -1453,7 +1464,7 @@ public class OfferServlet extends HttpServlet {
 																, gson
 															);
 														//offerTypeDescriptionString = "+";
-														Static_description offerTypeDescription =
+														/*Static_description offerTypeDescription =
 																new Static_description();
 														objectifyRun3(
 															offerType.getDescription_key()
@@ -1462,7 +1473,14 @@ public class OfferServlet extends HttpServlet {
 															, Static_descriprionDAO::getStaticDescriptionByKeyAndLang
 															, out
 															, gson
-														);
+														);*/
+														Static_description offerTypeDescription =
+																LocalizeHelper.getLocalizedSDescriptionObject(
+																		offerType.getDescription_key()
+																		, currentLanguageId
+																		, out
+																		, gson
+																	);
 														if(offerTypeDescription.getContent() != null) {
 															offerTypeDescriptionString =
 																	offerTypeDescription.getContent();

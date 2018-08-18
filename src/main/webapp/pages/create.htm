@@ -125,20 +125,23 @@
 		
 	//активируем модальное окно, боковую панель и схлопывающиеся области
 	$('#create-container .modal').modal();
-	
+	//получение экземпляра модального окна
 	var createModalInstance =
 		M.Modal.getInstance($('#create-container .modal'));
+	//функция отображения разметки или текста в модальном окне
 	var showInCreateModal = function (_content){
 		$('#offer-create-modal .modal-content').html(_content);
 		createModalInstance.open();
 	};
 	
+	//словарь для модального окна
 	var createModalDict = {};
+	//словарь для списков выбора
 	var createSelectDict = {};
 
     //Функция получения списка всех типов предложений
     var populateOfferTypesSelect = function(){
-    	
+    	//запрос к сервлету "получить список всех типов предложений"
     	$.ajax({
 			type: 'POST',
 			url: '/offertype?action=get-all',
@@ -146,7 +149,7 @@
 			cache: false
 		}).done(function(responseText, textStatus, jqXHR) {
 			  
-			//Готовим шаблон списка при помощи библиотеки Hogan
+			//Готовим шаблон списка всех типов предложений при помощи библиотеки Hogan
             var template = Hogan.compile(
         		'<select>'
                 +'<option disabled="" selected="" value="">'+createSelectDict.create_select_type+'</option>'
@@ -159,17 +162,16 @@
             );
             //Заполняем шаблон данными и помещаем на веб-страницу
 			$('#offer-type-select').html(template.render(responseText));
+            //активация компонента списка выбора типов предложений
 			$('#offer-type-select select').formSelect();
 			
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			  
-			//console.log(textStatus);
-			//alert("Ошибка получения списка типов заданий: " + jqXHR);
 			showInCreateModal("Ошибка получения списка типов заданий: " + jqXHR);
 		});
     }
     
-	//Готовим функцию create таблицы
+	//Готовим функцию создания каркаса таблицы предложений текущего пользователя
     function createOfferTable() {
 		
     	$('#offer-table-container').html(
@@ -190,9 +192,9 @@
 				+ '</table>'
     	);
 	}
-	
+	//Готовим функцию локализации текущего раздела
 	var localizeCreate = function (){
-		
+		//установка флага "идет локализация страницы создания предложений" 
 		pageLocalization["create"] = true;
 		
 		$.ajax({
@@ -201,7 +203,7 @@
 			dataType: 'json',
 			cache: false
 		}).done(function(responseText, textStatus, jqXHR) {
-			
+			//если успешно
 			//Получаем словарь
 			var dict = dictionaryResponseToArray(responseText.result);
 			
@@ -216,7 +218,7 @@
 			$('label[for=start-date-input]').html(dict.create_input_desired_start);
 			$('label[for=finish-date-input]').html(dict.create_input_desired_end);
 			$('label[for=image-input]').html(dict.create_input_image);
-			
+			//Находим текстовый узел внутри указанного элемента и заменяем его строкой из словаря
 			$('#submit-new-offer')
 				.contents()
 			    .filter(function() {
@@ -235,7 +237,7 @@
 			$('#editOffer').html(dict.create_edit_button);
 			$('#deleteOffer').html(dict.create_delete_button);
 			$('#changeOfferState').html(dict.create_state_button);
-			
+			//заполняем словари модального окна и списка выбора из основного словаря
 			for(var key in dict) {
 				
 			  if (key.indexOf("modal") !== -1) {
@@ -248,10 +250,10 @@
 				  createSelectDict[key] = val;
 			  }
 			}
-			
+			//вызываем заполнение списка выбора типа предложения (категории)
 			populateOfferTypesSelect();
 			$('#offer-type-select option').first().html(dict.create_select_type);
-			
+			//вызываем заполнение таблицы предложений текущего пользователя
 		    createOfferTable();
 			$('#offer-table-id').html(dict.create_table_id);
 			$('#offer-table-name').html(dict.create_table_name);
@@ -259,26 +261,28 @@
 			$('#offer-table-image').html(dict.create_table_image);
 			$('#offer-table-status').html(dict.create_table_status);
 			$('#offer-table-created').html(dict.create_table_created);
-			
-			
+			//если ошибка
 		}).fail(function(jqXHR, textStatus, errorThrown) {
-			  
-			//alert("Ошибка: " + jqXHR);
+			//показываем в модальном окне тип ошибки
 			showInCreateModal("Ошибка: " + jqXHR);
 		}).always(function() {
-		    
+			//при любом исходе запроса
+			//сброс флага "идет локализация страницы создания предложений"
 			pageLocalization["create"] = false;
 		});
 	}
-	
+	//заносим функцию локализации текущей страницы в глобальную карту
 	pageLocaleHandlers["create"] = localizeCreate;
+	//запускаем локализацию текущей страницы
 	localizeCreate();
 	
 	//Устанавливаем в элемент ввода Дата (Календарь) текущую дату,
     //вызывая на ней предварительно нашу корректирующую функцию
 	$('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input')
 		.val(new Date().toDateInputValue());
-	//Задаем календарю окно допустимых дат - от текущей включительно -> infinity
+	//Задаем календарям формы окно допустимых дат - от текущей включительно до бесконечности
+	//Задаем календарям фильтра предложений пользователя в таблице -
+	//от текущей даты год назад до текущей даты в этом году 
     var minDate = new Date();
     var nowDate = new Date();
     var lastYearDate = new Date();
@@ -288,7 +292,6 @@
     $('div#offers-date-filter input#calendarTo')
 		.val(nowDate.toDateInputValue());
     
-    //console.log($('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input'));
   	//активация выбора даты
     $('form#create-offer-form input#start-date-input, form#create-offer-form input#finish-date-input').datepicker({
 	    	'format':'dd-mm-yyyy'
@@ -303,7 +306,7 @@
     	, 'setDefaultDate':true
     	, 'autoClose':true
 	});
-  	
+  	//Обработчики кнопок удаления дат в каледарях формы
     $('form#create-offer-form input#remove-start-date').click(function(ev){
 		
 		ev.preventDefault();
@@ -316,23 +319,27 @@
 		$('form#create-offer-form input#finish-date-input').val("");
     });
     
-  	//Блокируем кнопк, пока не будет
+  	//Блокируем кнопки отправки и сброса,
+  	//пока не будет пройдена валидация обязательных элементов ввода формы
     $('form#create-offer-form #submit-new-offer').prop('disabled', 'disabled');
 
 	app.handler(function() {
 
 		return function(params) {
-			
+			//Идентификатор выбранного в таблице предложения
 			var selectedOfferId = 0;
-			
+			//Курсор следующего предложения из хранилища
 			var cursorString = null;
+			//Максимальное число строк предложений, получаемых за один запрос
 		    var offerLimit = 10;
+			//Число полученных на данный момент предложений
 		    var offerCounter = 0;
+			//Флаг процесса заполнения таблицы
 		    var offerTablePopulating = false;
-			
+			//Объекты для хранения строк автодополнения
 			var countryAutocompleteItems = {};
 			var cityAutocompleteItems = {};
-			
+			//Функция сброса таблицы и механизма добавления в нее строк при прокрутке вниз
 			function resetInfinityScrollInfo(){
 				
 				selectedOfferId = 0;
@@ -344,8 +351,11 @@
 			    
 			    $('#offer-table-container tbody').html('');
 			}
-			
-			//Блокируем кнопк, пока не будет
+			//Запуск Функции сброса таблицы при первой загрузке раздела или при возврате
+			//на него из другого раздела
+			resetInfinityScrollInfo();
+			//Блокируем кнопки отправки и сброса,
+		  	//пока не будет пройдена валидация обязательных элементов ввода формы
 			$("form#create-offer-form #submit-new-offer").attr('disabled', 'disabled');
 			
 			//Блокируем обработку нажатия клавиши Ввод,
@@ -356,7 +366,7 @@
 			      return false;
 			    }
 		  	});
-			
+			//Настройки валидатора для совместимости с материалайз
 			$.validator.setDefaults(
 					{
 						ignore: [],
@@ -373,7 +383,7 @@
 					    }
 					}
 				);
-			
+			//настройка правил валидации формы
 			$('form#create-offer-form').validate({
 		        rules: {
 		        	title: {
@@ -388,7 +398,7 @@
 		        	content: "Описание не заполнено"
 		        }
 		    });
-			
+			//функция валидации формы
 			var isFormValid = function(){
 				
 				var isTitleContentValid = false;
