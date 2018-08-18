@@ -169,6 +169,8 @@
 	//+ preloader off on external sign out finished
 	//+ add more offer types
 	//+ complete modals instead of alerts
+	//+ fetch correct number of offers for grid
+	//+ show selected image in the creation form
 	
 	//TODO add. 1: complete multylang v2:
 		//- localized example images
@@ -348,6 +350,8 @@
 			    
 			    $('#offer-grid-container > div').html(noItemsImage);
 			}
+		    
+			resetInfinityScrollInfo();
 			
 			/* Filter: country n city autocomplete */
 			
