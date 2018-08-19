@@ -1554,11 +1554,13 @@ public class OfferServlet extends HttpServlet {
 														return new OfferGridItem(
 																o.getId()
 																, offerTypeDescriptionString
-																, titleString
+																, titleString.length() > 30
+																	? titleString.substring(0, 30) + " ..."
+																			: titleString
 																, offerStateString
 																, imageBase64
-																, descriptionString.length() > 50
-																		? descriptionString.substring(0, 50) + " ..."
+																, descriptionString.length() > 75
+																		? descriptionString.substring(0, 75) + " ..."
 																		: descriptionString
 																, DateTransform.ReversedToDirect(o.getCreated_at())
 															);
