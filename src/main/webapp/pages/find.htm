@@ -320,9 +320,9 @@
 			var offerLimitDefault = 2;
 			if(windowWidth > 1200){
 				offerLimitDefault = 3;
-			} else {
+			}/* else {
 				offerLimitDefault = 2;
-			}
+			}*/
 			
 			//Начальные настройки бесконечной прокрутки предложений
 			var cursorString = null;
@@ -568,8 +568,49 @@
 				        		
 				        		offerLimit = offerLimitDefault;
 				        	}
+			        		
+			        		var newGridItems = data.result[0].items;
+			        		newGridItems.forEach(function(item, i, newGridItems) {
+							  
+			        			//Готовим шаблон offer grid item при помощи библиотеки Hogan
+							  	var template = Hogan.compile(
+					                '<div class="col s12 m12 l6 xl4">'
+						                +'<div class="card hoverable {{offer_type}}">'
+						                    +'<div class="card-image">'
+						                      +'<img src="{{image}}">'
+						                      +'<div class="card-title">'
+						                      	+'<div>{{title}}</div>'
+						                      	+'<div>({{offer_type}})</div>'
+						                      	+'<div class="card-title-date">{{created_at}}</div>'
+						                      +'</div>'
+						                    +'</div>'
+						                    +'<div class="card-content">'
+						                      +'<p>{{content_preview}}</p>'
+						                    +'</div>'
+						                    +'<div class="card-action">'
+						                      	+'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">'
+						                      		+ findCardDict.find_card_details
+				                      			+'</a>'
+						                    +'</div>'
+						                  +'</div>'
+						            +'</div>'
+						  		);
+			        			
+							  	var $offerGridContainer = $('#offer-grid-container');
+					            var $offerGridRows = $offerGridContainer.children();
+					            if($offerGridRows.length == 0
+					            		|| $offerGridRows.last().children().length == offerLimitDefault){
+					            	$offerGridContainer.append('<div class="row"></div>');
+					            	$offerGridRows = $offerGridContainer.children();
+					            }
+							  	//Заполняем шаблон данными и помещаем на веб-страницу
+								//$('#offer-grid-container > div').append(template.render(data.result[0]));
+							  	$offerGridRows.last().append(template.render(item));
+							  	//
+								$('#find-container #pointer-down').css('display', 'block');
+							});
 	
-				            //Готовим шаблон offer grid item при помощи библиотеки Hogan
+				            /*//Готовим шаблон offer grid item при помощи библиотеки Hogan
 						  	var template = Hogan.compile(
 					  			'{{#items}}'
 				                +'<div class="col s12 m12 l6 xl4">'
@@ -593,11 +634,8 @@
 					                  +'</div>'
 					            +'</div>'
 					      		+ '{{/items}}'
-					  		);
-						  	//Заполняем шаблон данными и помещаем на веб-страницу
-							$('#offer-grid-container > div').append(template.render(data.result[0]));
-						  	//
-							$('#find-container #pointer-down').css('display', 'block');
+					  		);*/
+				            
 			        	} else {
 			        		
 			        		$('#find-container #pointer-down').css('display', 'none');
