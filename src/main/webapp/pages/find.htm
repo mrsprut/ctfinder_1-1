@@ -157,7 +157,7 @@
 			    
 			</div>
 			<div class="modal-footer">
-				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+				<a href="#!find" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
 			</div>
 		</div>	
 	</div>
@@ -988,6 +988,9 @@
 		    			//Считывание значения дополнительного атрибута
 		    			//из элемента-ссылки, по которой кликнул пользователь
 		    			var id = $(this).data('offerid');
+		    			//Меняем текущий адрес на адрес с указанием ИД предложения
+		    			//без обновления страницы
+		    			window.history.pushState(null, document.title, "/#find:" + id);
 		    			//Вызов функции отображения окна детализации
 		    			//выбранного предложения
 		    			showOfferDetails(id);
