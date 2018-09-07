@@ -85,9 +85,9 @@ var getCurrentPageName = function(){
 					'<h5 class="white-text">{{index_footer_connect_title}}</h5>'
 					+'<ul>'
 						+'<li><a class="white-text" href="mailto:tyaamariupol@gmail.com">E-mail</a></li>'
-						+'<li><a class="white-text" href="#!">VK group</a></li>'
-						+'<li><a class="white-text" href="#!">FB group</a></li>'
-						+'<li><a class="white-text" href="#!">YouTube</a></li>'
+						+'<li><a class="white-text" href="https://vk.com/creativetfinder">VK group</a></li>'
+						+'<li><a class="white-text" href="https://www.facebook.com/groups/510052379461608/">FB group</a></li>'
+						+'<li class="disabled"><a class="white-text" href="#!">YouTube</a></li>'
 					+'</ul>'
 			    );
 				$('#footer-connect').html(footerConnectTemplate.render(dict));
