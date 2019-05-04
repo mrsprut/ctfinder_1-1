@@ -1674,6 +1674,32 @@ public class OfferServlet extends HttpServlet {
 											, toAddressString
 											, toNameString);
 									
+									// Делаем попытку создать новый узел в веб-приложении "MySkillsOrganizer"
+									// (сработает, если туда хотя бы раз заходил тот же пользователь Google,
+									// который сейчас кликнул "Присоединиться" в CTFinder)
+									
+									//Находим описание на текущем языке
+									String descriptionString = "-";
+									if(o.getDescription_key() != null
+											&& !o.getDescription_key().equals("")) {
+										Description description = new Description();
+										objectifyRun3(
+											o.getDescription_key()
+											, englishLanguage.getId()
+											, description
+											, DescriptionDAO::getDescriptionByKeyAndLang
+											, out
+											, gson
+										);
+										descriptionString = description.getContent();
+									}
+									
+									CTFinder2MySkillsOrganizer.createNode(
+											candidateUser.getEmail()
+											, titleString
+											, descriptionString
+										);
+									
 									List al = new ArrayList<>();
 									al.add(HttpRespWords.sent);
 									RespData rd = new RespData(al);
