@@ -4,6 +4,23 @@
 	<threadsafe>true</threadsafe>
 	<sessions-enabled>true</sessions-enabled>
 	<runtime>java8</runtime>
+	
+	<resource-files>
+	    <include path="/**.json" />
+	</resource-files>
+	
+	<system-properties>
+        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+	</system-properties>
+	
+	<manual-scaling>
+	   <instances>2</instances>
+	</manual-scaling>
+	
+	<!-- <url-stream-handler>urlfetch</url-stream-handler> -->
+	
+	<url-stream-handler>native</url-stream-handler>
+    <warmup-requests-enabled>true</warmup-requests-enabled>
 
 	<!-- <static-files>
 		<include path="/pages/*">

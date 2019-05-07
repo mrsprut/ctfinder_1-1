@@ -21,6 +21,7 @@ import org.tyaa.ctfinder.controller.LanguageDAO;
 import org.tyaa.ctfinder.entity.Language;
 
 import com.google.gson.Gson;
+import com.googlecode.objectify.ObjectifyService;
 
 /**
  * Servlet Filter implementation class LanguageFilter
@@ -29,6 +30,11 @@ import com.google.gson.Gson;
 public class LanguageFilter implements Filter {
 
 	private static Gson gson = new Gson();
+	
+	static {
+		ObjectifyService.register(Language.class);
+	}
+	
     /**
      * Default constructor. 
      */

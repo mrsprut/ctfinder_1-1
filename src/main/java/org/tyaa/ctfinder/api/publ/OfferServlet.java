@@ -530,14 +530,17 @@ public class OfferServlet extends HttpServlet {
 													+ authorUser.getName()
 													+ " published new offer: '"
 													+ title
-													+ "' (URL: https://creativetfinder.appspot.com/#find:"
+													// + "' (URL: https://creativetfinder.appspot.com/#find:"
+													+ "' (URL: https://creativetfinder-dev.appspot.com/#find:"
 													+ offer.getId()
 													+ "). "
-													+ "Unsubscription link: https://creativetfinder.appspot.com/pages/static/unsubscription.html?author-id="
+													// + "Unsubscription link: https://creativetfinder.appspot.com/pages/static/unsubscription.html?author-id="
+													+ "Unsubscription link: https://creativetfinder-dev.appspot.com/pages/static/unsubscription.html?author-id="
 														+ authorId
 														+ "&subscriber-id=";
 											String subjectString = "New offer";
-											String fromAddressString = "tyaamariupol@gmail.com";
+											// String fromAddressString = "tyaamariupol@gmail.com";
+											String fromAddressString = "tyaa10@gmail.com";
 											String fromNameString = "CTFinder";
 											
 											//log.info("messageString " + messageString);
@@ -844,7 +847,7 @@ public class OfferServlet extends HttpServlet {
 												Locale loc = new Locale(currentLanguage.getCode());
 												ResourceBundle bundle =
 														ResourceBundle.getBundle(
-																"org.tyaa.ctfinder.locale.ApplicationResourcesCommon"
+																"locales.ApplicationResourcesCommon"
 																, loc
 															);
 												String collaboratorsCount =
@@ -1654,25 +1657,27 @@ public class OfferServlet extends HttpServlet {
 											+ candidateUser.getName()
 											+ " wants to join your project: '"
 											+ titleString
-											+ "' (URL: https://creativetfinder.appspot.com/#find:"
+											// + "' (URL: https://creativetfinder.appspot.com/#find:"
+											+ "' (URL: https://creativetfinder-dev.appspot.com/#find:"
 											+ o.getId()
 											+ ")"
 											+ ". Get in touch with him by email: "
 											+ candidateUser.getEmail();
 									String subjectString = "Request for join";
-									String fromAddressString = "tyaamariupol@gmail.com";
+									// String fromAddressString = "tyaamariupol@gmail.com";
+									String fromAddressString = "tyaa10@gmail.com";
 									String fromNameString = "CTFinder";
 									String toAddressString = authorUser.getEmail();
 									String toNameString = authorUser.getName();
 									
 									// Отправляем сообщение
-									mailer.sendPlainMsg(
+									/* mailer.sendPlainMsg(
 											messageString
 											, subjectString
 											, fromAddressString
 											, fromNameString
 											, toAddressString
-											, toNameString);
+											, toNameString); */
 									
 									// Делаем попытку создать новый узел в веб-приложении "MySkillsOrganizer"
 									// (сработает, если туда хотя бы раз заходил тот же пользователь Google,

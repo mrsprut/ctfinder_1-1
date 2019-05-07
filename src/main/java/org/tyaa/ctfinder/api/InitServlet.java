@@ -21,6 +21,7 @@ import org.tyaa.ctfinder.controller.Offer_typeDAO;
 import org.tyaa.ctfinder.controller.StateDAO;
 import org.tyaa.ctfinder.controller.Static_descriprionDAO;
 import org.tyaa.ctfinder.controller.Static_titleDAO;
+import org.tyaa.ctfinder.controller.User_typeDAO;
 import org.tyaa.ctfinder.entity.City;
 import org.tyaa.ctfinder.entity.Country;
 import org.tyaa.ctfinder.entity.Language;
@@ -93,13 +94,13 @@ public class InitServlet extends HttpServlet {
 			
 			//Создаем в БД запись для английского языка
 			
-			/*Language englishLanguage = new Language();
-			englishLanguage.setCode("en");
+			Language englishLanguage0 = new Language();
+			englishLanguage0.setCode("en");
 			
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
-						LanguageDAO.createLang(englishLanguage);
+						LanguageDAO.createLang(englishLanguage0);
 					} catch (Exception ex) {
 
 						String errorJson = gson.toJson(ex.getMessage());
@@ -108,12 +109,12 @@ public class InitServlet extends HttpServlet {
 				}
 			});
 			
-			if(englishLanguage.getId() != null) {
+			if(englishLanguage0.getId() != null) {
 				
 				//Создаем в БД запись для заголовка для английского языка
 				
 				Static_title englishTitle = new Static_title();
-				englishTitle.setLang_id(englishLanguage.getId());
+				englishTitle.setLang_id(englishLanguage0.getId());
 				englishTitle.setKey("english_lang_title");
 				englishTitle.setContent("english");
 				
@@ -132,11 +133,11 @@ public class InitServlet extends HttpServlet {
 				if(englishTitle.getId() != null) {
 					
 					//update englishLanguage
-					englishLanguage.setTitle_key(englishTitle.getKey());
+					englishLanguage0.setTitle_key(englishTitle.getKey());
 					ObjectifyService.run(new VoidWork() {
 						public void vrun() {
 							try {
-								LanguageDAO.updateLang(englishLanguage);
+								LanguageDAO.updateLang(englishLanguage0);
 							} catch (Exception ex) {
 
 								String errorJson = gson.toJson(ex.getMessage());
@@ -148,7 +149,7 @@ public class InitServlet extends HttpServlet {
 					//create title 'user' for the future usertype
 					
 					Static_title userTitle = new Static_title();
-					userTitle.setLang_id(englishLanguage.getId());
+					userTitle.setLang_id(englishLanguage0.getId());
 					userTitle.setKey("user_user_type_title");
 					userTitle.setContent("user");
 					
@@ -179,14 +180,14 @@ public class InitServlet extends HttpServlet {
 						}
 					});
 				}
-			}*/
+			}
 			
 			/* Migration 2 */
 			
 			//Создаем в БД записи для описаний типов предложений
 			
 			//Получаем из БД объект английского языка
-			/*Language englishLanguage = new Language();
+			Language englishLanguage = new Language();
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
@@ -197,9 +198,9 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});*/
+			});
 			
-			/*Static_description volunteerAssistanceEnSd = new Static_description();
+			final Static_description volunteerAssistanceEnSd = new Static_description();
 			//TODO key generator
 			volunteerAssistanceEnSd.setKey("volunteer_assistance_offer_type");
 			volunteerAssistanceEnSd.setLang_id(englishLanguage.getId());
@@ -230,17 +231,17 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});*/
+			});
 			
-			/*Static_description  graphicDesignEnSd = new Static_description();
-			graphicDesignEnSd.setKey("graphic_design_offer_type");
-			graphicDesignEnSd.setLang_id(englishLanguage.getId());
-			graphicDesignEnSd.setContent("graphic design");
+			final Static_description  graphicDesignEnSd2 = new Static_description();
+			graphicDesignEnSd2.setKey("graphic_design_offer_type");
+			graphicDesignEnSd2.setLang_id(englishLanguage.getId());
+			graphicDesignEnSd2.setContent("graphic design");
 			
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
 					try {
-						Static_descriprionDAO.createStatic_descriprion(graphicDesignEnSd);
+						Static_descriprionDAO.createStatic_descriprion(graphicDesignEnSd2);
 					} catch (Exception ex) {
 
 						String errorJson = gson.toJson(ex.getMessage());
@@ -250,7 +251,7 @@ public class InitServlet extends HttpServlet {
 			});
 			
 			Offer_type graphicDesignOt = new Offer_type();
-			graphicDesignOt.setDescription_key(graphicDesignEnSd.getKey());
+			graphicDesignOt.setDescription_key(graphicDesignEnSd2.getKey());
 			
 			ObjectifyService.run(new VoidWork() {
 				public void vrun() {
@@ -262,13 +263,13 @@ public class InitServlet extends HttpServlet {
 						out.print(errorJson);
 					}
 				}
-			});*/
+			});
 			
 			/* Migration 3 */
 			
 			//Ukraine country en
 			//
-			/*Static_title ukraineCountrySt =
+			Static_title ukraineCountrySt =
 					new Static_title(
 							"ukraine_country"
 							, englishLanguage.getId()
@@ -280,11 +281,11 @@ public class InitServlet extends HttpServlet {
 					, gson
 				);
 			
-			Country ukraineCountry =
+			Country ukraineCountry0 =
 					new Country(ukraineCountrySt.getKey());
 			
 			objectifyRun(
-					ukraineCountry
+					ukraineCountry0
 					, CountryDAO::createCountry
 					, out
 					, gson
@@ -303,22 +304,22 @@ public class InitServlet extends HttpServlet {
 					, gson
 				);
 			
-			Country russiaCountry =
+			Country russiaCountry0 =
 					new Country(russiaCountrySt.getKey());
 			
 			objectifyRun(
-					russiaCountry
+					russiaCountry0
 					, CountryDAO::createCountry
 					, out
 					, gson
-				);*/
+				);
 			
 			
 			/* Migration 4 */
 			
 			// Create Kiev n Mariupol cities
 			
-			/*Country ukraineCountry =
+			Country ukraineCountry =
 					new Country();
 			
 			objectifyRun2(
@@ -424,12 +425,12 @@ public class InitServlet extends HttpServlet {
 					, CityDAO::createCity
 					, out
 					, gson
-				);*/
+				);
 			
 			
 			/* Migration 5 */
 			
-			/*//Create state options
+			//Create state options
 			
 			//created
 			Static_title createdStateSt =
@@ -534,14 +535,14 @@ public class InitServlet extends HttpServlet {
 					, StateDAO::createState
 					, out
 					, gson
-				);*/
+				);
 			
 			
 			/* Миграция 6 */
 			
 			//Создаем в БД запись для Russian языка
 			
-			/*Language russianLanguage = new Language();
+			Language russianLanguage = new Language();
 			russianLanguage.setCode("ru");
 			
 			objectifyRun(
@@ -600,7 +601,7 @@ public class InitServlet extends HttpServlet {
 						, out
 						, gson
 					);
-			}*/
+			}
 			
 			/* Миграция 7 */
 			
@@ -615,7 +616,7 @@ public class InitServlet extends HttpServlet {
 					, LanguageDAO::getLangByCode
 					, out
 					, gson
-				);
+				);*/
 			
 			//Русский заголовок для страны Украина
 			Static_title ukraineCountryRussianSt =
@@ -693,7 +694,7 @@ public class InitServlet extends HttpServlet {
 					, Static_titleDAO::createStatic_title
 					, out
 					, gson
-				);*/
+				);
 			
 			
 			/* Migration 8 */
@@ -709,29 +710,29 @@ public class InitServlet extends HttpServlet {
 					, LanguageDAO::getLangByCode
 					, out
 					, gson
-				);
-			
-			Static_description volunteerAssistanceEnSd = new Static_description();
-			volunteerAssistanceEnSd.setKey("volunteer_assistance_offer_type");
-			volunteerAssistanceEnSd.setLang_id(russianLanguage.getId());
-			volunteerAssistanceEnSd.setContent("волонтерская помощь");
-			objectifyRun(
-					volunteerAssistanceEnSd
-					, Static_descriprionDAO::createStatic_descriprion
-					, out
-					, gson
-				);
-			
-			Static_description  graphicDesignEnSd = new Static_description();
-			graphicDesignEnSd.setKey("graphic_design_offer_type");
-			graphicDesignEnSd.setLang_id(russianLanguage.getId());
-			graphicDesignEnSd.setContent("дизайн");
-			objectifyRun(
-					graphicDesignEnSd
-					, Static_descriprionDAO::createStatic_descriprion
-					, out
-					, gson
 				);*/
+			
+			Static_description volunteerAssistanceEnSd2 = new Static_description();
+			volunteerAssistanceEnSd2.setKey("volunteer_assistance_offer_type");
+			volunteerAssistanceEnSd2.setLang_id(russianLanguage.getId());
+			volunteerAssistanceEnSd2.setContent("волонтерская помощь");
+			objectifyRun(
+					volunteerAssistanceEnSd2
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
+			
+			Static_description graphicDesignEnSd3 = new Static_description();
+			graphicDesignEnSd3.setKey("graphic_design_offer_type");
+			graphicDesignEnSd3.setLang_id(russianLanguage.getId());
+			graphicDesignEnSd3.setContent("дизайн");
+			objectifyRun(
+					graphicDesignEnSd3
+					, Static_descriprionDAO::createStatic_descriprion
+					, out
+					, gson
+				);
 			
 			
 			/* Migration 9 */
@@ -757,7 +758,7 @@ public class InitServlet extends HttpServlet {
 					, LanguageDAO::getLangByCode
 					, out
 					, gson
-				);
+				);*/
 			
 			//1. естественные науки
 			//Создаем объект описания типа предложения на английском
@@ -1072,7 +1073,7 @@ public class InitServlet extends HttpServlet {
 					, Offer_typeDAO::createOffer_type
 					, out
 					, gson
-				);*/
+				);
 		} catch(Exception ex) {
 			
 			ex.printStackTrace();

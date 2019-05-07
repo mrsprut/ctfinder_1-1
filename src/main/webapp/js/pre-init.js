@@ -95,7 +95,7 @@ function checkSigninStatus(isSignedIn) {
 		//console.log('User signed out.');
 
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'https://creativetfinder.appspot.com/auth');
+		xhr.open('POST', 'https://creativetfinder-dev.appspot.com/auth');
 		//xhr.open('POST', 'http://localhost:8080/auth');
 		xhr.setRequestHeader('Content-Type',
 				'application/x-www-form-urlencoded');

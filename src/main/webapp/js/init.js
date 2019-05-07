@@ -189,7 +189,7 @@ function onSignIn(googleUser) {
 	var id_token = googleUser.getAuthResponse().id_token;
 	
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', 'https://creativetfinder.appspot.com/auth');
+	xhr.open('POST', 'https://creativetfinder-dev.appspot.com/auth');
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xhr.responseType = 'json';
 	xhr.onload = function() {

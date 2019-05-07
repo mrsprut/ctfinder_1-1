@@ -46,7 +46,8 @@ import com.googlecode.objectify.VoidWork;
 public class AuthServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final String CLIENT_ID = "662695077745-6ucmgmh2qtf9ltav8thhnot7i671ktgs.apps.googleusercontent.com";
+	// private static final String CLIENT_ID = "662695077745-6ucmgmh2qtf9ltav8thhnot7i671ktgs.apps.googleusercontent.com";
+	private static final String CLIENT_ID = "551611329284-gl2rot3pi55pu6t1h4utl43qcfm01bdh.apps.googleusercontent.com";
 	private static final JacksonFactory jacksonFactory = new JacksonFactory();
 
 	private GoogleIdTokenVerifier verifier;
