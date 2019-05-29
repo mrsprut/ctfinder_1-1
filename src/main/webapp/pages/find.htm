@@ -1,1038 +1,1057 @@
 <div id="find-container" class="container">
-	<div class="row flex">
-		<div class="col s1 valign-wrapper">
-			<ul id="slide-out" class="sidenav">
-				<li>
-					<ul class="collapsible">
-						<li>
-							<div class="collapsible-header">
-								<i class="material-icons">list</i><span id="find_title_categories">Categories</span>
-							</div>
-							<div class="collapsible-body">
-								<form id="categories" action="#">
-									
-								</form>
-							</div>
-						</li>
-						<li>
-							<div class="collapsible-header">
-								<i class="material-icons">filter_list</i><span id="find_title_filters">Filters</span>
-							</div>
-							<div class="collapsible-body">
-								<form id="filters" action="#">
-									<div class="row">
-										 <div class="col s12">
-										 	<div class="row">
-												<div class="input-field col s12">
-													<i class="material-icons prefix">place</i>
-													<input type="text" id="country-input" class="autocomplete" autocomplete="off" placeholder="Country">
-													<label for="country-input">Country</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col s12">
-										 	<div class="row">
-												<div class="input-field col s12">
-													<i class="material-icons prefix">place</i>
-													<input type="text" id="city-input" class="autocomplete" autocomplete="off" placeholder="City">
-													<label for="city-input">City</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col s12">
-										 	<div class="row">
-												<div class="input-field col s6">
-													<input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
-													<label for="c-count-input">Vacant places</label>
-												</div>
-												<div class="input-field col s6">
-													<p>
-														<label>
-															<input id="c-count-on-off" type="checkbox" />
-															<span>On / Off</span>
-														</label>
-													 </p>
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
-							</div>
-						</li>
-						<li>
-							<div class="collapsible-header">
-								<i class="material-icons">sort</i><span id="find_title_order">Order</span>
-							</div>
-							<div class="collapsible-body">
-								<form  id="order-rules" action="#">
-									<p>
-										<label> <input id="sort-created-desc" name="sort-group" type="radio" checked="checked" />
-											<span>newest by creation date</span>
-										</label>
-									</p>
-									<p>
-										<label> <input  id="sort-created-asc" name="sort-group" type="radio" />
-											<span>oldest by creation date</span>
-										</label>
-									</p>
-									<p>
-										<label> <input id="sort-urgency-asc" name="sort-group" type="radio" /> <span>from short-term to long-term</span>
-										</label>
-									</p>
-									<p>
-										<label> <input id="sort-urgency-desc" name="sort-group" type="radio" /> <span>from long-term to short-term</span>
-										</label>
-									</p>
-									<p>
-										<label> <input id="sort-start-asc" name="sort-group" type="radio" /> <span>closest starting date first</span>
-										</label>
-									</p>
-									<p>
-										<label> <input id="sort-start-desc" name="sort-group" type="radio" /> <span>later by start date</span>
-										</label>
-									</p>
-									<p>
-										<label> <input id="sort-finish-asc" name="sort-group" type="radio" /> <span>closest end date first</span>
-										</label>
-									</p>
-									<p>
-										<label> <input id="sort-finish-desc" name="sort-group" type="radio" /> <span>later by end date</span>
-										</label>
-									</p>
-								</form>
-							</div>
-						</li>
-					</ul>
-				</li>
-			</ul>
-			<a href="#" data-target="slide-out" class="sidenav-trigger"><i
-				class="material-icons" style="pointer-events: none">settings</i></a>
-		</div>
-		<div class="col s11">
-			<div class="row">
-				<form id="search-form" class="col s12">
-					<div class="input-field">
-						<i class="material-icons prefix">search</i>
-						<input id="search" class="autocomplete" autocomplete="off" type="text" placeholder="search by title" required>
-						<!-- <label class="label-icon" for="search">поиск по заголовкам</label> -->
-					</div>
-				</form>
-			</div>
-			<div class="row">
-				<div class="col s6">
-					<form>
-						<label for="calendarFrom"> From: </label>
-						<input id="calendarFrom" name="calendarFrom" type="text" class="datepicker"> </input>
-					</form>
-				</div>
-				<div class="col s6">
-					<form>
-						<label for="calendarTo"> to: </label>
-						<input id="calendarTo" name="calendarTo" type="text" class="datepicker"> </input>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Сюда при помощи jquery помещается шаблон grid, заполненный данными offers -->
-	<div class="row">
-		<div class="col s12 m12 l12 xl12">
-			<div id="offer-grid-container">
-				<div class="row"></div>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s12 m12 l12 xl12">
-			<img id="pointer-down" src="../img/pointer_down.gif" alt="pointer down">
-		</div>
-	</div>
-	<div>
-		<div id="offer-details" class="modal">
-			<div class="modal-content">
-			    
-			</div>
-			<div class="modal-footer">
-				<a href="#!find" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
-			</div>
-		</div>	
-	</div>
+    <div class="row flex">
+        <div class="col s1 valign-wrapper">
+            <ul id="slide-out" class="sidenav">
+                <li>
+                    <ul class="collapsible">
+                        <li>
+                            <div class="collapsible-header">
+                                <i class="material-icons">list</i><span id="find_title_categories">Categories</span>
+                            </div>
+                            <div class="collapsible-body">
+                                <form id="categories" action="#">
+
+                                </form>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header">
+                                <i class="material-icons">filter_list</i><span id="find_title_filters">Filters</span>
+                            </div>
+                            <div class="collapsible-body">
+                                <form id="filters" action="#">
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <div class="row">
+                                                <div class="input-field col s12">
+                                                    <i class="material-icons prefix">place</i>
+                                                    <input type="text" id="country-input" class="autocomplete" autocomplete="off" placeholder="Country">
+                                                    <label for="country-input">Country</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <div class="row">
+                                                <div class="input-field col s12">
+                                                    <i class="material-icons prefix">place</i>
+                                                    <input type="text" id="city-input" class="autocomplete" autocomplete="off" placeholder="City">
+                                                    <label for="city-input">City</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <div class="row">
+                                                <div class="input-field col s6">
+                                                    <input type="number" id="c-count-input" min="1" placeholder="&infin;" value="">
+                                                    <label for="c-count-input">Vacant places</label>
+                                                </div>
+                                                <div class="input-field col s6">
+                                                    <p>
+                                                        <label>
+                                                            <input id="c-count-on-off" type="checkbox" />
+                                                            <span>On / Off</span>
+                                                        </label>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header">
+                                <i class="material-icons">sort</i><span id="find_title_order">Order</span>
+                            </div>
+                            <div class="collapsible-body">
+                                <form  id="order-rules" action="#">
+                                    <p>
+                                        <label> <input id="sort-created-desc" name="sort-group" type="radio" checked="checked" />
+                                            <span>newest by creation date</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input  id="sort-created-asc" name="sort-group" type="radio" />
+                                            <span>oldest by creation date</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input id="sort-urgency-asc" name="sort-group" type="radio" /> <span>from short-term to long-term</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input id="sort-urgency-desc" name="sort-group" type="radio" /> <span>from long-term to short-term</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input id="sort-start-asc" name="sort-group" type="radio" /> <span>closest starting date first</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input id="sort-start-desc" name="sort-group" type="radio" /> <span>later by start date</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input id="sort-finish-asc" name="sort-group" type="radio" /> <span>closest end date first</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label> <input id="sort-finish-desc" name="sort-group" type="radio" /> <span>later by end date</span>
+                                        </label>
+                                    </p>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="#" data-target="slide-out" class="sidenav-trigger"><i
+                    class="material-icons" style="pointer-events: none">settings</i></a>
+        </div>
+        <div class="col s11">
+            <div class="row">
+                <form id="search-form" class="col s12">
+                    <div class="input-field">
+                        <i class="material-icons prefix">search</i>
+                        <input id="search" class="autocomplete" autocomplete="off" type="text" placeholder="search by title" required>
+                        <!-- <label class="label-icon" for="search">поиск по заголовкам</label> -->
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col s6">
+                    <form>
+                        <label for="calendarFrom"> From: </label>
+                        <input id="calendarFrom" name="calendarFrom" type="text" class="datepicker"> </input>
+                    </form>
+                </div>
+                <div class="col s6">
+                    <form>
+                        <label for="calendarTo"> to: </label>
+                        <input id="calendarTo" name="calendarTo" type="text" class="datepicker"> </input>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Сюда при помощи jquery помещается шаблон grid, заполненный данными offers -->
+    <div class="row">
+        <div class="col s12 m12 l12 xl12">
+            <div id="offer-grid-container">
+                <div class="row"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12 m12 l12 xl12">
+            <img id="pointer-down" src="../img/pointer_down.gif" alt="pointer down">
+        </div>
+    </div>
+    <div>
+        <div id="offer-details" class="modal">
+            <div class="modal-content">
+
+            </div>
+            <div class="modal-footer">
+                <a href="#!find" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+            </div>
+        </div>	
+    </div>
 </div>
 <script type="text/javascript">
-	
-	//TODO: fix destroying of date fields in new offer form
-	//+ tooltips
-	//+ preloader off on external sign out finished
-	//+ complete modals instead of alerts
-	//+ show selected image in the creation form
-	
-	//TODO add. 1: complete multylang v2:
-		//- localized example images
-		//- create translations for own offers
-	//TODO add. 2: switch search autocomplete title/content
-	
-	//активируем модальное окно, боковую панель и схлопывающиеся области
-	$('.sidenav').sidenav();
-	$('.collapsible').collapsible();
-	$('#find-container .modal').modal();
-	
-	var populateCategories = function(){
-		
-		$.ajax({
-			type: 'POST',
-			url: '/offertype?action=get-all',
-			dataType: 'json',
-			cache: false
-		}).done(function(responseText, textStatus, jqXHR) {
-			  
-			//console.log(responseText);
-			//Готовим шаблон списка при помощи библиотеки Hogan
+
+    //TODO: fix destroying of date fields in new offer form
+    //+ tooltips
+    //+ preloader off on external sign out finished
+    //+ complete modals instead of alerts
+    //+ show selected image in the creation form
+
+    //TODO add. 1: complete multylang v2:
+    //- localized example images
+    //- create translations for own offers
+    //TODO add. 2: switch search autocomplete title/content
+
+    //активируем модальное окно, боковую панель и схлопывающиеся области
+    $('.sidenav').sidenav();
+    $('.collapsible').collapsible();
+    $('#find-container .modal').modal();
+
+    var populateCategories = function () {
+
+        $.ajax({
+            type: 'POST',
+            url: '/offertype?action=get-all',
+            dataType: 'json',
+            cache: false
+        }).done(function (responseText, textStatus, jqXHR) {
+
+            //console.log(responseText);
+            //Готовим шаблон списка при помощи библиотеки Hogan
             var template = Hogan.compile(
-                '{{#result}}'
-                +'<p>'
-					+'<label for="{{id}}">'
-						+'<input id="{{id}}" type="checkbox" /><span>{{description}}</span>'
-					+'</label>'
-				+'</p>'
-				+'{{/result}}'
-            );
+                    '{{#result}}'
+                    + '<p>'
+                    + '<label for="{{id}}">'
+                    + '<input id="{{id}}" type="checkbox" /><span>{{description}}</span>'
+                    + '</label>'
+                    + '</p>'
+                    + '{{/result}}'
+                    );
             //Заполняем шаблон данными и помещаем на веб-страницу
-			$('#categories').html(template.render(responseText));
-			
-		}).fail(function(jqXHR, textStatus, errorThrown) {
-			  
-			alert("Ошибка: " + jqXHR);
-		}).always(function() {
-		    
-			preloaderOff();
-	  	});
-	};
-	
-	var findModalDict = {};
-	var findCardDict = {};
+            $('#categories').html(template.render(responseText));
 
-	var localizeFind = function (){
-		
-		pageLocalization["find"] = true;
-		
-		$.ajax({
-			type: 'POST',
-			url: '/language?action=dictionary&page=find',
-			dataType: 'json',
-			cache: false
-		}).done(function(responseText, textStatus, jqXHR) {
-			
-			//Получаем словарь
-			var dict = dictionaryResponseToArray(responseText.result);
-			
-			$('#find_title_categories').html(dict.find_title_categories);
-			populateCategories();
-			
-			$('#find_title_filters').html(dict.find_title_filters);
-			$('#country-input').attr('placeholder', dict.find_country_input);
-			$('label[for=country-input]').html(dict.find_country_input);
-			$('#city-input').attr('placeholder', dict.find_city_input);
-			$('label[for=city-input]').html(dict.find_city_input);
-			$('label[for=c-count-input]').html(dict.find_c_count_input);
-			$('#c-count-on-off ~ span').html(dict.find_c_count_on_off);
-			
-			$('#find_title_order').html(dict.find_title_order);
-			$('#sort-created-desc ~ span').html(dict.find_sort_created_desc);
-			$('#sort-created-asc ~ span').html(dict.find_sort_created_asc);
-			$('#sort-urgency-desc ~ span').html(dict.find_sort_urgency_desc);
-			$('#sort-urgency-asc ~ span').html(dict.find_sort_urgency_asc);
-			$('#sort-start-desc ~ span').html(dict.find_sort_start_desc);
-			$('#sort-start-asc ~ span').html(dict.find_sort_start_asc);
-			$('#sort-finish-desc ~ span').html(dict.find_sort_finish_desc);
-			$('#sort-finish-asc ~ span').html(dict.find_sort_finish_asc);
-			
-			$('#search').attr('placeholder', dict.find_search_placeholder);
-			$('label[for=calendarFrom]').html(dict.find_date_from);
-			$('label[for=calendarTo]').html(dict.find_date_to);
-			
-			
-			$('.card-action > a').html(dict.find_card_details);
-			
-			for(var key in dict) {
-				
-			  if (key.indexOf("modal") !== -1) {
-			  		
-				  var val = dict[key];
-				  findModalDict[key] = val;
-			  } else if (key.indexOf("card") !== -1) {
-			  		
-				  var val = dict[key];
-				  findCardDict[key] = val;
-			  }
-			}
-			
-		}).fail(function(jqXHR, textStatus, errorThrown) {
-			  
-			alert("Ошибка: " + jqXHR);
-		}).always(function() {
-		    
-			//preloaderOff();
-			pageLocalization["find"] = false;
-		});
-	}
-	
-	pageLocaleHandlers["find"] = localizeFind;
-	localizeFind();
-	
-	//Определяем текущую дату
-	var nowDate = new Date();
-	//Устанавливаем в элементы ввода Дата (Календарь) текущую дату,
-    //вызывая на ней предварительно нашу корректирующую функцию
-	$('#find-container #calendarFrom, #find-container #calendarTo')
-		.val(new Date().toDateInputValue());
-	//активируем элементы ввода Дата (Календарь)
-	$('#find-container #calendarFrom, #find-container #calendarTo').datepicker({
-    	'format':'dd-mm-yyyy'
-    	, 'setDefaultDate':true
-    	, 'autoClose':true
-	});
-	
-	app.handler(function(params) {
+        }).fail(function (jqXHR, textStatus, errorThrown) {
 
-		return function(params) {
-			
-			//Переменная для дескриптора интервала попыток
-			//получить и отобразить детализацию предложения
-			//при загрузке страницы с параметром - идентификатором предложения
-			var externalOpenDetailsInterval = null;
-			//Флаг процесса попытки получения детализации предложения
-			var gettingOfferDetails = false;
+            alert("Ошибка: " + jqXHR);
+        }).always(function () {
 
-			//Пустые объекты для хранения данных автодолнения
-			//выбора страны и города, которые будут приходить с сервера 
-			var countryAutocompleteItems = {};
-			var cityAutocompleteItems = {};
-			
-			var titleAutocompleteItems = {};
-			
-			var windowWidth = $(window).width();
-			var offerLimitDefault = 2;
-			if(windowWidth > 1200){
-				offerLimitDefault = 3;
-			}/* else {
-				offerLimitDefault = 2;
-			}*/
-			
-			//Начальные настройки бесконечной прокрутки предложений
-			var cursorString = null;
-		    var offerLimit = offerLimitDefault;
-		    var offerCounter = 0;
-		    var offerGridPopulating = false;
-		    var offerDetailsOrientation = "horizontal";
-		    if(windowWidth <= 600){
-		    	offerDetailsOrientation = "";
-			}
-		    
-		    $('#offer-grid-container > div').html(noItemsImage);
-		    
-		    //Функция сброса бесконечной прокрутки предложений
-		    //в начальное состояние
-			function resetInfinityScrollInfo(){
-				
-				offerLimit = offerLimitDefault;
-			    offerCounter = 0;
-			    offerGridPopulating = false;
-			    cursorString = null;
-			    if(windowWidth <= 600){
-			    	offerDetailsOrientation = "";
-				}
-			    
-			    $('#offer-grid-container > div').html(noItemsImage);
-			}
-		    
-			resetInfinityScrollInfo();
-			
-			/* Filter: country n city autocomplete */
-			
-			var onCountryAutocompleteCallback = function(){
+            preloaderOff();
+        });
+    };
 
-				console.log("country autocompleted");
-				resetInfinityScrollInfo();
-		    	doFilter();
-			};
-			
-			var onCityAutocompleteCallback = function(){
+    var findModalDict = {};
+    var findCardDict = {};
 
-				console.log("city autocompleted");
-				resetInfinityScrollInfo();
-		    	doFilter();
-			};
-			
-			var onTitleAutocompleteCallback = function(){
+    var localizeFind = function () {
 
-				resetInfinityScrollInfo();
-				doFilter();
-			}
-			
-			//country autocomplete
-		    $('input#country-input').autocomplete({
-		        data: countryAutocompleteItems
-		        , onAutocomplete: onCountryAutocompleteCallback
-			});
-			
-		    var countryAutocomplete =
-		    	M.Autocomplete.getInstance($('input#country-input'));
-			
-			$('input#country-input').keydown(function(e) { 
-					
-				// only user-triggered event
-				 if (e.originalEvent) {
-					 $('input#city-input').val("");
-					 $.ajax({
-					        url: "/country",
-					        type: "POST",
-					        data: {
-					            'action': 'autocomplete'
-					            , 'substring': $('input#country-input').val()
-					        },
-					        cache : false
-					    }).done(function(newAutocompleteItems) {
-					    	
-					    	var newAutocompleteItemsObj =
-					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
-					  		  		acc[cur] = null;
-					  		  		return acc;
-					  			}, {});
-					    	countryAutocomplete.updateData(newAutocompleteItemsObj);
-					    	//
-					    	console.log(countryAutocomplete);
-					    	countryAutocomplete.open();
-					});
-				 }
-				 else {
-				   // code-triggered event
-				 }
-			});
-			
-			//city autocomplete
-		    $('input#city-input').autocomplete({
-		        data: cityAutocompleteItems
-		        , onAutocomplete: onCityAutocompleteCallback
-			});
-			
-		    var cityAutocomplete =
-		    	M.Autocomplete.getInstance($('input#city-input'));
-			
-			$('input#city-input').keydown(function(e) { 
-					
-				// only user-triggered event
-				 if (e.originalEvent) {
-				 	
-					 $.ajax({
-					        url: "/city",
-					        type: "POST",
-					        data: {
-					            'action': 'autocomplete'
-				            	, 'country': $('input#country-input').val()
-					            , 'substring': $('input#city-input').val()
-					        },
-					        cache : false
-					    }).done(function(newAutocompleteItems) {
-					    	
-					    	var newAutocompleteItemsObj =
-					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
-					  		  		acc[cur] = null;
-					  		  		return acc;
-					  			}, {});
-					    	cityAutocomplete.updateData(newAutocompleteItemsObj);
-					    	console.log(cityAutocomplete);
-							
-					    	cityAutocomplete.open();
-					});
-				 }
-				 else {
-				   // code-triggered event
-				 }
-			});
-			
-			//search by title autocomplete
-		    $('#find-container input#search').autocomplete({
-		        data: titleAutocompleteItems
-		        , onAutocomplete: onTitleAutocompleteCallback
-			});
-			
-		  	//get created Autocomplete Instance from search-input
-		    var titleAutocomplete =
-		    	M.Autocomplete.getInstance($('#find-container input#search'));
-		  	
-		  	//handler for search-input keydown event
-		    $('#find-container input#search').keydown(function(e) { 
-				
-				// only user-triggered event
-				 if (e.originalEvent) {
-					 
-					 //Если нажата клавиша "Ввод" - отправить запрос на получение
-					 //диапазона предложений для сетки,
-					 //иначе - на получение вариантов автодополнения
-					 if(e.keyCode == 13){
-						 
-						resetInfinityScrollInfo();
-						doFilter();
-						return false;
-					 }
-					 //Собираем отформатированные даты из элементов Календарь
-		        	 var dateFrom = $('#find-container #calendarFrom').val();
-		        	 var dateTo = $('#find-container #calendarTo').val();
-					 //request data for search input's Autocomplete
-					 $.ajax({
-					        url: "/offer",
-					        type: "POST",
-					        data: {
-					            'action': 'autocomplete'
-					            , 'projection' : 'title'
-					            , 'startstring': $('#find-container input#search').val()
-					            , 'created-date-from' : dateFrom
-			        			, 'created-date-to' : dateTo
-					        },
-					        cache : false
-					    }).done(function(newAutocompleteItems) {
-					    	
-					    	var newAutocompleteItemsObj =
-					    		newAutocompleteItems.result.reduce(function(acc, cur, i) {
-					  		  		acc[cur] = null;
-					  		  		return acc;
-					  			}, {});
-					    	titleAutocomplete.updateData(newAutocompleteItemsObj);
-					    	//
-					    	titleAutocomplete.open();
-						});
-				 }
-				 else {
-				 }
-			});
-		  	
-		    $('#search-form i').unbind('click');
-		  	$('#search-form i').click(function(ev) {
-		  		
-		  		resetInfinityScrollInfo();
-				doFilter();
-		  	});
-						
-			/* Offers grid */
-			
-			var populateOffersGrid = function(filterData){
-		    	
-				//Добавляем на место таблицы полосу бесконечного прогресса -
-				//пока будет ожидаться ответ сервера
-		        preloaderOn("nocover");
-				//Собираем отформатированные даты из элементов Календарь
-		        var dateFrom = $('#find-container #calendarFrom').val();
-		        var dateTo = $('#find-container #calendarTo').val();
-		        //
-		        var searchByTitleStart = $('#find-container input#search').val();
-		        //Составляем строку запроса на сервер
-		        //для получения отфильтрованных данных о заданиях
-		        var urlString =
-		        	"/offer?action=get-range"
-		        			+ "&limit=" + offerLimit
-		        			+ "&created-date-from=" + dateFrom
-		        			+ "&created-date-to=" + dateTo
-		        			+ ((searchByTitleStart != "") ? ("&substring=" + searchByTitleStart) : "")
-		        			+ ((cursorString != null) ? ("&cursor=" + cursorString) : "");
-				
-		    	$.ajax({
-		            url: urlString,
-		            type: "POST",
-		            data: filterData,
-		            cache : false
-		        }).done(function(data) {
-		            
-		            //если удалось получить объект ответа о предложениях
-		            if(data.result[0] != undefined) {
-		            	
-			        	fetchedCount = data.result[0].items.length;
-			        	if(data.result[0].cursor_str != "end" && fetchedCount > 0){
-			        		
-			        		cursorString = data.result[0].cursor_str;
-			        		if(offerCounter == 0 && fetchedCount > 0){
-			        			$('#offer-grid-container > div').html('');
-			        		}
-			        		offerCounter += fetchedCount;
-			        		var offerCounterTail = offerCounter % offerLimitDefault;
-			        		if(offerCounterTail != 0 && offerLimit == offerLimitDefault){
-				        		
-				        		offerLimit += offerLimitDefault - offerCounterTail;
-				        		
-				        	} else if(offerLimit != offerLimitDefault) {
-				        		
-				        		offerLimit = offerLimitDefault;
-				        	}
-			        		
-			        		var newGridItems = data.result[0].items;
-			        		newGridItems.forEach(function(item, i, newGridItems) {
-							  
-			        			//Готовим шаблон offer grid item при помощи библиотеки Hogan
-							  	var template = Hogan.compile(
-					                '<div class="col s12 m12 l6 xl4">'
-						                +'<div class="card hoverable {{offer_type}}">'
-						                    +'<div class="card-image">'
-						                      +'<img src="{{image}}">'
-						                      +'<div class="card-title">'
-						                      	+'<div>{{title}}</div>'
-						                      	+'<div>({{offer_type}})</div>'
-						                      	+'<div class="card-title-date">{{created_at}}</div>'
-						                      +'</div>'
-						                    +'</div>'
-						                    +'<div class="card-content">'
-						                      +'<p>{{content_preview}}</p>'
-						                    +'</div>'
-						                    +'<div class="card-action">'
-						                      	+'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">'
-						                      		+ findCardDict.find_card_details
-				                      			+'</a>'
-						                    +'</div>'
-						                  +'</div>'
-						            +'</div>'
-						  		);
-			        			
-							  	var $offerGridContainer = $('#offer-grid-container');
-					            var $offerGridRows = $offerGridContainer.children();
-					            if($offerGridRows.length == 0
-					            		|| $offerGridRows.last().children().length == offerLimitDefault){
-					            	$offerGridContainer.append('<div class="row"></div>');
-					            	$offerGridRows = $offerGridContainer.children();
-					            }
-							  	//Заполняем шаблон данными и помещаем на веб-страницу
-								//$('#offer-grid-container > div').append(template.render(data.result[0]));
-							  	$offerGridRows.last().append(template.render(item));
-							  	//
-								$('#find-container #pointer-down').css('display', 'block');
-							});
-	
-				            /*//Готовим шаблон offer grid item при помощи библиотеки Hogan
-						  	var template = Hogan.compile(
-					  			'{{#items}}'
-				                +'<div class="col s12 m12 l6 xl4">'
-					                +'<div class="card hoverable {{offer_type}}">'
-					                    +'<div class="card-image">'
-					                      +'<img src="{{image}}">'
-					                      +'<div class="card-title">'
-					                      	+'<div>{{title}}</div>'
-					                      	+'<div>({{offer_type}})</div>'
-					                      	+'<div class="card-title-date">{{created_at}}</div>'
-					                      +'</div>'
-					                    +'</div>'
-					                    +'<div class="card-content">'
-					                      +'<p>{{content_preview}}</p>'
-					                    +'</div>'
-					                    +'<div class="card-action">'
-					                      	+'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">'
-					                      		+ findCardDict.find_card_details
-			                      			+'</a>'
-					                    +'</div>'
-					                  +'</div>'
-					            +'</div>'
-					      		+ '{{/items}}'
-					  		);*/
-				            
-			        	} else {
-			        		
-			        		$('#find-container #pointer-down').css('display', 'none');
-			        		offerCounter = "full";
-			        	}
-		            }
-		            offerGridPopulating = false;
-		        }).fail(function(jqXHR, textStatus, errorThrown) {
-					  
-					alert("Ошибка: " + jqXHR);
-				}).always(function() {
-				    
-					preloaderOff();
-			  	});
-			}
+        pageLocalization["find"] = true;
 
-			/* Filter */
-			
-			var doFilter = function(){
+        $.ajax({
+            type: 'POST',
+            url: '/language?action=dictionary&page=find',
+            dataType: 'json',
+            cache: false
+        }).done(function (responseText, textStatus, jqXHR) {
 
-				var filterData =
-					{'order-by': $('form#order-rules input[type=radio]:checked').attr('id')};
-		  		
-		  		var countryName = $('form#filters input#country-input').val();
-		  		var cityName = $('form#filters input#city-input').val();
-		  		var collaboratorsCount = $('form#filters input#c-count-input').val();
-		  		
-		  		if(countryName != ""){
-		  			filterData['country'] = countryName;
-		  		}
-		  		if(cityName != ""){
-		  			filterData['city'] = cityName;
-		  		}
-		  		if($('form#filters input#c-count-on-off').is(':checked')){
-			  		if(collaboratorsCount != ""){
-			  			filterData['c-count'] = collaboratorsCount;
-			  		} else {
-			  			filterData['c-count'] = -1;
-			  		}
-		  		}
-		  		var categoriesArray = new Array();
-		  		$("form#categories input:checked").each(function() {
-		  			categoriesArray.push($(this).attr('id'));
-		  		});
-		  		if(categoriesArray.length > 0){
-		  			filterData["categories"] = categoriesArray;
-		  		}
-		  		
-				populateOffersGrid(filterData);
-			}
-			
-			//Apply the filter
-			doFilter();
-			
-			//обработчик выбора одного из чекбоксов сортировки
-			$('form#order-rules input[type=radio]').unbind("change");
-			$('form#order-rules input[type=radio]').change(function() {
+            //Получаем словарь
+            var dict = dictionaryResponseToArray(responseText.result);
 
-			    if(this.checked) {
-					
-			    	resetInfinityScrollInfo();
-			    	doFilter();
-			    }
-			});
-			
-			//обработчики изменений фильтра по текущему числу вакантных мест в предложении
-			$('form#filters input#c-count-input').unbind("change");
-			$('form#filters input#c-count-input').change(function() {
+            $('#find_title_categories').html(dict.find_title_categories);
+            populateCategories();
 
-				if($('form#filters input#c-count-on-off').is(':checked')) {
-			    	resetInfinityScrollInfo();
-			    	doFilter();
-				}
-			});
-			//обработчик изменений фильтра по текущему числу вакантных мест в предложении
-			$('form#filters input#c-count-on-off').unbind("change");
-			$('form#filters input#c-count-on-off').change(function() {
+            $('#find_title_filters').html(dict.find_title_filters);
+            $('#country-input').attr('placeholder', dict.find_country_input);
+            $('label[for=country-input]').html(dict.find_country_input);
+            $('#city-input').attr('placeholder', dict.find_city_input);
+            $('label[for=city-input]').html(dict.find_city_input);
+            $('label[for=c-count-input]').html(dict.find_c_count_input);
+            $('#c-count-on-off ~ span').html(dict.find_c_count_on_off);
 
-		    	resetInfinityScrollInfo();
-		    	doFilter();
-			});
-			
-			/* Date range */
-			
-			var onDateRangeChanged = function(){
+            $('#find_title_order').html(dict.find_title_order);
+            $('#sort-created-desc ~ span').html(dict.find_sort_created_desc);
+            $('#sort-created-asc ~ span').html(dict.find_sort_created_asc);
+            $('#sort-urgency-desc ~ span').html(dict.find_sort_urgency_desc);
+            $('#sort-urgency-asc ~ span').html(dict.find_sort_urgency_asc);
+            $('#sort-start-desc ~ span').html(dict.find_sort_start_desc);
+            $('#sort-start-asc ~ span').html(dict.find_sort_start_asc);
+            $('#sort-finish-desc ~ span').html(dict.find_sort_finish_desc);
+            $('#sort-finish-asc ~ span').html(dict.find_sort_finish_asc);
 
-				if(!offerGridPopulating){
-					
-	    			resetInfinityScrollInfo();
-	    			doFilter();
-    			} else {
-    				
-    				setTimeout(onDateRangeChanged, 100);
-    			}
-			}
-			
-			$(document).unbind("change");
-			
-			$(document).on(
-		    		'change'
-		    		, '#find-container #calendarFrom, #find-container #calendarTo'
-		    		, onDateRangeChanged);
-			
-			//обработчик выбора одного из чекбоксов фильтра по категориям (типам предложений)
-			$(document).on(
-		    		'change'
-		    		, 'form#categories input[type=checkbox]'
-		    		, function(){
-		    			
-		    			resetInfinityScrollInfo();
-				    	doFilter();
-		    		});
-			
-			/* Grid infinity scroll */
-			
-			var onScroll = function(){
+            $('#search').attr('placeholder', dict.find_search_placeholder);
+            $('label[for=calendarFrom]').html(dict.find_date_from);
+            $('label[for=calendarTo]').html(dict.find_date_to);
 
-				if(offerCounter != "full" && !offerGridPopulating){
-					
-					var footerHeight = 283;
-					if ($(window).scrollTop() >=
-							($(document).height()
-								- footerHeight
-								- $(window).height())) {
-						offerGridPopulating = true;
-						doFilter();
-				    }
-				}
-			}
-			
-			var onClickNext = function(){
 
-				if(offerCounter != "full" && !offerGridPopulating){
+            $('.card-action > a').html(dict.find_card_details);
 
-					offerGridPopulating = true;
-					doFilter();
-				} else if(offerCounter == "full"){
-					
-					$('#find-container #pointer-down').css('display', 'none');
-				}
-			}
-			
-			$(window).unbind("scroll");
-			$(window).scroll(onScroll);
-			
-			$('#find-container #pointer-down').unbind("click");
-			$('#find-container #pointer-down').click(onClickNext);
-			
-			/* Offer details modal */
-			
-			var showOfferDetails = function(id){
-				
-				var urlString =
-		        	"/offer?action=get"
-		        			+"&id=" + id
-		        			+"&projection=grid-item-details";
-    			$.ajax({
-		            url: urlString,
-		            type: "POST",
-		            cache : false
-		        }).done(function(data) {
-		        	
-		        	if(data.result[0] != undefined){
-		        		
-		        		data.result[0]['dict'] = findModalDict;
-		        		//console.log(data.result[0]);
-			        	var template = Hogan.compile(
-					  			
-				      		'<h3 class="header">{{title}}</h3>'
-				      		+ '<h4>({{offer_type}})</h4>'
-				      	    + '<div class="card ' + offerDetailsOrientation + '">'
-				      	      +'<div class="card-image details-image">'
-				      	        +'<img src="{{image}}">'
-				      	      +'</div>'
-				      	      +'<div class="card-stacked">'
-				      	        +'<div class="card-content">'
-				      	      		+ '<h4>{{dict.find_modal_details_title}}</h4>'
-				      	      		+'<p>'
-				      	      			+'<strong>{{dict.find_modal_author}}: </strong>{{author_name}} '
-				      	      			+'{{#subscription}}'
-					      	      			+'<button id="unsubscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
-					      	      				+'{{dict.find_modal_unsubscribe_button}}'
-				      	      				+'</button>'
-				      	      			+'{{/subscription}}'
-					      	      		+'{{^subscription}}'
-					      	      			+'<button id="subscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
-					      	      				+'{{dict.find_modal_subscribe_button}}'
-				      	      				+'</button>'
-				      	      			+'{{/subscription}}'
-			      	      			+'</p>'
-				      	      		+'<p><strong>{{dict.find_modal_state}}: </strong>{{state}}</p>'
-				      	      		+'<p><strong>{{dict.find_modal_created}}: </strong>{{created_at}}</p>'
-				      	      		+'<p><strong>{{dict.find_modal_country}}: </strong>{{country}}</p>'
-				      	      		+'<p><strong>{{dict.find_modal_city}}: </strong>{{city}}</p>'
-					      	      	+'<p><strong>{{dict.find_modal_desired_start}}: </strong>{{desired_start_date}}</p>'
-					      	      	+'<p><strong>{{dict.find_modal_desired_end}}: </strong>{{desired_finish_date}}</p>'
-						      	    +'<p><strong>{{dict.find_modal_c_count}}: </strong>{{collaborators_count}}</p>'
-				      	      		+ '<h4>{{dict.find_modal_description_title}}</h4>'
-				      	          	+'<p>{{content}}</p>'
-				      	        +'</div>'
-				      	        +'<div class="card-action">'
-				      	          +'<a href="{{id}}"><h4>{{dict.find_modal_join_ref}}</h4></a>'
-				      	        +'</div>'
-				      	      +'</div>'
-				      	    +'</div>'
-				  		);
-			        	
-			        	$('#offer-details .modal-content')
-			        		.html(template.render(data.result[0]));
-			        	
-			        	var $currentSubscribeButton = null;
-			        	
-			        	//Обработчик клика по кнопке "Подписаться"
-			        	var subscribeHandler = function(ev){
-		        			
-		        			ev.preventDefault();
-		        			preloaderOn("nocover");
-							var createSubscriptionUrlString =
-					        	"/subscription?action=create"
-					        			+"&author-id=" + $(this).data("authorId");
-							$.ajax({
-					            url: createSubscriptionUrlString,
-					            type: "POST",
-					            cache : false
-					        }).done(function(data) {
-					        	
-					        	if(data.result != null && data.result[0] == "created"){
-					        		
-					        		$currentSubscribeButton.attr('id', 'unsubscribe');
-					        		$currentSubscribeButton.text(findModalDict.find_modal_unsubscribe_button);
-					        		$currentSubscribeButton.unbind("click");
-					        		$currentSubscribeButton.click(unsubscribeHandler);
-					        	} else {
-					        		alert('Ошибка отправки запроса');
-					        	}
-					        }).fail(function(jqXHR, textStatus, errorThrown) {
-								  
-								alert("Ошибка отправки запроса: " + jqXHR);
-							}).always(function() {
-							    
-								preloaderOff();
-						  	});
-		        		}
-			        	
-			        	//Обработчик клика по кнопке "Отписаться"
-			        	var unsubscribeHandler = function(ev){
-		        			
-		        			ev.preventDefault();
-		        			preloaderOn("nocover");
-							var deleteSubscriptionUrlString =
-					        	"/subscription?action=delete"
-					        			+"&author-id=" + $(this).data("authorId");
-							$.ajax({
-					            url: deleteSubscriptionUrlString,
-					            type: "POST",
-					            cache : false
-					        }).done(function(data) {
-					        	
-					        	if(data.result != null && data.result[0] == "deleted"){
-					        		
-					        		$currentSubscribeButton.attr('id', 'subscribe');
-					        		$currentSubscribeButton.text(findModalDict.find_modal_subscribe_button);
-					        		$currentSubscribeButton.unbind("click");
-					        		$currentSubscribeButton.click(subscribeHandler);
-					        	} else {
-					        		alert('Ошибка отправки запроса');
-					        	}
-					        }).fail(function(jqXHR, textStatus, errorThrown) {
-								  
-								alert("Ошибка отправки запроса: " + jqXHR);
-							}).always(function() {
-							    
-								preloaderOff();
-						  	});
-		        		}
-			        	
-			        	var $subscribeButton =
-			        		$('#offer-details .modal-content .card-content button#subscribe');
-			        	if($subscribeButton.length > 0){
-			        		
-			        		$currentSubscribeButton = $subscribeButton;
-			        		$subscribeButton.unbind("click");
-			        		$subscribeButton.click(subscribeHandler);
-			        	}
-			        	
-			        	var $unsubscribeButton =
-			        		$('#offer-details .modal-content .card-content button#unsubscribe');
-			        	if($unsubscribeButton.length > 0){
-			        		
-			        		$currentSubscribeButton = $unsubscribeButton;
-			        		$unsubscribeButton.unbind("click");
-			        		$unsubscribeButton.click(unsubscribeHandler);
-			        	}
-			        	
-			        	//Обработчик клика по ссылке "Присоединиться"
-			        	$('#offer-details .modal-content .card-action > a').unbind("click");
-						$('#offer-details .modal-content .card-action > a').click(function(ev){
-							
-							ev.preventDefault();
-							preloaderOn("nocover");
-							var urlString =
-					        	"/offer?action=join"
-					        			+"&id=" + data.result[0].id;
-							$.ajax({
-					            url: urlString,
-					            type: "POST",
-					            cache : false
-					        }).done(function(data) {
-					        	
-					        	if(data.result[0] == "sent"){
-					        		$('#offer-details .modal-content .card-action')
-					        			.html('<p>' + findModalDict.find_modal_request_was_sent + '</p>');
-					        	} else {
-					        		alert('Ошибка отправки запроса');
-					        	}
-					        }).fail(function(jqXHR, textStatus, errorThrown) {
-								  
-								alert("Ошибка отправки запроса: " + jqXHR);
-							}).always(function() {
-							    
-								preloaderOff();
-						  	});
-						});
-						//Если получение детализации прошло успешно - останавливаем
-						//повторение попыток
-						if(externalOpenDetailsInterval != null){
-							
-							clearInterval(externalOpenDetailsInterval);
-							externalOpenDetailsInterval = null;
-						}
-		        	}
-		        }).fail(function(jqXHR, textStatus, errorThrown) {
-					  
-					alert("Ошибка: " + jqXHR);
-				}).always(function() {
-					
-					//В любом случае сбрасываем флаг процесса попытки получения детализации
-					gettingOfferDetails = false;
-					preloaderOff();
-			  	});
-			};
-			
-			//Обработчик клика по ссылке "Детально"
-			//на любой карточке предложения в результатах поиска
-			$(document).unbind("click");
-			$(document).on(
-		    		'click'
-		    		, '#offer-grid-container .card-action > a'
-		    		, function(){
-		    			
-		    			preloaderOn("nocover");
-		    			//Считывание значения дополнительного атрибута
-		    			//из элемента-ссылки, по которой кликнул пользователь
-		    			var id = $(this).data('offerid');
-		    			//Меняем текущий адрес на адрес с указанием ИД предложения
-		    			//без обновления страницы
-		    			window.history.pushState(null, document.title, "/#find:" + id);
-		    			//Вызов функции отображения окна детализации
-		    			//выбранного предложения
-		    			showOfferDetails(id);
-		    		});
-			
-			//Функция получения и показа детализации предложения,
-			//когда страница загружается синхронно с параметром - идентификатором предложения
-			var openDetailsByExternal = function(){
-				
-				//Если не происодит предыдущая попытка
-				//console.log('authorized: ' + authorized + '; ' + 'localized: ' + localized + 'gettingOfferDetails: ' + gettingOfferDetails);
-				if(!gettingOfferDetails && authorized && localized){
-					
-					gettingOfferDetails = true;
-					//Заполняем модальное окно детализации
-	            	showOfferDetails(params);
-	                //Получаем объект модального окна детализации
-	            	var offerDetailsModal =
-	    		    	M.Modal.getInstance($('#offer-details'));
-	                //Отображаем окно
-	            	offerDetailsModal.open();
-				}
-			};
-			
-			//Если параметр в адресной строке задан
-            if (params != undefined) {
-            	//Пытаемся получить и отобразить детализацию предложения,
-            	//пока попытка не увенчается успехом
-            	
-            	externalOpenDetailsInterval =
-            		setInterval(openDetailsByExternal, 500);
-            	//localized = false;
-            	
-                /*try{
-                	openDetailsByExternal();
-                } catch (err){
-                	console.log('openDetailsByExternal error: ' + err);
-                	openDetailsByExternal();
-                }*/
+            for (var key in dict) {
+
+                if (key.indexOf("modal") !== -1) {
+
+                    var val = dict[key];
+                    findModalDict[key] = val;
+                } else if (key.indexOf("card") !== -1) {
+
+                    var val = dict[key];
+                    findCardDict[key] = val;
+                }
             }
 
-			setTimeout(preloaderOff, 500);
-		};
-	});
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+
+            alert("Ошибка: " + jqXHR);
+        }).always(function () {
+
+            //preloaderOff();
+            pageLocalization["find"] = false;
+        });
+    }
+
+    pageLocaleHandlers["find"] = localizeFind;
+    localizeFind();
+
+    //Определяем текущую дату
+    var nowDate = new Date();
+    //Устанавливаем в элементы ввода Дата (Календарь) текущую дату,
+    //вызывая на ней предварительно нашу корректирующую функцию
+    $('#find-container #calendarFrom, #find-container #calendarTo')
+            .val(new Date().toDateInputValue());
+    //активируем элементы ввода Дата (Календарь)
+    $('#find-container #calendarFrom, #find-container #calendarTo').datepicker({
+        'format': 'dd-mm-yyyy'
+        , 'setDefaultDate': true
+        , 'autoClose': true
+    });
+
+    app.handler(function (params) {
+
+        return function (params) {
+
+            //Переменная для дескриптора интервала попыток
+            //получить и отобразить детализацию предложения
+            //при загрузке страницы с параметром - идентификатором предложения
+            var externalOpenDetailsInterval = null;
+            //Флаг процесса попытки получения детализации предложения
+            var gettingOfferDetails = false;
+
+            //Пустые объекты для хранения данных автодолнения
+            //выбора страны и города, которые будут приходить с сервера 
+            var countryAutocompleteItems = {};
+            var cityAutocompleteItems = {};
+
+            var titleAutocompleteItems = {};
+
+            var windowWidth = $(window).width();
+            var offerLimitDefault = 2;
+            if (windowWidth > 1200) {
+                offerLimitDefault = 3;
+            }/* else {
+             offerLimitDefault = 2;
+             }*/
+
+            //Начальные настройки бесконечной прокрутки предложений
+            var cursorString = null;
+            var offerLimit = offerLimitDefault;
+            var offerCounter = 0;
+            var offerGridPopulating = false;
+            var offerDetailsOrientation = "horizontal";
+            if (windowWidth <= 600) {
+                offerDetailsOrientation = "";
+            }
+
+            $('#offer-grid-container > div').html(noItemsImage);
+
+            //Функция сброса бесконечной прокрутки предложений
+            //в начальное состояние
+            function resetInfinityScrollInfo() {
+
+                offerLimit = offerLimitDefault;
+                offerCounter = 0;
+                offerGridPopulating = false;
+                cursorString = null;
+                if (windowWidth <= 600) {
+                    offerDetailsOrientation = "";
+                }
+
+                $('#offer-grid-container > div').html(noItemsImage);
+            }
+
+            resetInfinityScrollInfo();
+
+            /* Filter: country n city autocomplete */
+
+            var onCountryAutocompleteCallback = function () {
+
+                console.log("country autocompleted");
+                resetInfinityScrollInfo();
+                doFilter();
+            };
+
+            var onCityAutocompleteCallback = function () {
+
+                console.log("city autocompleted");
+                resetInfinityScrollInfo();
+                doFilter();
+            };
+
+            var onTitleAutocompleteCallback = function () {
+
+                resetInfinityScrollInfo();
+                doFilter();
+            }
+
+            //country autocomplete
+            $('input#country-input').autocomplete({
+                data: countryAutocompleteItems
+                , onAutocomplete: onCountryAutocompleteCallback
+            });
+
+            var countryAutocomplete =
+                    M.Autocomplete.getInstance($('input#country-input'));
+
+            $('input#country-input').keydown(function (e) {
+
+                // only user-triggered event
+                if (e.originalEvent) {
+                    $('input#city-input').val("");
+                    $.ajax({
+                        url: "/country",
+                        type: "POST",
+                        data: {
+                            'action': 'autocomplete'
+                            , 'substring': $('input#country-input').val()
+                        },
+                        cache: false
+                    }).done(function (newAutocompleteItems) {
+
+                        var newAutocompleteItemsObj =
+                                newAutocompleteItems.result.reduce(function (acc, cur, i) {
+                                    acc[cur] = null;
+                                    return acc;
+                                }, {});
+                        countryAutocomplete.updateData(newAutocompleteItemsObj);
+                        //
+                        console.log(countryAutocomplete);
+                        countryAutocomplete.open();
+                    });
+                } else {
+                    // code-triggered event
+                }
+            });
+
+            //city autocomplete
+            $('input#city-input').autocomplete({
+                data: cityAutocompleteItems
+                , onAutocomplete: onCityAutocompleteCallback
+            });
+
+            var cityAutocomplete =
+                    M.Autocomplete.getInstance($('input#city-input'));
+
+            $('input#city-input').keydown(function (e) {
+
+                // only user-triggered event
+                if (e.originalEvent) {
+
+                    $.ajax({
+                        url: "/city",
+                        type: "POST",
+                        data: {
+                            'action': 'autocomplete'
+                            , 'country': $('input#country-input').val()
+                            , 'substring': $('input#city-input').val()
+                        },
+                        cache: false
+                    }).done(function (newAutocompleteItems) {
+
+                        var newAutocompleteItemsObj =
+                                newAutocompleteItems.result.reduce(function (acc, cur, i) {
+                                    acc[cur] = null;
+                                    return acc;
+                                }, {});
+                        cityAutocomplete.updateData(newAutocompleteItemsObj);
+                        console.log(cityAutocomplete);
+
+                        cityAutocomplete.open();
+                    });
+                } else {
+                    // code-triggered event
+                }
+            });
+
+            //search by title autocomplete
+            $('#find-container input#search').autocomplete({
+                data: titleAutocompleteItems
+                , onAutocomplete: onTitleAutocompleteCallback
+            });
+
+            //get created Autocomplete Instance from search-input
+            var titleAutocomplete =
+                    M.Autocomplete.getInstance($('#find-container input#search'));
+
+            //handler for search-input keydown event
+            $('#find-container input#search').keydown(function (e) {
+
+                // only user-triggered event
+                if (e.originalEvent) {
+
+                    //Если нажата клавиша "Ввод" - отправить запрос на получение
+                    //диапазона предложений для сетки,
+                    //иначе - на получение вариантов автодополнения
+                    if (e.keyCode == 13) {
+
+                        resetInfinityScrollInfo();
+                        doFilter();
+                        return false;
+                    }
+                    //Собираем отформатированные даты из элементов Календарь
+                    var dateFrom = $('#find-container #calendarFrom').val();
+                    var dateTo = $('#find-container #calendarTo').val();
+                    //request data for search input's Autocomplete
+                    $.ajax({
+                        url: "/offer",
+                        type: "POST",
+                        data: {
+                            'action': 'autocomplete'
+                            , 'projection': 'title'
+                            , 'startstring': $('#find-container input#search').val()
+                            , 'created-date-from': dateFrom
+                            , 'created-date-to': dateTo
+                        },
+                        cache: false
+                    }).done(function (newAutocompleteItems) {
+
+                        var newAutocompleteItemsObj =
+                                newAutocompleteItems.result.reduce(function (acc, cur, i) {
+                                    acc[cur] = null;
+                                    return acc;
+                                }, {});
+                        titleAutocomplete.updateData(newAutocompleteItemsObj);
+                        //
+                        titleAutocomplete.open();
+                    });
+                } else {
+                }
+            });
+
+            $('#search-form i').unbind('click');
+            $('#search-form i').click(function (ev) {
+
+                resetInfinityScrollInfo();
+                doFilter();
+            });
+
+            /* Offers grid */
+
+            var populateOffersGrid = function (filterData) {
+
+                //Добавляем на место таблицы полосу бесконечного прогресса -
+                //пока будет ожидаться ответ сервера
+                preloaderOn("nocover");
+                //Собираем отформатированные даты из элементов Календарь
+                var dateFrom = $('#find-container #calendarFrom').val();
+                var dateTo = $('#find-container #calendarTo').val();
+                //
+                var searchByTitleStart = $('#find-container input#search').val();
+                //Составляем строку запроса на сервер
+                //для получения отфильтрованных данных о заданиях
+                var urlString =
+                        "/offer?action=get-range"
+                        + "&limit=" + offerLimit
+                        + "&created-date-from=" + dateFrom
+                        + "&created-date-to=" + dateTo
+                        + ((searchByTitleStart != "") ? ("&substring=" + searchByTitleStart) : "")
+                        + ((cursorString != null) ? ("&cursor=" + cursorString) : "");
+
+                $.ajax({
+                    url: urlString,
+                    type: "POST",
+                    data: filterData,
+                    cache: false
+                }).done(function (data) {
+
+                    //если удалось получить объект ответа о предложениях
+                    if (data.result[0] != undefined) {
+
+                        fetchedCount = data.result[0].items.length;
+                        if (data.result[0].cursor_str != "end" && fetchedCount > 0) {
+
+                            cursorString = data.result[0].cursor_str;
+                            if (offerCounter == 0 && fetchedCount > 0) {
+                                $('#offer-grid-container > div').html('');
+                            }
+                            offerCounter += fetchedCount;
+                            var offerCounterTail = offerCounter % offerLimitDefault;
+                            if (offerCounterTail != 0 && offerLimit == offerLimitDefault) {
+
+                                offerLimit += offerLimitDefault - offerCounterTail;
+
+                            } else if (offerLimit != offerLimitDefault) {
+
+                                offerLimit = offerLimitDefault;
+                            }
+
+                            var newGridItems = data.result[0].items;
+                            newGridItems.forEach(function (item, i, newGridItems) {
+
+                                //Готовим шаблон offer grid item при помощи библиотеки Hogan
+                                var template = Hogan.compile(
+                                        '<div class="col s12 m12 l6 xl4">'
+                                        + '<div class="card hoverable {{offer_type}}">'
+                                        + '<div class="card-image">'
+                                        + '<img src="{{image}}">'
+                                        + '<div class="card-title">'
+                                        + '<div>{{title}}</div>'
+                                        + '<div>({{offer_type}})</div>'
+                                        + '<div class="card-title-date">{{created_at}}</div>'
+                                        + '</div>'
+                                        + '</div>'
+                                        + '<div class="card-content">'
+                                        + '<p>{{content_preview}}</p>'
+                                        + '</div>'
+                                        + '<div class="card-action">'
+                                        + '<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">'
+                                        + findCardDict.find_card_details
+                                        + '</a>'
+                                        + '</div>'
+                                        + '</div>'
+                                        + '</div>'
+                                        );
+
+                                var $offerGridContainer = $('#offer-grid-container');
+                                var $offerGridRows = $offerGridContainer.children();
+                                if ($offerGridRows.length == 0
+                                        || $offerGridRows.last().children().length == offerLimitDefault) {
+                                    $offerGridContainer.append('<div class="row"></div>');
+                                    $offerGridRows = $offerGridContainer.children();
+                                }
+                                //Заполняем шаблон данными и помещаем на веб-страницу
+                                //$('#offer-grid-container > div').append(template.render(data.result[0]));
+                                $offerGridRows.last().append(template.render(item));
+                                //
+                                $('#find-container #pointer-down').css('display', 'block');
+                            });
+
+                            /*//Готовим шаблон offer grid item при помощи библиотеки Hogan
+                             var template = Hogan.compile(
+                             '{{#items}}'
+                             +'<div class="col s12 m12 l6 xl4">'
+                             +'<div class="card hoverable {{offer_type}}">'
+                             +'<div class="card-image">'
+                             +'<img src="{{image}}">'
+                             +'<div class="card-title">'
+                             +'<div>{{title}}</div>'
+                             +'<div>({{offer_type}})</div>'
+                             +'<div class="card-title-date">{{created_at}}</div>'
+                             +'</div>'
+                             +'</div>'
+                             +'<div class="card-content">'
+                             +'<p>{{content_preview}}</p>'
+                             +'</div>'
+                             +'<div class="card-action">'
+                             +'<a data-offerid="{{id}}" class="modal-trigger" href="#offer-details">'
+                             + findCardDict.find_card_details
+                             +'</a>'
+                             +'</div>'
+                             +'</div>'
+                             +'</div>'
+                             + '{{/items}}'
+                             );*/
+
+                        } else {
+
+                            $('#find-container #pointer-down').css('display', 'none');
+                            offerCounter = "full";
+                        }
+                    }
+                    offerGridPopulating = false;
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                    alert("Ошибка: " + jqXHR);
+                }).always(function () {
+
+                    preloaderOff();
+                });
+            }
+
+            /* Filter */
+
+            var doFilter = function () {
+
+                var filterData =
+                        {'order-by': $('form#order-rules input[type=radio]:checked').attr('id')};
+
+                var countryName = $('form#filters input#country-input').val();
+                var cityName = $('form#filters input#city-input').val();
+                var collaboratorsCount = $('form#filters input#c-count-input').val();
+
+                if (countryName != "") {
+                    filterData['country'] = countryName;
+                }
+                if (cityName != "") {
+                    filterData['city'] = cityName;
+                }
+                if ($('form#filters input#c-count-on-off').is(':checked')) {
+                    if (collaboratorsCount != "") {
+                        filterData['c-count'] = collaboratorsCount;
+                    } else {
+                        filterData['c-count'] = -1;
+                    }
+                }
+                var categoriesArray = new Array();
+                $("form#categories input:checked").each(function () {
+                    categoriesArray.push($(this).attr('id'));
+                });
+                if (categoriesArray.length > 0) {
+                    filterData["categories"] = categoriesArray;
+                }
+
+                populateOffersGrid(filterData);
+            }
+
+            //Apply the filter
+            doFilter();
+
+            //обработчик выбора одного из чекбоксов сортировки
+            $('form#order-rules input[type=radio]').unbind("change");
+            $('form#order-rules input[type=radio]').change(function () {
+
+                if (this.checked) {
+
+                    resetInfinityScrollInfo();
+                    doFilter();
+                }
+            });
+
+            //обработчики изменений фильтра по текущему числу вакантных мест в предложении
+            $('form#filters input#c-count-input').unbind("change");
+            $('form#filters input#c-count-input').change(function () {
+
+                if ($('form#filters input#c-count-on-off').is(':checked')) {
+                    resetInfinityScrollInfo();
+                    doFilter();
+                }
+            });
+            //обработчик изменений фильтра по текущему числу вакантных мест в предложении
+            $('form#filters input#c-count-on-off').unbind("change");
+            $('form#filters input#c-count-on-off').change(function () {
+
+                resetInfinityScrollInfo();
+                doFilter();
+            });
+
+            /* Date range */
+
+            var onDateRangeChanged = function () {
+
+                if (!offerGridPopulating) {
+
+                    resetInfinityScrollInfo();
+                    doFilter();
+                } else {
+
+                    setTimeout(onDateRangeChanged, 100);
+                }
+            }
+
+            $(document).unbind("change");
+
+            $(document).on(
+                    'change'
+                    , '#find-container #calendarFrom, #find-container #calendarTo'
+                    , onDateRangeChanged);
+
+            //обработчик выбора одного из чекбоксов фильтра по категориям (типам предложений)
+            $(document).on(
+                    'change'
+                    , 'form#categories input[type=checkbox]'
+                    , function () {
+
+                        resetInfinityScrollInfo();
+                        doFilter();
+                    });
+
+            /* Grid infinity scroll */
+
+            var onScroll = function () {
+
+                if (offerCounter != "full" && !offerGridPopulating) {
+
+                    var footerHeight = 283;
+                    if ($(window).scrollTop() >=
+                            ($(document).height()
+                                    - footerHeight
+                                    - $(window).height())) {
+                        offerGridPopulating = true;
+                        doFilter();
+                    }
+                }
+            }
+
+            var onClickNext = function () {
+
+                if (offerCounter != "full" && !offerGridPopulating) {
+
+                    offerGridPopulating = true;
+                    doFilter();
+                } else if (offerCounter == "full") {
+
+                    $('#find-container #pointer-down').css('display', 'none');
+                }
+            }
+
+            $(window).unbind("scroll");
+            $(window).scroll(onScroll);
+
+            $('#find-container #pointer-down').unbind("click");
+            $('#find-container #pointer-down').click(onClickNext);
+
+            /* Offer details modal */
+
+            var showOfferDetails = function (id) {
+
+                var urlString =
+                        "/offer?action=get"
+                        + "&id=" + id
+                        + "&projection=grid-item-details";
+                $.ajax({
+                    url: urlString,
+                    type: "POST",
+                    cache: false
+                }).done(function (data) {
+
+                    if (data.result[0] != undefined) {
+
+                        data.result[0]['dict'] = findModalDict;
+                        //console.log(data.result[0]);
+                        var template = Hogan.compile(
+                                '<h3 class="header">{{title}}</h3>'
+                                + '<h4>({{offer_type}})</h4>'
+                                + '<div class="card ' + offerDetailsOrientation + '">'
+                                + '<div class="card-image details-image">'
+                                + '<img src="{{image}}">'
+                                + '</div>'
+                                + '<div class="card-stacked">'
+                                + '<div class="card-content">'
+                                + '<h4>{{dict.find_modal_details_title}}</h4>'
+                                + '<p>'
+                                + '<strong>{{dict.find_modal_author}}: </strong>{{author_name}} '
+                                + '{{#subscription}}'
+                                + '<button id="unsubscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
+                                + '{{dict.find_modal_unsubscribe_button}}'
+                                + '</button>'
+                                + '{{/subscription}}'
+                                + '{{^subscription}}'
+                                + '<button id="subscribe" data-author-id="{{author_id}}" class="waves-effect waves-light btn" type="button">'
+                                + '{{dict.find_modal_subscribe_button}}'
+                                + '</button>'
+                                + '{{/subscription}}'
+                                + '</p>'
+                                + '<p><strong>{{dict.find_modal_state}}: </strong>{{state}}</p>'
+                                + '<p><strong>{{dict.find_modal_created}}: </strong>{{created_at}}</p>'
+                                + '<p><strong>{{dict.find_modal_country}}: </strong>{{country}}</p>'
+                                + '<p><strong>{{dict.find_modal_city}}: </strong>{{city}}</p>'
+                                + '<p><strong>{{dict.find_modal_desired_start}}: </strong>{{desired_start_date}}</p>'
+                                + '<p><strong>{{dict.find_modal_desired_end}}: </strong>{{desired_finish_date}}</p>'
+                                + '<p><strong>{{dict.find_modal_c_count}}: </strong>{{collaborators_count}}</p>'
+                                + '<h4>{{dict.find_modal_description_title}}</h4>'
+                                + '<p>{{content}}</p>'
+                                + '</div>'
+                                + '<div class="card-action">'
+                                + '<a href="{{id}}"><h4>{{dict.find_modal_join_ref}}</h4></a>'
+                                + '</div>'
+                                + '</div>'
+                                + '</div>'
+                                );
+
+                        $('#offer-details .modal-content')
+                                .html(template.render(data.result[0]));
+
+                        var $currentSubscribeButton = null;
+
+                        //Обработчик клика по кнопке "Подписаться"
+                        var subscribeHandler = function (ev) {
+
+                            ev.preventDefault();
+                            preloaderOn("nocover");
+                            var createSubscriptionUrlString =
+                                    "/subscription?action=create"
+                                    + "&author-id=" + $(this).data("authorId");
+                            $.ajax({
+                                url: createSubscriptionUrlString,
+                                type: "POST",
+                                cache: false
+                            }).done(function (data) {
+
+                                if (data.result != null && data.result[0] == "created") {
+
+                                    $currentSubscribeButton.attr('id', 'unsubscribe');
+                                    $currentSubscribeButton.text(findModalDict.find_modal_unsubscribe_button);
+                                    $currentSubscribeButton.unbind("click");
+                                    $currentSubscribeButton.click(unsubscribeHandler);
+                                } else {
+                                    alert('Ошибка отправки запроса');
+                                }
+                            }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                                alert("Ошибка отправки запроса: " + jqXHR);
+                            }).always(function () {
+
+                                preloaderOff();
+                            });
+                        }
+
+                        //Обработчик клика по кнопке "Отписаться"
+                        var unsubscribeHandler = function (ev) {
+
+                            ev.preventDefault();
+                            preloaderOn("nocover");
+                            var deleteSubscriptionUrlString =
+                                    "/subscription?action=delete"
+                                    + "&author-id=" + $(this).data("authorId");
+                            $.ajax({
+                                url: deleteSubscriptionUrlString,
+                                type: "POST",
+                                cache: false
+                            }).done(function (data) {
+
+                                if (data.result != null && data.result[0] == "deleted") {
+
+                                    $currentSubscribeButton.attr('id', 'subscribe');
+                                    $currentSubscribeButton.text(findModalDict.find_modal_subscribe_button);
+                                    $currentSubscribeButton.unbind("click");
+                                    $currentSubscribeButton.click(subscribeHandler);
+                                } else {
+                                    alert('Ошибка отправки запроса');
+                                }
+                            }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                                alert("Ошибка отправки запроса: " + jqXHR);
+                            }).always(function () {
+
+                                preloaderOff();
+                            });
+                        }
+
+                        var $subscribeButton =
+                                $('#offer-details .modal-content .card-content button#subscribe');
+                        if ($subscribeButton.length > 0) {
+
+                            $currentSubscribeButton = $subscribeButton;
+                            $subscribeButton.unbind("click");
+                            $subscribeButton.click(subscribeHandler);
+                        }
+
+                        var $unsubscribeButton =
+                                $('#offer-details .modal-content .card-content button#unsubscribe');
+                        if ($unsubscribeButton.length > 0) {
+
+                            $currentSubscribeButton = $unsubscribeButton;
+                            $unsubscribeButton.unbind("click");
+                            $unsubscribeButton.click(unsubscribeHandler);
+                        }
+
+                        //Обработчик клика по ссылке "Присоединиться"
+                        $('#offer-details .modal-content .card-action > a').unbind("click");
+                        $('#offer-details .modal-content .card-action > a').click(function (ev) {
+
+                            ev.preventDefault();
+                            preloaderOn("nocover");
+                            var urlString =
+                                    "/offer?action=join"
+                                    + "&id=" + data.result[0].id;
+                            $.ajax({
+                                url: urlString,
+                                type: "POST",
+                                cache: false
+                            }).done(function (data) {
+
+                                if (data.result[0] === "sent") {
+                                    $('#offer-details .modal-content .card-action')
+                                            .html('<p>' + findModalDict.find_modal_request_was_sent + '</p>');
+                                    if(data.result[1] && data.result[2]){
+                                        var firebaseUId = data.result[1];
+                                        var newFirebaseNode = data.result[2];
+                                        
+                                        $.ajax({
+                                            url: "https://us-central1-my-skills-organizer.cloudfunctions.net/addNode?uId=" + firebaseUId,
+                                            type: "POST",
+                                            data: newFirebaseNode,
+                                            crossDomain: true,
+                                            cache: false
+                                        }).done(function (firebaseData) {
+
+                                            if (firebaseData && (firebaseData.results)) {
+                                                alert("Добавлен новый узел задачи в Ваш MySkillsOrganizer");
+                                            } else {
+                                                alert("Не удалось добавить новый узел задачи в Ваш MySkillsOrganizer");
+                                            }
+                                        }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                                            // alert("Ошибка отправки запроса: " + jqXHR);
+                                        });
+                                        
+                                    }
+                                } else {
+                                    alert('Ошибка отправки запроса');
+                                }
+                            }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                                alert("Ошибка отправки запроса: " + jqXHR);
+                            }).always(function () {
+
+                                preloaderOff();
+                            });
+                        });
+                        //Если получение детализации прошло успешно - останавливаем
+                        //повторение попыток
+                        if (externalOpenDetailsInterval != null) {
+
+                            clearInterval(externalOpenDetailsInterval);
+                            externalOpenDetailsInterval = null;
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                    alert("Ошибка: " + jqXHR);
+                }).always(function () {
+
+                    //В любом случае сбрасываем флаг процесса попытки получения детализации
+                    gettingOfferDetails = false;
+                    preloaderOff();
+                });
+            };
+
+            //Обработчик клика по ссылке "Детально"
+            //на любой карточке предложения в результатах поиска
+            $(document).unbind("click");
+            $(document).on(
+                    'click'
+                    , '#offer-grid-container .card-action > a'
+                    , function () {
+
+                        preloaderOn("nocover");
+                        //Считывание значения дополнительного атрибута
+                        //из элемента-ссылки, по которой кликнул пользователь
+                        var id = $(this).data('offerid');
+                        //Меняем текущий адрес на адрес с указанием ИД предложения
+                        //без обновления страницы
+                        window.history.pushState(null, document.title, "/#find:" + id);
+                        //Вызов функции отображения окна детализации
+                        //выбранного предложения
+                        showOfferDetails(id);
+                    });
+
+            //Функция получения и показа детализации предложения,
+            //когда страница загружается синхронно с параметром - идентификатором предложения
+            var openDetailsByExternal = function () {
+
+                //Если не происодит предыдущая попытка
+                //console.log('authorized: ' + authorized + '; ' + 'localized: ' + localized + 'gettingOfferDetails: ' + gettingOfferDetails);
+                if (!gettingOfferDetails && authorized && localized) {
+
+                    gettingOfferDetails = true;
+                    //Заполняем модальное окно детализации
+                    showOfferDetails(params);
+                    //Получаем объект модального окна детализации
+                    var offerDetailsModal =
+                            M.Modal.getInstance($('#offer-details'));
+                    //Отображаем окно
+                    offerDetailsModal.open();
+                }
+            };
+
+            //Если параметр в адресной строке задан
+            if (params != undefined) {
+                //Пытаемся получить и отобразить детализацию предложения,
+                //пока попытка не увенчается успехом
+
+                externalOpenDetailsInterval =
+                        setInterval(openDetailsByExternal, 500);
+                //localized = false;
+
+                /*try{
+                 openDetailsByExternal();
+                 } catch (err){
+                 console.log('openDetailsByExternal error: ' + err);
+                 openDetailsByExternal();
+                 }*/
+            }
+
+            setTimeout(preloaderOff, 500);
+        };
+    });
 </script>

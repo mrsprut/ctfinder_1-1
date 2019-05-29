@@ -5,7 +5,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class MySkillsOrganizerNode {
 
-	public String user;
+	public Boolean dependenciesSatisfied;
 	
 	public String title;
 	public String type;
@@ -20,7 +20,7 @@ public class MySkillsOrganizerNode {
 	public MySkillsOrganizerNode() {}
 	
 	public MySkillsOrganizerNode(
-			String user
+			Boolean dependenciesSatisfied
 			, String title
 			, String type
 			, String description
@@ -31,7 +31,7 @@ public class MySkillsOrganizerNode {
 			, Integer radius
 		) {
 		super();
-		this.user = user;
+		this.dependenciesSatisfied = dependenciesSatisfied;
 		this.title = title;
 		this.type = type;
 		this.description = description;
@@ -44,7 +44,7 @@ public class MySkillsOrganizerNode {
 
 	@Override
 	public String toString() {
-		return "MySkillsOrganizerNode [user=" + user + ", title=" + title + ", type=" + type + ", description="
+		return "MySkillsOrganizerNode [dependenciesSatisfied=" + dependenciesSatisfied + ", title=" + title + ", type=" + type + ", description="
 				+ description + ", status=" + status + ", access=" + access + ", left=" + left + ", top=" + top
 				+ ", radius=" + radius + "]";
 	}

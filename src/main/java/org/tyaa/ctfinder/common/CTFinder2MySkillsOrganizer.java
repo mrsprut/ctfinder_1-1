@@ -86,35 +86,44 @@ public class CTFinder2MySkillsOrganizer {
 		FirebaseApp fa = FirebaseApp.initializeApp(options);
 		log.info("step 1:  " + fa);
 	}
+        
+        public static String getFirebaseUserId(String _email){
+        
+            UserRecord userRecord = null;
+            String uId = null;
+            try {
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                userRecord = firebaseAuth.getUserByEmail(_email);
+                if (userRecord != null) {
+                    uId = userRecord.getUid();
+                } else {
+                    ObjectifyQueryLauncher.printException(new Exception("userRecord == null"), null, gson);
+                }
+            } catch (Exception ex) {
+                ObjectifyQueryLauncher.printException(ex, null, gson);
+            }
+            
+            return uId;
+        }
 	
+        //Doesn't work under Standard GAE Environment
 	public static void createNode(String email, String title, String description) {
 		
-		// log.info("step 2:  " + email + " " + title + " " + description);
 		UserRecord userRecord = null;
-		
-		
-		
-		//Task<UserRecord> userRecordTask = null;
 		try {
-			//userRecordTask =
-					//FirebaseAuth.getInstance().getUserByEmail(email);
-			
-			userRecord = FirebaseAuth.getInstance().getUserByEmail(email);
-			
+			FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+			userRecord = firebaseAuth.getUserByEmail(email);
 			log.info("step 3:  " + userRecord);
 			if (userRecord != null) {
 				String uId = userRecord.getUid();
 				log.info("step 4:  " + uId);
 				final FirebaseDatabase database = FirebaseDatabase.getInstance();
 				log.info("step 5:  " + database);
-				DatabaseReference ref = database.getReference("nodes");
+				DatabaseReference ref = database.getReference(uId + "/nodes");
 				log.info("step 6:  " + ref);
 				MySkillsOrganizerNode node =
-						new MySkillsOrganizerNode(uId, title, "2", description, "1", false, 0, 0, 50);
-				
-
+						new MySkillsOrganizerNode(true, title, "2", description, "1", false, 0, 0, 50);
 				DatabaseReference childRef = ref.push();
-				
 				ref.addChildEventListener(new ChildEventListener() {
 					
 					@Override
@@ -160,91 +169,14 @@ public class CTFinder2MySkillsOrganizer {
 				
 				log.info("step 7:  " + childRef.getKey());
 				
-				// childRef.setValueAsync(node);
 				childRef.setValueAsync(node);
 				
 				System.out.println("step 9:  " + "done");
 			} else {
 				ObjectifyQueryLauncher.printException(new Exception("userRecord == null"), null, gson);
 			}
-			
-			/*userRecordTask.addOnCompleteListener(new OnCompleteListener<UserRecord>() {
-				
-				@Override
-				public void onComplete(Task<UserRecord> task) {
-					
-					UserRecord userRecord = task.getResult();
-					log.info("step 3:  " + userRecord);
-					if (userRecord != null) {
-						String uId = userRecord.getUid();
-						log.info("step 4:  " + uId);
-						final FirebaseDatabase database = FirebaseDatabase.getInstance();
-						log.info("step 5:  " + database);
-						DatabaseReference ref = database.getReference("nodes");
-						log.info("step 6:  " + ref);
-						MySkillsOrganizerNode node =
-								new MySkillsOrganizerNode(uId, title, "2", description, "1", false, 0, 0, 50);
-						
-
-						DatabaseReference childRef = ref.push();
-						
-						ref.addChildEventListener(new ChildEventListener() {
-							
-							@Override
-							public void onChildRemoved(DataSnapshot snapshot) {
-								// TODO Auto-generated method stub
-								
-							}
-							
-							@Override
-							public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-								// TODO Auto-generated method stub
-								
-							}
-							
-							@Override
-							public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-								
-								for (DataSnapshot child : snapshot.getChildren()) {
-							          if (child.getKey().equals(childRef.getKey())) {
-							        	  System.out.println("step 8:  " + child.getValue());
-							          }
-							        }
-							}
-							
-							@Override
-							public void onChildAdded(DataSnapshot snapshot, String previousChildName) {
-								System.out.println("step 8-0:  " + snapshot.getValue());
-								for (DataSnapshot child : snapshot.getChildren()) {
-							          if (child.getKey().equals(childRef.getKey())) {
-							        	  System.out.println("step 8:  " + child.getValue());
-							        	  // Status.getInstance().notifyUpdate();
-							          }
-							        }
-								
-							}
-							
-							@Override
-							public void onCancelled(DatabaseError error) {
-								System.out.println("step 8:  " + error.getCode());
-								
-							}
-						});
-						
-						log.info("step 7:  " + childRef.getKey());
-						
-						// childRef.setValueAsync(node);
-						childRef.setValue(node);
-						
-						System.out.println("step 9:  " + "done");
-					} else {
-						ObjectifyQueryLauncher.printException(new Exception("userRecord == null"), null, gson);
-					}
-				}
-			});*/
 		} catch (Exception ex) {
 			ObjectifyQueryLauncher.printException(ex, null, gson);
 		}
-		
 	}
 }

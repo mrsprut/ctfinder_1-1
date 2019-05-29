@@ -1699,14 +1699,36 @@ public class OfferServlet extends HttpServlet {
 										descriptionString = description.getContent();
 									}
 									
-									CTFinder2MySkillsOrganizer.createNode(
+									/* CTFinder2MySkillsOrganizer.createNode(
 											candidateUser.getEmail()
 											, titleString
 											, descriptionString
 										);
-									
+									*/
+                                                                        
+                                                                        String firebaseUserId
+                                                                            = CTFinder2MySkillsOrganizer.getFirebaseUserId(candidateUser.getEmail());
+                                                                        
+                                                                        MySkillsOrganizerNode node = null;
+                                                                        if (firebaseUserId != null) {
+                                                                            node =
+                                                                                new MySkillsOrganizerNode(
+                                                                                    true
+                                                                                    , titleString
+                                                                                    , "1"
+                                                                                    , descriptionString
+                                                                                    , "1"
+                                                                                    , false
+                                                                                    , 100
+                                                                                    , 100
+                                                                                    , 50
+                                                                                );
+                                                                        }
+                                                                        
 									List al = new ArrayList<>();
 									al.add(HttpRespWords.sent);
+                                                                        al.add(firebaseUserId);
+                                                                        al.add(node);
 									RespData rd = new RespData(al);
 									String successJson = gson.toJson(rd);
 									out.print(successJson);

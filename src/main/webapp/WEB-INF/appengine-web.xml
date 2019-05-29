@@ -14,7 +14,7 @@
 	</system-properties>
 	
 	<manual-scaling>
-	   <instances>2</instances>
+	   <instances>1</instances>
 	</manual-scaling>
 	
 	<!-- <url-stream-handler>urlfetch</url-stream-handler> -->
